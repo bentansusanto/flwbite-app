@@ -42,7 +42,7 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           if (data?.csrfToken) {
-            Cookies.set("csrf_token", data.csrfToken);
+            Cookies.set("csrf_token", data.csrfToken, { path: '/', sameSite: "lax" });
           }
         } catch (err) {
           console.error("Failed to fetch CSRF token:", err);

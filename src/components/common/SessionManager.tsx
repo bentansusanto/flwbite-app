@@ -16,7 +16,7 @@ export default function SessionManager() {
   // Handle CSRF token storage and periodic refetch
   useEffect(() => {
     if (csrfData?.csrfToken) {
-      Cookies.set("csrf_token", csrfData.csrfToken, { sameSite: "strict" });
+      Cookies.set("csrf_token", csrfData.csrfToken, { path: '/', sameSite: "lax" });
     }
 
     // Refresh CSRF token every 30 minutes
