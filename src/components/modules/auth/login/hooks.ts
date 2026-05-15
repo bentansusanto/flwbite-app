@@ -63,19 +63,22 @@ export const useLoginHook = () => {
           domain,
         }).unwrap();
         
-        // Save token to cookie
+        // Save token to cookie with global path
         if (response.data?.access_token) {
-          Cookies.set("flwbite_token", response.data.access_token, { expires: 7 }); // Expires in 7 days
-          Cookies.set("flwbite_role", response.data.role, { expires: 7 });
+          const cookieOptions = { expires: 7, path: '/' };
+          Cookies.set("flwbite_token", response.data.access_token, cookieOptions);
+          Cookies.set("flwbite_role", response.data.role, cookieOptions);
           if (response.data?.branch_id) {
-            Cookies.set("flwbite_branch", response.data.branch_id, { expires: 7 });
+            Cookies.set("flwbite_branch", response.data.branch_id, cookieOptions);
           }
         }
         
+        // Use window.location.href instead of router.push to ensure 
+        // cookies are fully synced before the next page load (Next.js Middleware fix)
         if (response.data?.role === "cashier") {
-          router.push("/orders/new");
+          window.location.href = "/orders/new";
         } else {
-          router.push("/");
+          window.location.href = "/";
         }
       } catch (err: any) {
         if (err?.data?.message) {
@@ -95,19 +98,20 @@ export const useLoginHook = () => {
         domain 
       }).unwrap();
       
-      // Save token to cookie
+      // Save token to cookie with global path
       if (response.data?.access_token) {
-        Cookies.set("flwbite_token", response.data.access_token, { expires: 1 }); // PIN session might be shorter
-        Cookies.set("flwbite_role", response.data.role || "cashier", { expires: 1 });
+        const cookieOptions = { expires: 1, path: '/' };
+        Cookies.set("flwbite_token", response.data.access_token, cookieOptions);
+        Cookies.set("flwbite_role", response.data.role || "cashier", cookieOptions);
         if (response.data?.branch_id) {
-          Cookies.set("flwbite_branch", response.data.branch_id, { expires: 1 });
+          Cookies.set("flwbite_branch", response.data.branch_id, cookieOptions);
         }
       }
       
       if (response.data?.role === "cashier") {
-        router.push("/orders/new");
+        window.location.href = "/orders/new";
       } else {
-        router.push("/");
+        window.location.href = "/";
       }
     } catch (err) {
       console.error("Cashier Login failed:", err);

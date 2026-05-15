@@ -10,7 +10,7 @@ const baseQuery = fetchBaseQuery({
     }
     const csrfToken = Cookies.get("csrf_token");
     if (csrfToken) {
-      headers.set("x-csrf-token", csrfToken);
+      headers.set("X-CSRF-Token", csrfToken);
     }
     return headers;
   },
