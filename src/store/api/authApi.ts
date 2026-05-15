@@ -33,7 +33,7 @@ export const authApi = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
-    getCsrfToken: builder.query<{ csrfToken: string }, any>({
+    getCsrfToken: builder.query<{ csrfToken: string }, void>({
       query: () => "/csrf-token",
       transformResponse: (response: any) => ({
         csrfToken: response?.data?.token ?? "",
