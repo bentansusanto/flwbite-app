@@ -24,15 +24,25 @@ const nextConfig: NextConfig = {
     return config;
   },
 
-    turbopack: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
+  },
 
+  async rewrites() {
+    const internalApiUrl = process.env.INTERNAL_API_URL;
+    if (!internalApiUrl) return [];
+    return [
+      {
+        source: '/api/proxy/:path*',
+        destination: `${internalApiUrl}/:path*`,
+      },
+    ];
+  },
 };
 
 export default withPWA(nextConfig);
