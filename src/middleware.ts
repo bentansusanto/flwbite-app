@@ -10,6 +10,8 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
   const token = request.cookies.get("flwbite_token")?.value;
 
+  console.log(`Middleware Debug: Path: ${pathname}, Host: ${hostname}, HasToken: ${!!token}`);
+
   // 1. Logika Subdomain (Multi-tenancy)
   // Ubah flwbite.com menjadi domain utama Anda
   const rootDomain = "flwbite.com";

@@ -92,11 +92,17 @@ export const useLoginHook = () => {
 
   const handleCashierLogin = async () => {
     try {
+      // Clear old cookies first to avoid conflict
+      Cookies.remove("flwbite_token", { path: '/' });
+      Cookies.remove("flwbite_role", { path: '/' });
+      
       const response = await login({ 
-        identifier: "cashier", 
+        identifier: "cashier", // Make sure your API expects this identifier for PIN login
         pin, 
         domain 
       }).unwrap();
+      
+      console.log("Cashier Login Response:", response);
       
       // Save token to cookie with global path
       if (response.data?.access_token) {
@@ -106,15 +112,18 @@ export const useLoginHook = () => {
         if (response.data?.branch_id) {
           Cookies.set("flwbite_branch", response.data.branch_id, cookieOptions);
         }
-      }
-      
-      if (response.data?.role === "cashier") {
-        window.location.href = "/orders/new";
+
+        // Force a small delay to ensure cookies are written before redirect
+        setTimeout(() => {
+          window.location.href = "/orders/new";
+        }, 100);
       } else {
-        window.location.href = "/";
+        alert("Login berhasil tapi token tidak ditemukan. Hubungi admin.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Cashier Login failed:", err);
+      const msg = err?.data?.message || "PIN yang Anda masukkan salah.";
+      alert(msg); // Show error to user
     }
   };
 
