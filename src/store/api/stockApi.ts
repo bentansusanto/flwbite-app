@@ -4,33 +4,15 @@ export const stockApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllStocks: builder.query({
       query: () => "/stocks",
-      providesTags: (result) =>
-        result?.data
-          ? [
-              ...result.data.map(({ id }: { id: string }) => ({ type: "Stock" as const, id })),
-              { type: "Stock" as const, id: "LIST" },
-            ]
-          : [{ type: "Stock" as const, id: "LIST" }],
+      providesTags: ["Stock"],
     }),
     getStocksByBranch: builder.query({
       query: (branchId: string) => `/stocks/branch/${branchId}`,
-      providesTags: (result) =>
-        result?.data
-          ? [
-              ...result.data.map(({ id }: { id: string }) => ({ type: "Stock" as const, id })),
-              { type: "Stock" as const, id: "LIST" },
-            ]
-          : [{ type: "Stock" as const, id: "LIST" }],
+      providesTags: ["Stock"],
     }),
     getStocksByVariant: builder.query({
       query: (variantId: string) => `/stocks/variant/${variantId}`,
-      providesTags: (result) =>
-        result?.data
-          ? [
-              ...result.data.map(({ id }: { id: string }) => ({ type: "Stock" as const, id })),
-              { type: "Stock" as const, id: "LIST" },
-            ]
-          : [{ type: "Stock" as const, id: "LIST" }],
+      providesTags: ["Stock"],
     }),
     updateStock: builder.mutation({
       query: (body) => ({
@@ -38,7 +20,7 @@ export const stockApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "Stock" as const, id: "LIST" }],
+      invalidatesTags: ["Stock", "Product"],
     }),
   }),
 });

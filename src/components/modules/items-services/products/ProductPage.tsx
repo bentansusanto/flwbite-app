@@ -41,7 +41,10 @@ export const ProductPage = () => {
     isAlertOpen, handleDelete, handleConfirmDelete, handleCancelDelete,
   } = useProductHook();
 
-  const categoryOptions = categories.map((c: any) => ({ label: c.name, value: c.id }));
+  // Filter categories based on the selected product type
+  const categoryOptions = categories
+    .filter((c: any) => c.category_type === selectedType)
+    .map((c: any) => ({ label: c.name, value: c.id }));
 
   const initialValues = selectedProduct
     ? {

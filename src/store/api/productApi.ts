@@ -7,21 +7,11 @@ export const productApi = apiSlice.injectEndpoints({
         url: "/products",
         params,
       }),
-      // Provide LIST tag + individual tags untuk setiap produk
-      providesTags: (result) =>
-        result?.data
-          ? [
-              ...result.data.map(({ id }: { id: string }) => ({
-                type: "Product" as const,
-                id,
-              })),
-              { type: "Product" as const, id: "LIST" },
-            ]
-          : [{ type: "Product" as const, id: "LIST" }],
+      providesTags: ["Product"],
     }),
     getProductById: builder.query({
       query: (id) => `/products/${id}`,
-      providesTags: (result, error, id) => [{ type: "Product" as const, id }],
+      providesTags: ["Product"],
     }),
     createProduct: builder.mutation({
       query: (body) => ({
@@ -29,8 +19,7 @@ export const productApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      // Invalidate LIST agar getProducts re-fetch
-      invalidatesTags: [{ type: "Product" as const, id: "LIST" }],
+      invalidatesTags: ["Product"],
     }),
     updateProduct: builder.mutation({
       query: ({ id, ...body }) => ({
@@ -38,21 +27,14 @@ export const productApi = apiSlice.injectEndpoints({
         method: "PUT",
         body,
       }),
-      // Invalidate item spesifik + LIST
-      invalidatesTags: (result, error, { id }) => [
-        { type: "Product" as const, id },
-        { type: "Product" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["Product"],
     }),
     deleteProduct: builder.mutation({
       query: (id) => ({
         url: `/products/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [
-        { type: "Product" as const, id },
-        { type: "Product" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["Product"],
     }),
     // Variants
     createVariant: builder.mutation({
@@ -61,10 +43,7 @@ export const productApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: (result, error, { productId }) => [
-        { type: "Product" as const, id: productId },
-        { type: "Product" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["Product"],
     }),
     updateVariant: builder.mutation({
       query: ({ productId, variantId, ...body }) => ({
@@ -72,20 +51,14 @@ export const productApi = apiSlice.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (result, error, { productId }) => [
-        { type: "Product" as const, id: productId },
-        { type: "Product" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["Product"],
     }),
     deleteVariant: builder.mutation({
       query: ({ productId, variantId }) => ({
         url: `/products/${productId}/variants/${variantId}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, { productId }) => [
-        { type: "Product" as const, id: productId },
-        { type: "Product" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["Product"],
     }),
   }),
 });

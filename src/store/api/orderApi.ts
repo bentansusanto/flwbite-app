@@ -53,7 +53,7 @@ export const orderApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Order", "PosSession"],
+      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
     }),
     payOrder: builder.mutation<any, any>({
       query: (body) => ({
@@ -61,28 +61,28 @@ export const orderApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Order", "PosSession"],
+      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
     }),
     refundOrder: builder.mutation<any, string>({
       query: (id) => ({
         url: `/orders/${id}/refund`,
         method: "POST",
       }),
-      invalidatesTags: ["Order", "PosSession"],
+      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
     }),
     cancelOrder: builder.mutation<any, string>({
       query: (id) => ({
         url: `/orders/${id}/cancel`,
         method: "PATCH",
       }),
-      invalidatesTags: ["Order", "PosSession"],
+      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
     }),
     completeOrder: builder.mutation<any, string>({
       query: (id) => ({
         url: `/orders/${id}/complete`,
         method: "PATCH",
       }),
-      invalidatesTags: ["Order", "PosSession"],
+      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
     }),
   }),
 });

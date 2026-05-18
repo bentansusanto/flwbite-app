@@ -7,17 +7,11 @@ export const purchaseApi = apiSlice.injectEndpoints({
         url: "/purchase-orders",
         params,
       }),
-      providesTags: (result) =>
-        result?.data
-          ? [
-              ...result.data.map(({ id }: { id: string }) => ({ type: "PurchaseOrder" as const, id })),
-              { type: "PurchaseOrder" as const, id: "LIST" },
-            ]
-          : [{ type: "PurchaseOrder" as const, id: "LIST" }],
+      providesTags: ["PurchaseOrder"],
     }),
     getPurchaseOrderById: builder.query({
       query: (id: string) => `/purchase-orders/${id}`,
-      providesTags: (result, error, id) => [{ type: "PurchaseOrder" as const, id }],
+      providesTags: ["PurchaseOrder"],
     }),
     createPurchaseOrder: builder.mutation({
       query: (body) => ({
@@ -25,7 +19,7 @@ export const purchaseApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "PurchaseOrder" as const, id: "LIST" }],
+      invalidatesTags: ["PurchaseOrder"],
     }),
     updatePurchaseOrder: builder.mutation({
       query: ({ id, ...body }) => ({
@@ -33,10 +27,7 @@ export const purchaseApi = apiSlice.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "PurchaseOrder" as const, id },
-        { type: "PurchaseOrder" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["PurchaseOrder"],
     }),
     payPurchaseOrder: builder.mutation({
       query: ({ id, ...body }) => ({
@@ -44,27 +35,18 @@ export const purchaseApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "PurchaseOrder" as const, id },
-        { type: "PurchaseOrder" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["PurchaseOrder"],
     }),
     getPurchaseReceivings: builder.query({
       query: (params) => ({
         url: "/purchase-receivings",
         params,
       }),
-      providesTags: (result) =>
-        result?.data
-          ? [
-              ...result.data.map(({ id }: { id: string }) => ({ type: "PurchaseReceiving" as const, id })),
-              { type: "PurchaseReceiving" as const, id: "LIST" },
-            ]
-          : [{ type: "PurchaseReceiving" as const, id: "LIST" }],
+      providesTags: ["PurchaseReceiving"],
     }),
     getPurchaseReceivingById: builder.query({
       query: (id: string) => `/purchase-receivings/${id}`,
-      providesTags: (result, error, id) => [{ type: "PurchaseReceiving" as const, id }],
+      providesTags: ["PurchaseReceiving"],
     }),
     createPurchaseReceiving: builder.mutation({
       query: (body) => ({
@@ -72,19 +54,14 @@ export const purchaseApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: (result, error, { purchase_order_id }) => [
-        { type: "PurchaseReceiving" as const, id: "LIST" },
-        { type: "PurchaseOrder" as const, id: "LIST" },
-        { type: "PurchaseOrder" as const, id: purchase_order_id },
-        { type: "Product" as const, id: "LIST" }, // Receiving updates stock
-      ],
+      invalidatesTags: ["PurchaseReceiving", "PurchaseOrder", "Product", "Stock"],
     }),
     cancelPurchaseOrder: builder.mutation({
       query: (id: string) => ({
         url: `/purchase-orders/${id}/cancel`,
         method: "PUT",
       }),
-      invalidatesTags: [{ type: "PurchaseOrder" as const, id: "LIST" }],
+      invalidatesTags: ["PurchaseOrder"],
     }),
   }),
 });

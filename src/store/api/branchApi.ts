@@ -4,35 +4,23 @@ export const branchApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getBranches: builder.query({
       query: () => "/branches",
-      providesTags: (result) =>
-        result?.data
-          ? [
-              ...result.data.map(({ id }: { id: string }) => ({ type: "Branch" as const, id })),
-              { type: "Branch" as const, id: "LIST" },
-            ]
-          : [{ type: "Branch" as const, id: "LIST" }],
+      providesTags: ["Branch"],
     }),
     getBranchById: builder.query({
       query: (id: string) => `/branches/${id}`,
-      providesTags: (result, error, id) => [{ type: "Branch" as const, id }],
+      providesTags: ["Branch"],
     }),
     createBranch: builder.mutation({
       query: (body) => ({ url: "/branches", method: "POST", body }),
-      invalidatesTags: [{ type: "Branch" as const, id: "LIST" }],
+      invalidatesTags: ["Branch"],
     }),
     updateBranch: builder.mutation({
       query: ({ id, ...body }) => ({ url: `/branches/${id}`, method: "PUT", body }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "Branch" as const, id },
-        { type: "Branch" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["Branch"],
     }),
     deleteBranch: builder.mutation({
       query: (id: string) => ({ url: `/branches/${id}`, method: "DELETE" }),
-      invalidatesTags: (result, error, id) => [
-        { type: "Branch" as const, id },
-        { type: "Branch" as const, id: "LIST" },
-      ],
+      invalidatesTags: ["Branch"],
     }),
   }),
 });
