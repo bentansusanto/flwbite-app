@@ -102,7 +102,7 @@ const baseQueryWithReauth: BaseQueryFn<
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Product", "Category", "User", "Order", "Branch", "Supplier", "SupplierCategory", "PurchaseOrder", "PurchaseReceiving", "Stock", "StockTake", "ProductBatch", "StockMovement", "PosSession", "Customer"], // Define common tags for caching
+  tagTypes: ["Product", "Category", "User", "Order", "Branch", "Supplier", "SupplierCategory", "PurchaseOrder", "PurchaseReceiving", "Stock", "StockTake", "ProductBatch", "StockMovement", "PosSession", "Customer", "Tax", "Promotion"], // Define common tags for caching
 
   endpoints: (builder) => ({}), // Endpoints will be injected from other files
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Search, ShoppingCart, Trash2, Plus, Minus, ChevronRight, Filter, Power, Package, UserPlus, Users } from "lucide-react";
 import Button from "@/components/ui/button/Button";
 import { PosSessionGuard } from "../pos-session/PosSessionGuard";
@@ -10,6 +10,8 @@ import Cookies from "js-cookie";
 import { useGetProductsQuery } from "@/store/api/productApi";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
 import { useCreateOrderMutation, usePayOrderMutation, useGetTransactionsQuery, useCancelOrderMutation, useCompleteOrderMutation } from "@/store/api/orderApi";
+import { useGetTaxesQuery } from "@/store/api/taxApi";
+import { useGetPromotionsQuery } from "@/store/api/promotionApi";
 import { toast } from "sonner";
 import { Drawer } from "@/components/ui/drawer";
 import { useGetStocksByBranchQuery } from "@/store/api/stockApi";
@@ -36,6 +38,9 @@ export const NewOrdersPage = () => {
   const [isCloseSessionOpen, setIsCloseSessionOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isPromoListModalOpen, setIsPromoListModalOpen] = useState(false);
+  const [isTaxListModalOpen, setIsTaxListModalOpen] = useState(false);
+  const [manuallySelectedPromoId, setManuallySelectedPromoId] = useState<string | null>(null);
 
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
@@ -64,6 +69,8 @@ export const NewOrdersPage = () => {
     branch_id: branchId
   }, { skip: !branchId });
   const { data: stocksData } = useGetStocksByBranchQuery(branchId || "", { skip: !branchId });
+  const { data: taxesData } = useGetTaxesQuery(undefined);
+  const { data: promotionsData } = useGetPromotionsQuery(undefined);
   const [cancelOrder] = useCancelOrderMutation();
   const [completeOrder] = useCompleteOrderMutation();
 
@@ -74,6 +81,8 @@ export const NewOrdersPage = () => {
   const categoriesList = categoriesData?.data || [];
   const pendingOrders = pendingOrdersData?.data || [];
   const paidOrders = paidOrdersData?.data || [];
+  const taxes = taxesData?.data || [];
+  const promotions = promotionsData?.data || [];
 
   const handleResumeOrder = (order: any) => {
     if (cart.length > 0) {
@@ -184,6 +193,21 @@ export const NewOrdersPage = () => {
       return item;
     }));
   };
+  const getOrderType = () => {
+    let defaultType = selectedBusinessType === "all" ? "RETAIL" : selectedBusinessType.toUpperCase();
+    if (cart.length === 0) return defaultType;
+
+    const cartProductTypes = cart.map(item => {
+      const prod = products.find((p: any) => p.id === item.id);
+      return prod?.type?.toUpperCase();
+    }).filter(Boolean);
+
+    if (cartProductTypes.length === 0) return defaultType;
+
+    if (cartProductTypes.includes("SERVICE")) return "SERVICE";
+    if (cartProductTypes.includes("FNB") || cartProductTypes.includes("F&B")) return "FNB";
+    return cartProductTypes[0] || "RETAIL";
+  };
 
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
@@ -195,15 +219,15 @@ export const NewOrdersPage = () => {
 
     try {
       const orderRes = await createOrder({
-        type: selectedBusinessType === "all" ? "RETAIL" : selectedBusinessType.toUpperCase(),
+        type: getOrderType(),
         branch_id: branchId,
         customer_name: selectedCustomer?.name || "Customer",
         items: cart.map(item => ({
           variant_id: item.variant_id,
           qty: item.quantity
         })),
-        tax_amount: tax,
-        discount_amount: 0,
+        tax_amount: totalTax,
+        discount_amount: totalDiscount,
         notes: notes
       }).unwrap();
 
@@ -233,7 +257,7 @@ export const NewOrdersPage = () => {
 
     try {
       await createOrder({
-        type: selectedBusinessType === "all" ? "RETAIL" : selectedBusinessType.toUpperCase(),
+        type: getOrderType(),
         branch_id: branchId,
         customer_name: selectedCustomer?.name || customerName || "Customer",
         table_number: tableNumber,
@@ -241,8 +265,8 @@ export const NewOrdersPage = () => {
           variant_id: item.variant_id,
           qty: item.quantity
         })),
-        tax_amount: tax,
-        discount_amount: 0,
+        tax_amount: totalTax,
+        discount_amount: totalDiscount,
         notes: notes
       }).unwrap();
 
@@ -259,9 +283,230 @@ export const NewOrdersPage = () => {
     }
   };
 
+  const handlePayButtonClick = (isMobile: boolean = false) => {
+    if (cart.length === 0) {
+      toast.error("Keranjang belanja masih kosong! Pilih produk terlebih dahulu.");
+      return;
+    }
+    if (!selectedCustomer) {
+      toast.error("Pelanggan wajib dipilih sebelum melakukan pembayaran!");
+      if (isMobile) {
+        setIsDrawerOpen(false);
+      }
+      setIsCustomerModalOpen(true);
+      return;
+    }
+    if (isMobile) {
+      setIsDrawerOpen(false);
+    }
+    setIsCheckoutOpen(true);
+  };
+
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const tax = subtotal * 0.1;
-  const total = subtotal + tax;
+
+  const activeTaxes = useMemo(() => {
+    return (taxes || []).filter((t: any) => t.is_active);
+  }, [taxes]);
+
+  const activePromotions = useMemo(() => {
+    if (!promotions) return [];
+    const now = new Date();
+    return promotions.filter((promo: any) => {
+      if (promo.status !== "ACTIVE") return false;
+      const start = new Date(promo.start_date);
+      const end = new Date(promo.end_date);
+      if (now < start || now > end) return false;
+      if (promo.branches && promo.branches.length > 0 && branchId) {
+        if (!promo.branches.includes(branchId)) return false;
+      }
+      return true;
+    });
+  }, [promotions, branchId]);
+
+  const applicablePromotions = useMemo(() => {
+    if (cart.length === 0) return [];
+    
+    const results: { id: string; name: string; discount: number }[] = [];
+    const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    activePromotions.forEach((promo: any) => {
+      let promoDiscount = 0;
+      const isManuallySelected = manuallySelectedPromoId === promo.id;
+      
+      (promo.rules || []).forEach((rule: any) => {
+        let isApplicable = false;
+        let ruleDiscount = 0;
+        
+        if (isManuallySelected) {
+          isApplicable = true;
+        } else {
+          let condVal: any = {};
+          try {
+            condVal = typeof rule.condition_value === 'string' 
+              ? JSON.parse(rule.condition_value) 
+              : rule.condition_value;
+          } catch (e) {
+            condVal = rule.condition_value;
+          }
+          
+          if (rule.condition_type === "MIN_QTY") {
+            const qtyVal = typeof condVal === 'object' && condVal ? (condVal.min_qty || condVal.value) : condVal;
+            const requiredQty = Number(qtyVal || 0);
+            if (totalQty >= requiredQty) {
+              isApplicable = true;
+            }
+          }
+          else if (rule.condition_type === "MIN_SPEND") {
+            const spendVal = typeof condVal === 'object' && condVal ? (condVal.min_spend || condVal.value) : condVal;
+            const requiredSpend = Number(spendVal || 0);
+            if (subtotal >= requiredSpend) {
+              isApplicable = true;
+            }
+          }
+          else if (rule.condition_type === "CUSTOMER_NEW") {
+            if (selectedCustomer) {
+              isApplicable = true;
+            }
+          }
+          else if (rule.condition_type === "PRODUCT_CATEGORY" || (rule.condition_categories && rule.condition_categories.length > 0)) {
+            const allowedCategories = rule.condition_categories || [];
+            const hasMatchingProduct = cart.some(item => {
+              const prod = products.find((p: any) => p.id === item.id);
+              return prod && allowedCategories.includes(prod.category_id);
+            });
+            if (hasMatchingProduct) {
+              isApplicable = true;
+            }
+          }
+          else if (rule.condition_variants && rule.condition_variants.length > 0) {
+            const allowedVariants = rule.condition_variants || [];
+            const hasMatchingVariant = cart.some(item => allowedVariants.includes(item.variant_id));
+            if (hasMatchingVariant) {
+              isApplicable = true;
+            }
+          } else {
+            isApplicable = true;
+          }
+        }
+        
+        if (isApplicable) {
+          let actionVal: any = {};
+          try {
+            actionVal = typeof rule.action_value === 'string'
+              ? JSON.parse(rule.action_value)
+              : rule.action_value;
+          } catch (e) {
+            actionVal = rule.action_value;
+          }
+          
+          const value = typeof actionVal === 'object' && actionVal 
+            ? Number(actionVal.discount_value || actionVal.value || 0) 
+            : Number(actionVal || 0);
+          
+          if (rule.action_type === "DISCOUNT_PERCENT") {
+            const allowedVariants = rule.action_variants || [];
+            const allowedCategories = rule.action_categories || [];
+            
+            if (allowedVariants.length > 0 || allowedCategories.length > 0) {
+              let applicableSum = 0;
+              cart.forEach(item => {
+                const prod = products.find((p: any) => p.id === item.id);
+                const matchesVar = allowedVariants.includes(item.variant_id);
+                const matchesCat = prod && allowedCategories.includes(prod.category_id);
+                if (matchesVar || matchesCat) {
+                  applicableSum += item.price * item.quantity;
+                }
+              });
+              ruleDiscount = applicableSum * (value / 100);
+            } else {
+              ruleDiscount = subtotal * (value / 100);
+            }
+          }
+          else if (rule.action_type === "DISCOUNT_AMOUNT" || rule.action_type === "DISCOUNT_FIXED") {
+            ruleDiscount = value;
+          }
+          else if (rule.action_type === "FREE_ITEM" || rule.action_type === "FREE_PRODUCT" || rule.action_type === "BUY_X_GET_Y") {
+            const allowedVariants = rule.action_variants || [];
+            let matchingItems = cart;
+            if (allowedVariants.length > 0) {
+              matchingItems = cart.filter(item => allowedVariants.includes(item.variant_id));
+            }
+            
+            if (matchingItems.length > 0) {
+              const prices = matchingItems.map(item => item.price);
+              const minPrice = Math.min(...prices);
+              const matchingQty = matchingItems.reduce((sum, item) => sum + item.quantity, 0);
+              
+              let freeCount = 0;
+              if (isManuallySelected) {
+                freeCount = Math.max(1, Math.floor(matchingQty / 3));
+              } else {
+                freeCount = Math.floor(matchingQty / 3);
+              }
+              ruleDiscount = minPrice * freeCount;
+            }
+          }
+          else if (rule.action_type === "FIXED_PRICE") {
+            const allowedVariants = rule.action_variants || [];
+            let matchingItems = cart;
+            if (allowedVariants.length > 0) {
+              matchingItems = cart.filter(item => allowedVariants.includes(item.variant_id));
+            }
+            
+            const matchingQty = matchingItems.reduce((sum, item) => sum + item.quantity, 0);
+            const normalSum = matchingItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            const bundleCount = Math.max(isManuallySelected ? 1 : 0, Math.floor(matchingQty / 3));
+            if (bundleCount > 0) {
+              const remainingQty = Math.max(0, matchingQty - (bundleCount * 3));
+              const prices = matchingItems.map(item => item.price);
+              const avgPrice = prices.length > 0 ? prices.reduce((a,b)=>a+b,0)/prices.length : 0;
+              const bundleSum = (bundleCount * value) + (remainingQty * avgPrice);
+              ruleDiscount = Math.max(0, normalSum - bundleSum);
+            }
+          }
+        }
+        
+        if (ruleDiscount > promoDiscount) {
+          promoDiscount = ruleDiscount;
+        }
+      });
+      
+      if (promoDiscount > 0) {
+        results.push({
+          id: promo.id,
+          name: promo.name,
+          discount: promoDiscount
+        });
+      }
+    });
+    
+    return results;
+  }, [cart, activePromotions, subtotal, selectedCustomer, products, manuallySelectedPromoId]);
+
+  const totalDiscount = useMemo(() => {
+    let maxSingleDiscount = 0;
+    let stackableSum = 0;
+    
+    applicablePromotions.forEach(ap => {
+      const promoObj = promotions.find((p: any) => p.id === ap.id);
+      if (promoObj && promoObj.is_stackable) {
+        stackableSum += ap.discount;
+      }
+      if (ap.discount > maxSingleDiscount) {
+        maxSingleDiscount = ap.discount;
+      }
+    });
+    
+    return Math.max(stackableSum, maxSingleDiscount);
+  }, [applicablePromotions, promotions]);
+
+  const taxSubtotal = Math.max(0, subtotal - totalDiscount);
+  const totalTax = activeTaxes.length > 0 
+    ? activeTaxes.reduce((sum: number, t: any) => sum + (taxSubtotal * (t.value / 100)), 0)
+    : 0;
+
+  const total = Math.max(0, taxSubtotal + totalTax);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -332,9 +577,9 @@ export const NewOrdersPage = () => {
               className="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 transition-colors relative group"
             >
               <Users className="w-5 h-5 text-gray-400" />
-              {pendingOrders.length > 0 && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900 shadow-sm">
-                  {pendingOrders.length}
+              {(pendingOrders.length + paidOrders.length) > 0 && (
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900 shadow-sm animate-pulse">
+                  {pendingOrders.length + paidOrders.length}
                 </div>
               )}
               <span className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Antrian Pesanan</span>
@@ -506,6 +751,21 @@ export const NewOrdersPage = () => {
               </div>
             )}
           </div>
+          {/* Active Promos & Taxes Quick View Pills */}
+          <div className="flex gap-2 pt-1">
+            <button
+              onClick={() => setIsPromoListModalOpen(true)}
+              className="flex-1 py-2 px-3 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100/50 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all border border-emerald-100 dark:border-emerald-900/30"
+            >
+              🏷️ Promo Aktif ({activePromotions.length})
+            </button>
+            <button
+              onClick={() => setIsTaxListModalOpen(true)}
+              className="flex-1 py-2 px-3 bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-100/50 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all border border-indigo-100 dark:border-indigo-900/30"
+            >
+              📄 Pajak Aktif ({activeTaxes.length})
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
@@ -527,10 +787,25 @@ export const NewOrdersPage = () => {
               <span>Subtotal</span>
               <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(subtotal)}</span>
             </div>
-            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 font-medium">
-              <span>Pajak (10%)</span>
-              <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(tax)}</span>
-            </div>
+            {applicablePromotions.map((ap) => (
+              <div key={ap.id} className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+                <span className="flex items-center gap-1.5">🏷️ {ap.name}</span>
+                <span className="font-bold">-{formatCurrency(ap.discount)}</span>
+              </div>
+            ))}
+            {activeTaxes.length > 0 ? (
+              activeTaxes.map((t: any) => (
+                <div key={t.id} className="flex justify-between text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  <span>Pajak - {t.name} ({t.value}%)</span>
+                  <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(taxSubtotal * (t.value / 100))}</span>
+                </div>
+              ))
+            ) : (
+              <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 font-medium">
+                <span>Pajak (10%)</span>
+                <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(totalTax)}</span>
+              </div>
+            )}
             <div className="flex justify-between text-lg pt-2 border-t border-gray-200 dark:border-gray-700">
               <span className="font-bold text-gray-900 dark:text-white">Total</span>
               <span className="font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(total)}</span>
@@ -546,8 +821,7 @@ export const NewOrdersPage = () => {
               Simpan
             </Button>
             <Button
-              onClick={() => setIsCheckoutOpen(true)}
-              disabled={cart.length === 0}
+              onClick={() => handlePayButtonClick(false)}
               className="flex-[2] h-14 text-lg font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-lg shadow-indigo-500/20"
             >
               Bayar <ChevronRight className="ml-1 w-5 h-5" />
@@ -642,10 +916,25 @@ export const NewOrdersPage = () => {
                 <span>Subtotal</span>
                 <span className="font-bold text-gray-900">{formatCurrency(subtotal)}</span>
               </div>
-              <div className="flex justify-between text-sm text-gray-500">
-                <span>Pajak (10%)</span>
-                <span className="font-bold text-gray-900">{formatCurrency(tax)}</span>
-              </div>
+              {applicablePromotions.map((ap) => (
+                <div key={ap.id} className="flex justify-between text-sm text-emerald-600 font-medium">
+                  <span className="flex items-center gap-1.5">🏷️ {ap.name}</span>
+                  <span className="font-bold">-{formatCurrency(ap.discount)}</span>
+                </div>
+              ))}
+              {activeTaxes.length > 0 ? (
+                activeTaxes.map((t: any) => (
+                  <div key={t.id} className="flex justify-between text-sm text-gray-500">
+                    <span>Pajak - {t.name} ({t.value}%)</span>
+                    <span className="font-bold text-gray-900">{formatCurrency(taxSubtotal * (t.value / 100))}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>Pajak (10%)</span>
+                  <span className="font-bold text-gray-900">{formatCurrency(totalTax)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-xl font-bold pt-4">
                 <span>Total</span>
                 <span className="text-indigo-600">{formatCurrency(total)}</span>
@@ -664,10 +953,7 @@ export const NewOrdersPage = () => {
                 Simpan
               </Button>
               <Button
-                onClick={() => {
-                  setIsDrawerOpen(false);
-                  setIsCheckoutOpen(true);
-                }}
+                onClick={() => handlePayButtonClick(true)}
                 className="flex-[2] h-14 font-bold bg-indigo-600 text-white rounded-2xl shadow-xl shadow-indigo-100"
               >
                 Bayar Sekarang <ChevronRight className="ml-1 w-5 h-5" />
@@ -754,7 +1040,9 @@ export const NewOrdersPage = () => {
           onClose={() => setIsCheckoutOpen(false)}
           total={total}
           subtotal={subtotal}
-          tax={tax}
+          tax={totalTax}
+          discount={totalDiscount}
+          appliedPromotions={applicablePromotions}
           cart={cart}
           onConfirm={handleCheckoutConfirm}
           isLoading={isCreating || isPaying}
@@ -805,6 +1093,196 @@ export const NewOrdersPage = () => {
         cancelLabel="Tidak"
         variant="danger"
       />
+
+      {isPromoListModalOpen && (
+        <Modal
+          isOpen={isPromoListModalOpen}
+          onClose={() => setIsPromoListModalOpen(false)}
+          title="Daftar Promosi Aktif"
+          className="max-w-xl mx-auto"
+        >
+          <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto no-scrollbar">
+            {activePromotions.length === 0 ? (
+              <div className="py-10 text-center space-y-2">
+                <span className="text-4xl">🏷️</span>
+                <p className="text-sm font-semibold text-gray-500">Tidak Ada Promosi Aktif</p>
+                <p className="text-xs text-gray-400">Belum ada kampanye promosi yang berjalan saat ini.</p>
+              </div>
+            ) : (
+              activePromotions.map((promo: any) => {
+                const isApplied = applicablePromotions.some(ap => ap.id === promo.id);
+                return (
+                  <div 
+                    key={promo.id} 
+                    className={`p-4 rounded-2xl border transition-all ${
+                      isApplied 
+                        ? "bg-emerald-50/50 dark:bg-emerald-950/10 border-emerald-200 dark:border-emerald-800" 
+                        : "bg-white dark:bg-gray-800/40 border-gray-100 dark:border-white/5"
+                    }`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-gray-900 dark:text-white text-sm">{promo.name}</span>
+                          {isApplied && (
+                            <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-lg uppercase">
+                              Diterapkan
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{promo.description}</p>
+                      </div>
+                      {promo.is_stackable && (
+                        <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold rounded-lg uppercase">
+                          Stackable
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800/60 grid grid-cols-2 gap-2 text-[10px] font-medium text-gray-400">
+                      <div>
+                        <span className="block text-[9px] uppercase tracking-wider text-gray-400/80">Berlaku Mulai</span>
+                        <span className="text-gray-600 dark:text-gray-300 font-semibold text-[11px]">
+                          {new Date(promo.start_date).toLocaleDateString("id-ID", { dateStyle: "medium" })}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-[9px] uppercase tracking-wider text-gray-400/80">Hingga Tanggal</span>
+                        <span className="text-gray-600 dark:text-gray-300 font-semibold text-[11px]">
+                          {new Date(promo.end_date).toLocaleDateString("id-ID", { dateStyle: "medium" })}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Rules list */}
+                    <div className="mt-3 space-y-1.5">
+                      {promo.rules.map((rule: any, idx: number) => {
+                        let ruleCondText = rule.condition_type;
+                        try {
+                          const cleanVal = typeof rule.condition_value === 'string'
+                            ? JSON.parse(rule.condition_value)
+                            : rule.condition_value;
+                          
+                          if (rule.condition_type === "MIN_SPEND") {
+                            const spend = typeof cleanVal === 'object' && cleanVal ? (cleanVal.min_spend || cleanVal.value || cleanVal) : cleanVal;
+                            ruleCondText = `Min Belanja ${formatCurrency(Number(spend))}`;
+                          } else if (rule.condition_type === "MIN_QTY") {
+                            const qty = typeof cleanVal === 'object' && cleanVal ? (cleanVal.min_qty || cleanVal.value || cleanVal) : cleanVal;
+                            ruleCondText = `Min Qty ${qty} Pcs`;
+                          } else if (rule.condition_type === "CUSTOMER_NEW") {
+                            ruleCondText = "Pelanggan Baru";
+                          }
+                        } catch(e) {
+                          if (rule.condition_type === "MIN_SPEND") {
+                            ruleCondText = `Min Belanja ${formatCurrency(Number(rule.condition_value))}`;
+                          } else if (rule.condition_type === "MIN_QTY") {
+                            ruleCondText = `Min Qty ${rule.condition_value} Pcs`;
+                          }
+                        }
+                        
+                        return (
+                          <div key={idx} className="p-2.5 bg-gray-50 dark:bg-gray-900/50 rounded-xl text-xs text-gray-600 dark:text-gray-300 flex items-center justify-between">
+                            <div>
+                              <span className="font-bold text-indigo-600 dark:text-indigo-400">{rule.condition_type === "MIN_SPEND" ? "Belanja" : rule.condition_type === "MIN_QTY" ? "Jumlah" : "Syarat"}: </span>
+                              <span className="font-medium text-gray-700 dark:text-gray-200">{ruleCondText}</span>
+                            </div>
+                            <div className="font-bold text-emerald-600 dark:text-emerald-400">
+                              {rule.action_type === "DISCOUNT_PERCENT" ? `${rule.action_value}% Off` : 
+                               rule.action_type === "DISCOUNT_FIXED" ? `-${formatCurrency(Number(rule.action_value))}` : 
+                               rule.action_type === "FREE_PRODUCT" ? "Beli 2 Gratis 1" : "Free Item"}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Manual Application Controls */}
+                    <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800/60 flex justify-end">
+                      {manuallySelectedPromoId === promo.id ? (
+                        <button
+                          onClick={() => {
+                            setManuallySelectedPromoId(null);
+                            toast.success("Penerapan manual dibatalkan.");
+                          }}
+                          className="px-3.5 py-1.5 border border-red-200 dark:border-red-900/30 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
+                        >
+                          ❌ Batalkan Pilihan
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setManuallySelectedPromoId(promo.id);
+                            toast.success(`Promo "${promo.name}" diterapkan secara manual.`);
+                          }}
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-sm shadow-emerald-500/10"
+                        >
+                          👉 Terapkan Promo
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            <Button onClick={() => setIsPromoListModalOpen(false)} className="w-full mt-4 h-12 bg-indigo-600 text-white rounded-xl">
+              Tutup
+            </Button>
+          </div>
+        </Modal>
+      )}
+
+      {isTaxListModalOpen && (
+        <Modal
+          isOpen={isTaxListModalOpen}
+          onClose={() => setIsTaxListModalOpen(false)}
+          title="Daftar Pajak Aktif"
+          className="max-w-xl mx-auto"
+        >
+          <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto no-scrollbar">
+            {activeTaxes.length === 0 ? (
+              <div className="py-10 text-center space-y-2">
+                <span className="text-4xl">📄</span>
+                <p className="text-sm font-semibold text-gray-500">Tidak Ada Pajak Aktif</p>
+                <p className="text-xs text-gray-400">Semua transaksi saat ini bebas biaya pajak.</p>
+              </div>
+            ) : (
+              activeTaxes.map((t: any) => {
+                const computedAmt = taxSubtotal * (t.value / 100);
+                return (
+                  <div key={t.id} className="p-4 rounded-2xl border bg-white dark:bg-gray-800/40 border-gray-100 dark:border-white/5 flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-gray-900 dark:text-white text-sm">{t.name}</span>
+                        <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 text-[10px] font-bold rounded-lg">
+                          {t.value}%
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-0.5">ID Pajak: {t.id}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="block text-[9px] uppercase tracking-wider text-gray-400/80">Potongan Pajak</span>
+                      <span className="font-bold text-gray-900 dark:text-white text-sm">
+                        {formatCurrency(computedAmt)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            
+            <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-2xl flex justify-between items-center text-xs font-semibold text-gray-600 dark:text-gray-400 mt-2">
+              <span>Total Nilai Pajak Terhitung:</span>
+              <span className="font-bold text-sm text-indigo-600 dark:text-indigo-400">
+                {formatCurrency(totalTax)}
+              </span>
+            </div>
+            
+            <Button onClick={() => setIsTaxListModalOpen(false)} className="w-full mt-4 h-12 bg-indigo-600 text-white rounded-xl">
+              Tutup
+            </Button>
+          </div>
+        </Modal>
+      )}
     </div>
     </div>
     </PosSessionGuard>

@@ -24,6 +24,7 @@ import { useTransactionFilters, useTransactionActions } from "./hooks";
 import { Modal } from "@/components/ui/modal";
 import { toast } from "sonner";
 import { useGetTransactionsQuery, Order, useRefundOrderMutation } from "@/store/api/orderApi";
+import { useGetProductsQuery } from "@/store/api/productApi";
 
 export default function TransactionHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,6 +36,9 @@ export default function TransactionHistoryPage() {
   const { data: branchesData, isLoading: isLoadingBranches } = useGetBranchesQuery({});
   const branches = branchesData?.data || [];
 
+  const { data: productsData } = useGetProductsQuery({});
+  const products = productsData?.data || [];
+
   const filterFormik = useTransactionFilters((values) => {
     // Filter logic
   });
@@ -43,6 +47,51 @@ export default function TransactionHistoryPage() {
   const transactions: Order[] = transactionsData?.data || [];
 
   const { handlePrintReceipt } = useTransactionActions();
+
+  const getOrderTypeBadge = (trx: Order) => {
+    const itemTypes = (trx.items || []).map((item: any) => {
+      const prod = products.find((p: any) => 
+        p.id === item.product_id || 
+        (p.variants && p.variants.some((v: any) => v.id === item.variant_id))
+      );
+      return prod?.type?.toUpperCase();
+    }).filter(Boolean);
+
+    const uniqueTypes = Array.from(new Set(itemTypes));
+
+    if (uniqueTypes.length > 1) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200/40 dark:border-amber-900/30">
+          Campuran ({uniqueTypes.join(" + ")})
+        </span>
+      );
+    }
+
+    const singleType = uniqueTypes[0] || trx.type?.toUpperCase() || "RETAIL";
+
+    switch (singleType) {
+      case "SERVICE":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400 border border-violet-200/40 dark:border-violet-900/30">
+            Service
+          </span>
+        );
+      case "FNB":
+      case "F&B":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200/40 dark:border-emerald-900/30">
+            F&B
+          </span>
+        );
+      case "RETAIL":
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-200/40 dark:border-blue-900/30">
+            Product
+          </span>
+        );
+    }
+  };
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
@@ -122,10 +171,12 @@ export default function TransactionHistoryPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="outline" startIcon={<Download size={18} />}>
-            Export CSV
-          </Button>
-          <Button startIcon={<RefreshCcw size={18} />} className="shadow-lg shadow-indigo-500/20" onClick={() => refetch()}>
+          <Button 
+            startIcon={<RefreshCcw size={18} />} 
+            className="shadow-lg shadow-indigo-500/20" 
+            onClick={() => refetch()}
+            loading={isLoadingTrx}
+          >
             Refresh
           </Button>
         </div>
@@ -243,9 +294,7 @@ export default function TransactionHistoryPage() {
                     </td>
                     <td className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{trx.customer_name || "Walk-in Customer"}</td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10 px-2 py-1 rounded-md w-fit text-xs font-bold uppercase">
-                        {trx.type}
-                      </div>
+                      {getOrderTypeBadge(trx)}
                     </td>
                     <td className="px-6 py-4 text-right text-sm font-bold text-gray-900 dark:text-white">
                       {formatCurrency(trx.final_amount)}
@@ -377,9 +426,9 @@ export default function TransactionHistoryPage() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Type</p>
-              <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase">
-                {selectedTrx?.type}
-              </p>
+              <div className="mt-1">
+                {selectedTrx && getOrderTypeBadge(selectedTrx)}
+              </div>
             </div>
             <div>
               <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Final Amount</p>

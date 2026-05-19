@@ -9,6 +9,8 @@ interface CheckoutModalProps {
   total: number;
   subtotal: number;
   tax: number;
+  discount: number;
+  appliedPromotions?: { id: string; name: string; discount: number }[];
   cart: { variant_id: string; name: string; price: number; quantity: number }[];
   onConfirm: (paymentMethod: "CASH" | "QRIS", amountPaid: number) => Promise<void>;
   isLoading: boolean;
@@ -20,6 +22,8 @@ export const CheckoutModal = ({
   total,
   subtotal,
   tax,
+  discount,
+  appliedPromotions = [],
   cart,
   onConfirm,
   isLoading
@@ -83,13 +87,27 @@ export const CheckoutModal = ({
               <span className="text-gray-900 dark:text-white font-bold">{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex justify-between text-[12px] font-medium text-gray-500">
-              <span>Pajak (10%)</span>
+              <span>Pajak</span>
               <span className="text-gray-900 dark:text-white font-bold">{formatCurrency(tax)}</span>
             </div>
-            <div className="flex justify-between text-[12px] font-medium text-gray-500">
-              <span>Diskon</span>
-              <span className="text-emerald-600 font-bold">Rp 0</span>
-            </div>
+            {appliedPromotions && appliedPromotions.map((ap) => (
+              <div key={ap.id} className="flex justify-between text-[12px] font-medium text-emerald-600">
+                <span>🏷️ {ap.name}</span>
+                <span className="font-bold">-{formatCurrency(ap.discount)}</span>
+              </div>
+            ))}
+            {discount > 0 && appliedPromotions.length === 0 && (
+              <div className="flex justify-between text-[12px] font-medium text-emerald-600">
+                <span>Diskon</span>
+                <span className="font-bold">-{formatCurrency(discount)}</span>
+              </div>
+            )}
+            {discount === 0 && (
+              <div className="flex justify-between text-[12px] font-medium text-gray-500">
+                <span>Diskon</span>
+                <span className="font-bold">Rp 0</span>
+              </div>
+            )}
             <div className="flex justify-between items-center pt-5 mt-1 border-t border-gray-100 dark:border-gray-700">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Total Pay</span>
               <span className="text-lg lg:text-xl font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(total)}</span>
