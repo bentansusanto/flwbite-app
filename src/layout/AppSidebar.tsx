@@ -27,7 +27,10 @@ import {
 } from "../icons/index";
 
 
+import { useGetBranchesQuery } from "@/store/api/branchApi";
+import { useGetMeTenantQuery } from "@/store/api/tenantApi";
 import Cookies from "js-cookie";
+import { Store } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -143,15 +146,15 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    name: "Branches",
-    icon: <FolderIcon />,
-    path: "/branches",
+    name: "Tenants",
+    icon: <Store size={20} />,
+    path: "/tenants",
     allowedRoles: ["owner", "super_admin"],
   },
   {
-    name: "Tenants",
+    name: "Tenants (Admin)",
     icon: <GroupIcon />,
-    path: "/tenants",
+    path: "/tenants-admin",
     allowedRoles: ["super_admin"],
   },
   {
@@ -176,12 +179,47 @@ const AppSidebar: React.FC = () => {
   const [activeSubmenu, setActiveSubmenu] = useState<NavItem | null>(null);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [userRole, setUserRole] = useState<string>("staff");
+  const [activeBranchId, setActiveBranchId] = useState<string>("");
+
+  const { data: branchesRes, isLoading: isLoadingBranches } = useGetBranchesQuery(undefined);
+  const branches = branchesRes?.data || [];
+  
+  const { data: tenantRes } = useGetMeTenantQuery(undefined);
+  const tenant = tenantRes?.data;
+
+  // Dynamically update favicon based on tenant logo
+  useEffect(() => {
+    if (tenant?.logo) {
+      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+      }
+      link.href = tenant.logo;
+    }
+  }, [tenant?.logo]);
 
   useEffect(() => {
     // Client-side only
     const role = Cookies.get("flwbite_role") || "staff";
     setUserRole(role);
-  }, []);
+    
+    const currentBranch = Cookies.get("flwbite_branch");
+    if (currentBranch) {
+      setActiveBranchId(currentBranch);
+    } else if (branches.length > 0) {
+      Cookies.set("flwbite_branch", branches[0].id, { expires: 7 });
+      setActiveBranchId(branches[0].id);
+    }
+  }, [branches]);
+
+  const handleBranchChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    Cookies.set("flwbite_branch", val, { expires: 7 });
+    setActiveBranchId(val);
+    window.location.reload();
+  };
 
   // Filter items based on role
   const filteredNavItems = navItems.filter(item => 
@@ -348,35 +386,36 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex  ${
+        className={`py-8 flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link href="/" onClick={() => isMobileOpen && toggleMobileSidebar()}>
+        <Link href="/" onClick={() => isMobileOpen && toggleMobileSidebar()} className="flex items-center gap-3 w-full">
           {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <Image
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <Image
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-            </>
+            <div className="flex items-center gap-3">
+              {tenant?.logo ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={tenant.logo} alt="Logo" className="h-8 w-8 rounded-lg object-cover bg-white shadow-sm" />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-lg shadow-sm">
+                  {tenant?.name ? tenant.name.charAt(0).toUpperCase() : "F"}
+                </div>
+              )}
+              <span className="text-xl font-bold text-gray-900 dark:text-white truncate">
+                {tenant?.name ? tenant.name.split(" ").slice(0, 2).join(" ") : "Flwbite"}
+              </span>
+            </div>
           ) : (
-            <Image
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+            <div className="flex justify-center w-full">
+              {tenant?.logo ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={tenant.logo} alt="Logo" className="h-8 w-8 rounded-lg object-cover bg-white shadow-sm" />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-lg shadow-sm">
+                  {tenant?.name ? tenant.name.charAt(0).toUpperCase() : "F"}
+                </div>
+              )}
+            </div>
           )}
         </Link>
       </div>
@@ -391,6 +430,28 @@ const AppSidebar: React.FC = () => {
                       : "translate-x-0 opacity-100"
                   }`}
                 >
+                  {/* Branch Selector */}
+                  {(isExpanded || isHovered || isMobileOpen) && branches.length > 0 && (
+                    <div className="mb-6 px-1">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">Pilih Cabang</p>
+                      <div className="relative">
+                        <select
+                          value={activeBranchId}
+                          onChange={handleBranchChange}
+                          className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 pl-4 pr-10 text-sm font-semibold text-gray-700 outline-none transition hover:border-brand-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.02] dark:text-gray-300 dark:hover:border-gray-700 dark:focus:border-brand-500 cursor-pointer"
+                        >
+                          {branches.map((b: any) => (
+                            <option key={b.id} value={b.id}>
+                              {b.name}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      </div>
+                    </div>
+                  )}
+                  {/* End Branch Selector */}
+
                   <h2
                     className={`mb-4 text-theme-sm uppercase flex leading-[20px] text-gray-400 ${
                       !isExpanded && !isHovered

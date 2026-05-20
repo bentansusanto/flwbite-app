@@ -1,0 +1,11 @@
+import { Metadata } from "next";
+import TenantPage from "@/components/modules/tenants/TenantPage";
+
+export const metadata: Metadata = {
+  title: "Tenants | Flwbite POS",
+  description: "Kelola profil bisnis dan cabang Anda.",
+};
+
+export default function Page() {
+  return <TenantPage />;
+}

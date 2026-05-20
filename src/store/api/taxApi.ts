@@ -14,11 +14,17 @@ export const taxApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getTaxes: builder.query<{ status: string; data: Tax[] }, void>({
       query: () => "/taxes",
-      providesTags: ["Tax"],
+      providesTags: (result) =>
+        result && result.data
+          ? [
+              ...result.data.map(({ id }) => ({ type: "Tax" as const, id })),
+              { type: "Tax", id: "LIST" },
+            ]
+          : [{ type: "Tax", id: "LIST" }],
     }),
     getTaxById: builder.query<{ status: string; data: Tax }, string>({
       query: (id) => `/taxes/${id}`,
-      providesTags: ["Tax"],
+      providesTags: (result, error, id) => [{ type: "Tax", id }],
     }),
     createTax: builder.mutation<{ status: string; data: Tax }, Partial<Tax>>({
       query: (body) => ({
@@ -26,7 +32,7 @@ export const taxApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Tax"],
+      invalidatesTags: [{ type: "Tax", id: "LIST" }],
     }),
     updateTax: builder.mutation<{ status: string; data: Tax }, { id: string; name: string; value: number; is_active: boolean }>({
       query: ({ id, ...body }) => ({
@@ -34,14 +40,17 @@ export const taxApi = apiSlice.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: ["Tax"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Tax", id: "LIST" },
+        { type: "Tax", id },
+      ],
     }),
     deleteTax: builder.mutation<{ status: string; message: string }, string>({
       query: (id) => ({
         url: `/taxes/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Tax"],
+      invalidatesTags: [{ type: "Tax", id: "LIST" }],
     }),
   }),
 });

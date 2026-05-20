@@ -7,7 +7,13 @@ export const stockTakeApi = apiSlice.injectEndpoints({
         url: "/stock-takes",
         params
       }),
-      providesTags: ["StockTake"]
+      providesTags: (result) =>
+        result && result.data
+          ? [
+              ...result.data.map(({ id }: { id: string }) => ({ type: "StockTake" as const, id })),
+              { type: "StockTake", id: "LIST" },
+            ]
+          : [{ type: "StockTake", id: "LIST" }]
     }),
     getStockTakeById: builder.query<any, string>({
       query: (id) => `/stock-takes/${id}`,
@@ -19,7 +25,7 @@ export const stockTakeApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data
       }),
-      invalidatesTags: ["StockTake"]
+      invalidatesTags: [{ type: "StockTake", id: "LIST" }]
     }),
     updateStockTake: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
@@ -27,7 +33,10 @@ export const stockTakeApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body: data
       }),
-      invalidatesTags: (result, error, { id }) => ["StockTake", { type: "StockTake", id }]
+      invalidatesTags: (result, error, { id }) => [
+        { type: "StockTake", id: "LIST" },
+        { type: "StockTake", id }
+      ]
     })
   })
 });

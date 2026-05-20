@@ -12,6 +12,7 @@ import Button from "@/components/ui/button/Button";
 import InputField from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Select from "@/components/form/Select";
+import ImageUpload from "@/components/form/ImageUpload";
 
 const PRODUCT_TYPES = [
   { type: "retail" as ProductType, label: "Retail", description: "Produk fisik dijual per unit.", icon: <ShoppingBag size={28} />, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-500/10", border: "hover:border-blue-300" },
@@ -145,31 +146,41 @@ export const ProductPage = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label required>Nama Produk</Label>
-                      <InputField name="name" placeholder="e.g. Kopi Susu" value={values.name} onChange={handleChange} onBlur={handleBlur} error={!!(touched.name && errors.name)} hint={touched.name && errors.name ? String(errors.name) : ""} />
-                    </div>
-                    <div>
-                      <Label required>Kategori</Label>
-                      <Select options={categoryOptions} placeholder="Pilih kategori" defaultValue={values.category_id} onChange={(val) => setFieldValue("category_id", val)} />
-                      {touched.category_id && errors.category_id && <p className="mt-1 text-xs text-error-500">{String(errors.category_id)}</p>}
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    <ImageUpload 
+                      value={values.image} 
+                      onChange={(url) => setFieldValue("image", url)} 
+                      label="Foto Produk" 
+                      className="shrink-0"
+                    />
+                    <div className="flex-1 space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label required>Nama Produk</Label>
+                          <InputField name="name" placeholder="e.g. Kopi Susu" value={values.name} onChange={handleChange} onBlur={handleBlur} error={!!(touched.name && errors.name)} hint={touched.name && errors.name ? String(errors.name) : ""} />
+                        </div>
+                        <div>
+                          <Label required>Kategori</Label>
+                          <Select options={categoryOptions} placeholder="Pilih kategori" defaultValue={values.category_id} onChange={(val) => setFieldValue("category_id", val)} />
+                          {touched.category_id && errors.category_id && <p className="mt-1 text-xs text-error-500">{String(errors.category_id)}</p>}
+                        </div>
+                      </div>
+
+                      <label className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_stock_tracked ? "border-brand-200 bg-brand-50/40 dark:border-brand-800 dark:bg-brand-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
+                        <div className="relative shrink-0">
+                          <input type="checkbox" className="sr-only" checked={values.is_stock_tracked} onChange={(e) => setFieldValue("is_stock_tracked", e.target.checked)} />
+                          <div className={`h-5 w-9 rounded-full transition-colors ${values.is_stock_tracked ? "bg-brand-500" : "bg-gray-200 dark:bg-gray-700"}`} />
+                          <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_stock_tracked ? "translate-x-4" : "translate-x-0.5"}`} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Apakah produk ini memiliki stok fisik?</p>
+                          <p className="mt-0.5 text-xs text-gray-400 line-clamp-1">
+                            {values.is_stock_tracked ? "Stok akan dipantau setiap ada transaksi." : (values.type === "service" || values.type === "f&b") ? "Direkomendasikan — tidak perlu lacak stok." : "Stok tidak dipantau sistem."}
+                          </p>
+                        </div>
+                      </label>
                     </div>
                   </div>
-
-                  <label className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_stock_tracked ? "border-brand-200 bg-brand-50/40 dark:border-brand-800 dark:bg-brand-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
-                    <div className="relative shrink-0">
-                      <input type="checkbox" className="sr-only" checked={values.is_stock_tracked} onChange={(e) => setFieldValue("is_stock_tracked", e.target.checked)} />
-                      <div className={`h-5 w-9 rounded-full transition-colors ${values.is_stock_tracked ? "bg-brand-500" : "bg-gray-200 dark:bg-gray-700"}`} />
-                      <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_stock_tracked ? "translate-x-4" : "translate-x-0.5"}`} />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Apakah produk ini memiliki stok fisik?</p>
-                      <p className="mt-0.5 text-xs text-gray-400 line-clamp-1">
-                        {values.is_stock_tracked ? "Stok akan dipantau setiap ada transaksi." : (values.type === "service" || values.type === "f&b") ? "Direkomendasikan — tidak perlu lacak stok." : "Stok tidak dipantau sistem."}
-                      </p>
-                    </div>
-                  </label>
 
                   <div>
                     <Label>Deskripsi (Opsional)</Label>

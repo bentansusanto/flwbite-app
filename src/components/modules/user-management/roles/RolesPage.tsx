@@ -152,12 +152,6 @@ export default function RolesPage() {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => setSelectedRole(null)}
-                  className="rounded-xl p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <X size={20} />
-                </button>
               </div>
             </div>
 

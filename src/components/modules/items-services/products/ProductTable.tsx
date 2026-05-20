@@ -173,11 +173,16 @@ export const ProductTable: React.FC<Props> = ({
                       {/* Name */}
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                          <div className={`flex h-8 w-8 shrink-0 overflow-hidden items-center justify-center rounded-lg ${
                             product.type === "retail" ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10"
                             : product.type === "f&b" ? "bg-orange-50 text-orange-600 dark:bg-orange-500/10"
                             : "bg-purple-50 text-purple-600 dark:bg-purple-500/10"}`}>
-                            <TypeIcon type={product.type} size={15} />
+                            {product.image ? (
+                              /* eslint-disable-next-line @next/next/no-img-element */
+                              <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                            ) : (
+                              <TypeIcon type={product.type} size={15} />
+                            )}
                           </div>
                           <div>
                             <p className="font-medium text-gray-800 dark:text-white/90">{product.name}</p>

@@ -7,7 +7,13 @@ export const productBatchApi = apiSlice.injectEndpoints({
         url: "/batches",
         params
       }),
-      providesTags: ["ProductBatch"]
+      providesTags: (result) =>
+        result && result.data
+          ? [
+              ...result.data.map(({ id }: { id: string }) => ({ type: "ProductBatch" as const, id })),
+              { type: "ProductBatch", id: "LIST" },
+            ]
+          : [{ type: "ProductBatch", id: "LIST" }]
     }),
     getProductBatchById: builder.query<any, string>({
       query: (id) => `/batches/${id}`,
@@ -19,7 +25,7 @@ export const productBatchApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data
       }),
-      invalidatesTags: ["ProductBatch"]
+      invalidatesTags: [{ type: "ProductBatch", id: "LIST" }]
     }),
     updateProductBatch: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
@@ -27,14 +33,17 @@ export const productBatchApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body: data
       }),
-      invalidatesTags: (result, error, { id }) => ["ProductBatch", { type: "ProductBatch", id }]
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ProductBatch", id: "LIST" },
+        { type: "ProductBatch", id }
+      ]
     }),
     deleteProductBatch: builder.mutation<any, string>({
       query: (id) => ({
         url: `/batches/${id}`,
         method: "DELETE"
       }),
-      invalidatesTags: ["ProductBatch"]
+      invalidatesTags: [{ type: "ProductBatch", id: "LIST" }]
     })
   })
 });

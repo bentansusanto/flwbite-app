@@ -16,7 +16,13 @@ export const customerApi = apiSlice.injectEndpoints({
         url: "/customers",
         params,
       }),
-      providesTags: ["Customer"],
+      providesTags: (result) =>
+        result && result.data
+          ? [
+              ...result.data.map(({ id }: { id: string }) => ({ type: "Customer" as const, id })),
+              { type: "Customer", id: "LIST" },
+            ]
+          : [{ type: "Customer", id: "LIST" }],
     }),
     createCustomer: builder.mutation<any, any>({
       query: (body) => ({
@@ -24,7 +30,7 @@ export const customerApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Customer"],
+      invalidatesTags: [{ type: "Customer", id: "LIST" }],
     }),
   }),
 });

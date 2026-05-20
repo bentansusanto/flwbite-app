@@ -4,11 +4,23 @@ export const supplierApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getSuppliers: builder.query({
       query: () => "/suppliers",
-      providesTags: ["Supplier"],
+      providesTags: (result) =>
+        result && result.data
+          ? [
+              ...result.data.map(({ id }: { id: string }) => ({ type: "Supplier" as const, id })),
+              { type: "Supplier", id: "LIST" },
+            ]
+          : [{ type: "Supplier", id: "LIST" }],
     }),
     getSupplierCategories: builder.query({
       query: () => "/supplier_categories",
-      providesTags: ["SupplierCategory"],
+      providesTags: (result) =>
+        result && result.data
+          ? [
+              ...result.data.map(({ id }: { id: string }) => ({ type: "SupplierCategory" as const, id })),
+              { type: "SupplierCategory", id: "LIST" },
+            ]
+          : [{ type: "SupplierCategory", id: "LIST" }],
     }),
     createSupplierCategory: builder.mutation({
       query: (body) => ({
@@ -16,7 +28,7 @@ export const supplierApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["SupplierCategory"],
+      invalidatesTags: [{ type: "SupplierCategory", id: "LIST" }],
     }),
     updateSupplierCategory: builder.mutation({
       query: ({ id, ...body }) => ({
@@ -24,14 +36,17 @@ export const supplierApi = apiSlice.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: ["SupplierCategory"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "SupplierCategory", id: "LIST" },
+        { type: "SupplierCategory", id },
+      ],
     }),
     deleteSupplierCategory: builder.mutation({
       query: (id) => ({
         url: `/supplier_categories/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["SupplierCategory"],
+      invalidatesTags: [{ type: "SupplierCategory", id: "LIST" }],
     }),
     createSupplier: builder.mutation({
       query: (body) => ({
@@ -39,7 +54,7 @@ export const supplierApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Supplier"],
+      invalidatesTags: [{ type: "Supplier", id: "LIST" }],
     }),
     updateSupplier: builder.mutation({
       query: ({ id, ...body }) => ({
@@ -47,14 +62,17 @@ export const supplierApi = apiSlice.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: ["Supplier"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Supplier", id: "LIST" },
+        { type: "Supplier", id },
+      ],
     }),
     deleteSupplier: builder.mutation({
       query: (id) => ({
         url: `/suppliers/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Supplier"],
+      invalidatesTags: [{ type: "Supplier", id: "LIST" }],
     }),
   }),
 });
