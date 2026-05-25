@@ -32,6 +32,7 @@ export default function TransactionHistoryPage() {
   const [selectedTrx, setSelectedTrx] = useState<Order | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isRefundConfirmOpen, setIsRefundConfirmOpen] = useState(false);
+  const [refundReason, setRefundReason] = useState("");
 
   const { data: branchesData, isLoading: isLoadingBranches } = useGetBranchesQuery({});
   const branches = branchesData?.data || [];
@@ -101,11 +102,16 @@ export default function TransactionHistoryPage() {
 
   const handleRefund = async () => {
     if (!selectedTrx) return;
+    if (!refundReason.trim()) {
+      toast.error("Refund reason is required");
+      return;
+    }
     try {
-      await refundOrder(selectedTrx.id).unwrap();
+      await refundOrder({ id: selectedTrx.id, reason: refundReason }).unwrap();
       toast.success(`Transaction ${selectedTrx.order_number} has been refunded.`);
       setIsRefundConfirmOpen(false);
       setIsDetailOpen(false);
+      setRefundReason("");
     } catch (error: any) {
       toast.error(error.data?.message || "Failed to process refund");
     }
@@ -200,7 +206,7 @@ export default function TransactionHistoryPage() {
           <div>
             <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Revenue</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">
-              {formatCurrency(transactions.reduce((acc, t) => acc + t.final_amount, 0))}
+              {formatCurrency(transactions.filter(t => !['REFUNDED', 'VOIDED', 'CANCELLED'].includes(t.status.toUpperCase())).reduce((acc, t) => acc + t.final_amount, 0))}
             </p>
           </div>
         </div>
@@ -438,14 +444,10 @@ export default function TransactionHistoryPage() {
               </p>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Receipt</p>
-              <button
-                onClick={() => handlePrintReceipt(selectedTrx)}
-                className="flex items-center gap-1.5 text-[11px] font-bold text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-white dark:hover:bg-gray-800 transition-all w-fit bg-gray-100/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-lg shadow-sm mt-1"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                Print Receipt
-              </button>
+              <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Status</p>
+              <div className="mt-1">
+                {selectedTrx && getStatusBadge(selectedTrx.status)}
+              </div>
             </div>
           </div>
 
@@ -499,8 +501,25 @@ export default function TransactionHistoryPage() {
             </div>
           </div>
 
+          {selectedTrx?.status === 'REFUNDED' && selectedTrx?.refund_reason && (
+            <div className="mb-8 p-4 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-900/30 rounded-2xl">
+              <p className="text-[10px] font-bold text-red-500 uppercase mb-1.5 tracking-widest">Refund Reason</p>
+              <p className="text-sm font-medium text-red-700 dark:text-red-400 leading-relaxed">{selectedTrx.refund_reason}</p>
+            </div>
+          )}
+
           <div className="flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
              <Button type="button" variant="outline" className="flex-1 font-bold dark:border-gray-700 dark:text-gray-300" onClick={() => setIsDetailOpen(false)}>Close</Button>
+             
+             <Button
+                type="button"
+                variant="outline"
+                className="flex-1 font-bold border-brand-200 text-brand-700 hover:bg-brand-50 hover:border-brand-300 dark:border-brand-900/50 dark:text-brand-400 dark:hover:bg-brand-900/20"
+                startIcon={<Printer size={18} />}
+                onClick={() => handlePrintReceipt(selectedTrx)}
+              >
+                Print Receipt
+              </Button>
 
              {['COMPLETED', 'PAID'].includes(selectedTrx?.status?.toUpperCase() || "") && (
                <Button
@@ -517,19 +536,31 @@ export default function TransactionHistoryPage() {
       </Modal>
 
       {/* Refund Confirmation Modal */}
-      <Modal isOpen={isRefundConfirmOpen} onClose={() => setIsRefundConfirmOpen(false)} className="max-w-md">
+      <Modal isOpen={isRefundConfirmOpen} onClose={() => { setIsRefundConfirmOpen(false); setRefundReason(""); }} className="max-w-md">
         <div className="p-6 text-center">
           <div className="w-16 h-16 bg-amber-50 dark:bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600 dark:text-amber-400 border-4 border-amber-100 dark:border-amber-900/30">
             <Undo2 className="w-8 h-8" />
           </div>
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Process Refund?</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-8 font-medium">
+          <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
             This will mark transaction <span className="font-bold text-gray-800 dark:text-gray-200">{selectedTrx?.order_number}</span> as refunded. This action is tracked in the audit log.
           </p>
 
+          <div className="text-left mb-8">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Reason for Refund <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={refundReason}
+              onChange={(e) => setRefundReason(e.target.value)}
+              placeholder="e.g., Wrong item selected by customer"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none h-24"
+            ></textarea>
+          </div>
+
           <div className="flex gap-3">
-             <Button variant="outline" className="flex-1 dark:border-gray-700 dark:text-gray-300" onClick={() => setIsRefundConfirmOpen(false)} disabled={isRefunding}>Cancel</Button>
-             <Button className="flex-1 bg-amber-600 hover:bg-amber-700 text-white shadow-lg shadow-amber-500/20" onClick={handleRefund} disabled={isRefunding}>
+             <Button variant="outline" className="flex-1 dark:border-gray-700 dark:text-gray-300" onClick={() => { setIsRefundConfirmOpen(false); setRefundReason(""); }} disabled={isRefunding}>Cancel</Button>
+             <Button className="flex-1 bg-amber-600 hover:bg-amber-700 text-white shadow-lg shadow-amber-500/20" onClick={handleRefund} disabled={isRefunding || !refundReason.trim()}>
                {isRefunding ? 'Processing...' : 'Confirm Refund'}
              </Button>
           </div>

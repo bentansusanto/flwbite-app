@@ -24,6 +24,7 @@ export const productSchema = z.object({
     error: "Pilih tipe produk yang valid",
   }),
   is_stock_tracked: z.boolean().default(true),
+  is_sell: z.boolean().default(true),
   image: z.string().optional(),
   variants: z
     .array(productVariantSchema)

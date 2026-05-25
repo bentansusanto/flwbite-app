@@ -24,6 +24,7 @@ export interface Order {
   payment_method: string;
   notes: string;
   created_at: string;
+  refund_reason?: string;
   items: OrderItem[];
 }
 
@@ -63,10 +64,11 @@ export const orderApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
     }),
-    refundOrder: builder.mutation<any, string>({
-      query: (id) => ({
+    refundOrder: builder.mutation<any, { id: string; reason: string }>({
+      query: ({ id, reason }) => ({
         url: `/orders/${id}/refund`,
         method: "POST",
+        body: { reason },
       }),
       invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
     }),

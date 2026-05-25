@@ -1,17 +1,19 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Search, ShoppingCart, Trash2, Plus, Minus, ChevronRight, Filter, Power, Package, UserPlus, Users, LayoutGrid, ShoppingBag, Utensils, Star } from "lucide-react";
 import Button from "@/components/ui/button/Button";
 import { PosSessionGuard } from "../pos-session/PosSessionGuard";
 import { CloseSessionModal } from "../pos-session/CloseSessionModal";
 import { CheckoutModal } from "./CheckoutModal";
+import { ReceiptModal, ReceiptData } from "./ReceiptModal";
 import Cookies from "js-cookie";
 import { useGetProductsQuery } from "@/store/api/productApi";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
 import { useCreateOrderMutation, usePayOrderMutation, useGetTransactionsQuery, useCancelOrderMutation, useCompleteOrderMutation } from "@/store/api/orderApi";
 import { useGetTaxesQuery } from "@/store/api/taxApi";
 import { useGetPromotionsQuery } from "@/store/api/promotionApi";
+import { useGetMeTenantQuery } from "@/store/api/tenantApi";
 import { toast } from "sonner";
 import { Drawer } from "@/components/ui/drawer";
 import { useGetStocksByBranchQuery } from "@/store/api/stockApi";
@@ -47,6 +49,11 @@ export const NewOrdersPage = () => {
   const [isQueueModalOpen, setIsQueueModalOpen] = useState(false);
   const [isCancelAlertOpen, setIsCancelAlertOpen] = useState(false);
   const [orderIdToCancel, setOrderIdToCancel] = useState<string | null>(null);
+  
+  // Receipt State
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const [lastOrderData, setLastOrderData] = useState<ReceiptData | null>(null);
+
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
 
@@ -57,6 +64,9 @@ export const NewOrdersPage = () => {
 
   const role = Cookies.get("flwbite_role");
   const branchId = Cookies.get("flwbite_branch");
+  const { data: tenantRes } = useGetMeTenantQuery(undefined);
+  const tenantName = tenantRes?.data?.name || "Toko Demo";
+  const branches: any[] = []; // Placeholder
 
   // API Queries
   const { data: productsData, isLoading: isLoadingProducts } = useGetProductsQuery({});
@@ -75,8 +85,8 @@ export const NewOrdersPage = () => {
   const [cancelOrder] = useCancelOrderMutation();
   const [completeOrder] = useCompleteOrderMutation();
 
-  const [createOrder, { isLoading: isCreating }] = useCreateOrderMutation();
-  const [payOrder, { isLoading: isPaying }] = usePayOrderMutation();
+  const [createOrder, { isLoading: isCreatingOrder }] = useCreateOrderMutation();
+  const [payOrder, { isLoading: isPayingOrder }] = usePayOrderMutation();
 
   const products = productsData?.data || [];
   const categoriesList = categoriesData?.data || [];
@@ -125,7 +135,6 @@ export const NewOrdersPage = () => {
     }
   };
 
-  // Get categories that actually have products in them (and filter by business type if selected)
   const availableCategories = categoriesList.filter((cat: any) => {
     return products.some((p: any) => p.category_id === cat.id && p.type === selectedBusinessType);
   });
@@ -133,16 +142,12 @@ export const NewOrdersPage = () => {
   const categoryNames = ["All Items", ...availableCategories.map((c: any) => c.name)];
 
   const filteredProducts = products.filter((product: any) => {
-    // 1. Business Type Filter
     const matchesBusinessType = product.type === selectedBusinessType;
-
-    // 2. Category Filter
     const selectedCatObj = categoriesList.find((c: any) => c.name === selectedCategory);
     const matchesCategory = selectedCategory === "All Items" ||
                            (product.category?.name === selectedCategory) ||
                            (selectedCatObj && product.category_id === selectedCatObj.id);
 
-    // 3. Search Filter
     const searchLower = searchQuery.toLowerCase();
     const matchesName = product.name.toLowerCase().includes(searchLower);
     const matchesSKU = product.variants?.some((v: any) =>
@@ -200,10 +205,9 @@ export const NewOrdersPage = () => {
     }));
   };
   const getOrderType = () => {
-    if (selectedBusinessType === "f&b") {
-      return orderType; // DINE_IN, TAKEAWAY, DELIVERY
-    }
-    return selectedBusinessType?.toUpperCase() || "RETAIL";
+    if (selectedBusinessType === "f&b") return "FNB";
+    if (selectedBusinessType === "service") return "SERVICE";
+    return "RETAIL";
   };
 
   const handleCheckoutConfirm = async (paymentMethod: "CASH" | "QRIS", amountPaid: number) => {
@@ -235,10 +239,30 @@ export const NewOrdersPage = () => {
       }).unwrap();
 
       toast.success("Transaksi Berhasil!");
-      setCart([]);
-      setSelectedCustomer(null);
-      setIsCheckoutOpen(false);
-      setIsDrawerOpen(false);
+      
+      setLastOrderData({
+        orderId: orderId,
+        cashierName: role || "Cashier",
+        branchName: branches.find((b:any) => b.id === branchId)?.name || "Branch",
+        tenantName: tenantName,
+        customerName: selectedCustomer?.name || customerName || "Customer",
+        items: cart.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        subtotal: subtotal,
+        tax: totalTax,
+        discount: totalDiscount,
+        total: total,
+        paymentMethod: paymentMethod,
+        amountPaid: amountPaid,
+        change: Math.max(0, amountPaid - total),
+        date: new Date()
+      });
+      
+      setIsReceiptOpen(true);
+      
     } catch (err: any) {
       toast.error(err?.data?.message || "Terjadi kesalahan saat memproses pesanan.");
     }
@@ -271,10 +295,22 @@ export const NewOrdersPage = () => {
       setCustomerName("");
       setTableNumber("");
       setNotes("");
-      setIsDrawerOpen(false);
+      setIsQueueModalOpen(false);
+      setCart([]);
     } catch (err: any) {
       toast.error(err?.data?.message || "Gagal menyimpan pesanan.");
     }
+  };
+
+  const handleCloseReceipt = () => {
+    setIsReceiptOpen(false);
+    setLastOrderData(null);
+    setCart([]);
+    setSelectedCustomer(null);
+    setCustomerName("");
+    setTableNumber("");
+    setIsCheckoutOpen(false);
+    setIsDrawerOpen(false);
   };
 
   const handlePayButtonClick = (isMobile: boolean = false) => {
@@ -867,10 +903,10 @@ export const NewOrdersPage = () => {
             <Button
               variant="outline"
               onClick={handleSaveOrder}
-              disabled={cart.length === 0 || isCreating}
+              disabled={cart.length === 0 || isCreatingOrder}
               className="flex-1 h-14 text-sm font-bold border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-2xl"
             >
-              {isCreating ? "Menyimpan..." : "Simpan Pesanan"}
+              {isCreatingOrder ? "Menyimpan..." : "Simpan Pesanan"}
             </Button>
             <Button
               onClick={() => handlePayButtonClick(false)}
@@ -891,7 +927,7 @@ export const NewOrdersPage = () => {
           <div className="flex-2 flex gap-2">
             <button
               onClick={handleSaveOrder}
-              disabled={cart.length === 0 || isCreating}
+              disabled={cart.length === 0 || isCreatingOrder}
               className="w-12 h-12 shrink-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Package className="w-6 h-6" />
@@ -1033,8 +1069,6 @@ export const NewOrdersPage = () => {
         </div>
       </Drawer>
 
-
-
       {isVariantModalOpen && (
         <VariantSelectionModal
           isOpen={isVariantModalOpen}
@@ -1063,9 +1097,15 @@ export const NewOrdersPage = () => {
           appliedPromotions={applicablePromotions}
           cart={cart}
           onConfirm={handleCheckoutConfirm}
-          isLoading={isCreating || isPaying}
+          isLoading={isCreatingOrder || isPayingOrder}
         />
       )}
+
+      <ReceiptModal 
+        isOpen={isReceiptOpen}
+        onClose={handleCloseReceipt}
+        receiptData={lastOrderData}
+      />
 
       {isCustomerModalOpen && (
         <CustomerSelectionModal

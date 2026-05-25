@@ -165,6 +165,7 @@ export const useProductHook = () => {
           category_id: values.category_id,
           type: values.type,
           is_stock_tracked: values.is_stock_tracked,
+          is_sell: values.is_sell,
           image: values.image,
           variants: values.variants.map((v) => ({
             ...(v.id ? { id: v.id } : {}),
@@ -186,6 +187,7 @@ export const useProductHook = () => {
           category_id: values.category_id,
           type: values.type,
           is_stock_tracked: values.is_stock_tracked,
+          is_sell: values.is_sell,
           image: values.image,
           variants: values.variants.map((v) => ({
             name: v.name,

@@ -28,7 +28,9 @@ const TYPE_BADGE: Record<string, string> = {
 
 const buildDefaultValues = (type: ProductType) => ({
   name: "", description: "", category_id: "", type,
-  is_stock_tracked: type === "retail", image: "",
+  is_stock_tracked: type === "retail", 
+  is_sell: true,
+  image: "",
   variants: [{ name: "Default", price: 0, cost_price: null, is_active: true }],
 });
 
@@ -54,6 +56,7 @@ export const ProductPage = () => {
         category_id: selectedProduct.category_id || "",
         type: selectedProduct.type || "retail",
         is_stock_tracked: selectedProduct.is_stock_tracked ?? true,
+        is_sell: selectedProduct.is_sell ?? true,
         image: selectedProduct.image || "",
         variants:
           selectedProduct.variants?.length > 0
@@ -166,19 +169,35 @@ export const ProductPage = () => {
                         </div>
                       </div>
 
-                      <label className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_stock_tracked ? "border-brand-200 bg-brand-50/40 dark:border-brand-800 dark:bg-brand-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
-                        <div className="relative shrink-0">
-                          <input type="checkbox" className="sr-only" checked={values.is_stock_tracked} onChange={(e) => setFieldValue("is_stock_tracked", e.target.checked)} />
-                          <div className={`h-5 w-9 rounded-full transition-colors ${values.is_stock_tracked ? "bg-brand-500" : "bg-gray-200 dark:bg-gray-700"}`} />
-                          <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_stock_tracked ? "translate-x-4" : "translate-x-0.5"}`} />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Apakah produk ini memiliki stok fisik?</p>
-                          <p className="mt-0.5 text-xs text-gray-400 line-clamp-1">
-                            {values.is_stock_tracked ? "Stok akan dipantau setiap ada transaksi." : (values.type === "service" || values.type === "f&b") ? "Direkomendasikan — tidak perlu lacak stok." : "Stok tidak dipantau sistem."}
-                          </p>
-                        </div>
-                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <label className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_stock_tracked ? "border-brand-200 bg-brand-50/40 dark:border-brand-800 dark:bg-brand-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
+                          <div className="relative shrink-0 mt-0.5">
+                            <input type="checkbox" className="sr-only" checked={values.is_stock_tracked} onChange={(e) => setFieldValue("is_stock_tracked", e.target.checked)} />
+                            <div className={`h-5 w-9 rounded-full transition-colors ${values.is_stock_tracked ? "bg-brand-500" : "bg-gray-200 dark:bg-gray-700"}`} />
+                            <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_stock_tracked ? "translate-x-4" : "translate-x-0.5"}`} />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Lacak Stok?</p>
+                            <p className="mt-0.5 text-xs text-gray-400">
+                              {values.is_stock_tracked ? "Stok dipantau saat transaksi." : "Stok tidak dipantau."}
+                            </p>
+                          </div>
+                        </label>
+
+                        <label className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_sell ? "border-emerald-200 bg-emerald-50/40 dark:border-emerald-800 dark:bg-emerald-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
+                          <div className="relative shrink-0 mt-0.5">
+                            <input type="checkbox" className="sr-only" checked={values.is_sell} onChange={(e) => setFieldValue("is_sell", e.target.checked)} />
+                            <div className={`h-5 w-9 rounded-full transition-colors ${values.is_sell ? "bg-emerald-500" : "bg-gray-200 dark:bg-gray-700"}`} />
+                            <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_sell ? "translate-x-4" : "translate-x-0.5"}`} />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Produk Dijual?</p>
+                            <p className="mt-0.5 text-xs text-gray-400">
+                              {values.is_sell ? "Bisa dibeli pelanggan." : "Hanya untuk stok internal."}
+                            </p>
+                          </div>
+                        </label>
+                      </div>
                     </div>
                   </div>
 
@@ -212,23 +231,25 @@ export const ProductPage = () => {
                             )}
                           </div>
                           <div className={`grid gap-3 ${values.type === "retail" ? "grid-cols-2" : "grid-cols-1"}`}>
-                            <div>
-                              <p className="mb-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Harga Jual</p>
-                              <div className={`flex h-11 overflow-hidden rounded-xl border shadow-sm transition focus-within:ring-2 ${(touched.variants as any)?.[index]?.price && (errors.variants as any)?.[index]?.price ? "border-red-500 focus-within:ring-red-500/10" : "border-gray-200 dark:border-gray-700 focus-within:border-brand-300 focus-within:ring-brand-500/10"}`}>
-                                <span className="flex items-center border-r border-gray-100 bg-gray-50 px-3 text-xs font-bold text-gray-400 dark:border-gray-700 dark:bg-gray-800">Rp</span>
-                                <input
-                                  type="text"
-                                  inputMode="numeric"
-                                  id={`variants.${index}.price`}
-                                  name={`variants.${index}.price`}
-                                  placeholder="0"
-                                  value={variant.price === 0 ? "" : variant.price}
-                                  onChange={(e) => { const raw = e.target.value.replace(/[^0-9]/g, ""); setFieldValue(`variants.${index}.price`, raw === "" ? "" : Number(raw)); }}
-                                  onBlur={handleBlur}
-                                  className="flex-1 bg-transparent px-3 text-sm font-bold text-gray-800 outline-none dark:text-white/90"
-                                />
+                            {values.is_sell && (
+                              <div>
+                                <p className="mb-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Harga Jual</p>
+                                <div className={`flex h-11 overflow-hidden rounded-xl border shadow-sm transition focus-within:ring-2 ${(touched.variants as any)?.[index]?.price && (errors.variants as any)?.[index]?.price ? "border-red-500 focus-within:ring-red-500/10" : "border-gray-200 dark:border-gray-700 focus-within:border-brand-300 focus-within:ring-brand-500/10"}`}>
+                                  <span className="flex items-center border-r border-gray-100 bg-gray-50 px-3 text-xs font-bold text-gray-400 dark:border-gray-700 dark:bg-gray-800">Rp</span>
+                                  <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    id={`variants.${index}.price`}
+                                    name={`variants.${index}.price`}
+                                    placeholder="0"
+                                    value={variant.price === 0 ? "" : variant.price}
+                                    onChange={(e) => { const raw = e.target.value.replace(/[^0-9]/g, ""); setFieldValue(`variants.${index}.price`, raw === "" ? "" : Number(raw)); }}
+                                    onBlur={handleBlur}
+                                    className="flex-1 bg-transparent px-3 text-sm font-bold text-gray-800 outline-none dark:text-white/90"
+                                  />
+                                </div>
                               </div>
-                            </div>
+                            )}
                             {values.type === "retail" && (
                               <div>
                                 <p className="mb-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Harga Modal</p>
