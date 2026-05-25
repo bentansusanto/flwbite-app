@@ -45,10 +45,10 @@ export const Modal = ({
 
   const contentClasses = isFullscreen
     ? "w-full h-full bg-white dark:bg-gray-900"
-    : `relative w-full rounded-2xl bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 ${className}`;
+    : `relative w-full rounded-t-3xl rounded-b-none sm:rounded-2xl bg-white dark:bg-gray-900 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-2xl overflow-hidden border-t sm:border border-gray-100 dark:border-gray-800 ${className}`;
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-[999999] flex items-end sm:items-center justify-center p-0 sm:p-6">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 transition-opacity"
@@ -61,6 +61,12 @@ export const Modal = ({
         className={contentClasses}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Mobile Drag Handle */}
+        {!isFullscreen && (
+          <div className="w-full flex justify-center pt-3 pb-1 sm:hidden">
+            <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+          </div>
+        )}
         {/* Close Button - Now Sticky */}
         {showCloseButton && (
           <button

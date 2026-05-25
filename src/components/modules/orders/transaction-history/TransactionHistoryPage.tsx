@@ -144,7 +144,7 @@ export default function TransactionHistoryPage() {
   const getPaymentIcon = (method: string) => {
     switch (method?.toUpperCase()) {
       case 'CASH': return <Banknote className="w-3.5 h-3.5 text-emerald-500" />;
-      case 'QRIS': return <ArrowUpRight className="w-3.5 h-3.5 text-indigo-500" />;
+      case 'QRIS': return <ArrowUpRight className="w-3.5 h-3.5 text-brand-500" />;
       default: return <CreditCard className="w-3.5 h-3.5 text-blue-500" />;
     }
   };
@@ -160,7 +160,7 @@ export default function TransactionHistoryPage() {
   const paginatedTrx = filteredTrx.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -173,7 +173,7 @@ export default function TransactionHistoryPage() {
         <div className="flex items-center gap-3">
           <Button 
             startIcon={<RefreshCcw size={18} />} 
-            className="shadow-lg shadow-indigo-500/20" 
+            className="shadow-lg shadow-brand-500/20" 
             onClick={() => refetch()}
             loading={isLoadingTrx}
           >
@@ -185,11 +185,11 @@ export default function TransactionHistoryPage() {
       {/* Stats Quick View */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-900/40 dark:backdrop-blur-md p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 flex items-center gap-4">
-          <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+          <div className="w-12 h-12 bg-brand-50 dark:bg-brand-500/10 rounded-xl flex items-center justify-center text-brand-600 dark:text-brand-400">
             <History className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Transactions</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Transactions</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">{transactions.length}</p>
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function TransactionHistoryPage() {
             <Banknote className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Revenue</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Revenue</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">
               {formatCurrency(transactions.reduce((acc, t) => acc + t.final_amount, 0))}
             </p>
@@ -209,7 +209,7 @@ export default function TransactionHistoryPage() {
             <Undo2 className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Refunds / Cancelled</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Refunds / Cancelled</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">
               {transactions.filter(t => ['REFUNDED', 'VOIDED', 'CANCELLED'].includes(t.status.toUpperCase())).length}
               <span className="text-xs font-medium text-rose-600 ml-1">items</span>
@@ -229,7 +229,7 @@ export default function TransactionHistoryPage() {
               placeholder="Search by Order Number or Customer..."
               value={filterFormik.values.search}
               onChange={filterFormik.handleChange}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all"
             />
           </div>
 
@@ -239,13 +239,14 @@ export default function TransactionHistoryPage() {
               name="branch_id"
               value={filterFormik.values.branch_id}
               onChange={filterFormik.handleChange}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all appearance-none cursor-pointer font-medium text-gray-700 dark:text-gray-300"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all appearance-none cursor-pointer font-medium text-gray-700 dark:text-gray-300"
             >
               <option value="">{isLoadingBranches ? "Loading branches..." : "All Branches"}</option>
               {branches.map((branch: any) => (
                 <option key={branch.id} value={branch.id}>{branch.name}</option>
               ))}
             </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
 
           <div className="relative">
@@ -255,7 +256,7 @@ export default function TransactionHistoryPage() {
               name="start_date"
               value={filterFormik.values.start_date}
               onChange={filterFormik.handleChange}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-gray-700 dark:text-gray-300"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all text-gray-700 dark:text-gray-300"
             />
           </div>
         </div>
@@ -266,25 +267,25 @@ export default function TransactionHistoryPage() {
         <div className="overflow-x-auto">
           {isLoadingTrx ? (
             <div className="p-20 text-center space-y-4">
-              <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <div className="w-12 h-12 border-4 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
               <p className="text-gray-500 font-medium italic">Fetching transaction history...</p>
             </div>
           ) : (
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-100 dark:border-white/5">
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order No & Date</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Final Amount</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Status</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order No & Date</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Customer</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Final Amount</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Status</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-white/5">
                 {paginatedTrx.map((trx) => (
                   <tr key={trx.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors group">
-                    <td className="px-6 py-4">
+                    <td className="whitespace-nowrap px-6 py-4">
                       <div>
                         <p className="text-sm font-bold text-gray-900 dark:text-white">{trx.order_number}</p>
                         <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">
@@ -292,23 +293,23 @@ export default function TransactionHistoryPage() {
                         </p>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{trx.customer_name || "Walk-in Customer"}</td>
-                    <td className="px-6 py-4">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{trx.customer_name || "Walk-in Customer"}</td>
+                    <td className="whitespace-nowrap px-6 py-4">
                       {getOrderTypeBadge(trx)}
                     </td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-gray-900 dark:text-white">
+                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-bold text-gray-900 dark:text-white">
                       {formatCurrency(trx.final_amount)}
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="whitespace-nowrap px-6 py-4 text-center">
                       {getStatusBadge(trx.status)}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="whitespace-nowrap px-6 py-4 text-right">
                       <button
                         onClick={() => {
                           setSelectedTrx(trx);
                           setIsDetailOpen(true);
                         }}
-                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                        className="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
@@ -331,7 +332,7 @@ export default function TransactionHistoryPage() {
               <select
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
-                className="h-7 rounded-lg border border-gray-200 bg-white px-2 text-xs text-gray-700 outline-none focus:border-indigo-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 font-bold"
+                className="h-7 rounded-lg border border-gray-200 bg-white px-2 text-xs text-gray-700 outline-none focus:border-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 font-bold"
               >
                 {[5, 10, 25, 50].map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -375,7 +376,7 @@ export default function TransactionHistoryPage() {
                     onClick={() => setCurrentPage(p)}
                     className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold transition-colors ${
                       currentPage === p
-                        ? "bg-indigo-600 text-white shadow-sm"
+                        ? "bg-brand-600 text-white shadow-sm"
                         : "border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
                     }`}
                   >
@@ -440,7 +441,7 @@ export default function TransactionHistoryPage() {
               <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Receipt</p>
               <button
                 onClick={() => handlePrintReceipt(selectedTrx)}
-                className="flex items-center gap-1.5 text-[11px] font-bold text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-gray-800 transition-all w-fit bg-gray-100/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-lg shadow-sm mt-1"
+                className="flex items-center gap-1.5 text-[11px] font-bold text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-white dark:hover:bg-gray-800 transition-all w-fit bg-gray-100/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-lg shadow-sm mt-1"
               >
                 <Printer className="w-3.5 h-3.5" />
                 Print Receipt
@@ -454,19 +455,19 @@ export default function TransactionHistoryPage() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-gray-800/50 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest border-b border-gray-100 dark:border-gray-800">
-                    <th className="px-4 py-3">Item Name</th>
-                    <th className="px-4 py-3 text-center">Qty</th>
-                    <th className="px-4 py-3 text-right">Price</th>
-                    <th className="px-4 py-3 text-right">Subtotal</th>
+                    <th className="whitespace-nowrap px-4 py-3">Item Name</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-center">Qty</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right">Price</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-white/5">
                   {selectedTrx?.items.map((item: any) => (
                     <tr key={item.id} className="text-sm font-medium">
-                      <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{item.variant_name || "Unknown Product"}</td>
-                      <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{item.qty}</td>
-                      <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-500">{formatCurrency(item.price)}</td>
-                      <td className="px-4 py-3 text-right font-bold text-gray-900 dark:text-white">{formatCurrency(item.total)}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-gray-800 dark:text-gray-200">{item.variant_name || "Unknown Product"}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-center text-gray-600 dark:text-gray-400">{item.qty}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-right text-gray-500 dark:text-gray-500">{formatCurrency(item.price)}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-right font-bold text-gray-900 dark:text-white">{formatCurrency(item.total)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -494,7 +495,7 @@ export default function TransactionHistoryPage() {
             </div>
             <div className="flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-2">
               <span>Total Paid</span>
-              <span className="text-indigo-600 dark:text-indigo-400">{formatCurrency(selectedTrx?.final_amount || 0)}</span>
+              <span className="text-brand-600 dark:text-brand-400">{formatCurrency(selectedTrx?.final_amount || 0)}</span>
             </div>
           </div>
 

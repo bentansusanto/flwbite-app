@@ -137,7 +137,7 @@ export default function TenantPage() {
   const isSavingBranch = isCreatingBranch || isUpdatingBranch;
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

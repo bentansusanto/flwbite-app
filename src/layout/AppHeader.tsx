@@ -3,6 +3,7 @@ import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import NotificationDropdown from "@/components/header/NotificationDropdown";
 import UserDropdown from "@/components/header/UserDropdown";
 import { useSidebar } from "@/context/SidebarContext";
+import { useGetMeTenantQuery } from "@/store/api/tenantApi";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState ,useEffect,useRef} from "react";
@@ -11,6 +12,8 @@ const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const { data: tenantRes } = useGetMeTenantQuery(undefined);
+  const tenant = tenantRes?.data;
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -41,11 +44,11 @@ const AppHeader: React.FC = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-white/5 dark:bg-[#06060a] lg:border-b">
+    <header className="sticky top-0 flex w-full bg-white/90 backdrop-blur-xl shadow-theme-sm border-b border-slate-200/60 z-99999 dark:border-white/5 dark:bg-[#06060a]/90">
       <div className="flex flex-col items-center justify-between grow lg:flex-row lg:px-6">
         <div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-white/5 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
           <button
-            className="items-center justify-center w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-white/5 lg:flex dark:text-gray-400 lg:h-11 lg:w-11 lg:border"
+            className="hidden items-center justify-center w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-white/5 lg:flex dark:text-gray-400 lg:h-11 lg:w-11 lg:border"
             onClick={handleToggle}
             aria-label="Toggle Sidebar"
           >
@@ -83,21 +86,18 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
-          <Link href="/" className="lg:hidden">
-            <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src="./images/logo/logo.svg"
-              alt="Logo"
-            />
-            <Image
-              width={154}
-              height={32}
-              className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
-              alt="Logo"
-            />
+          <Link href="/" className="lg:hidden flex items-center gap-2">
+            {tenant?.logo ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={tenant.logo} alt="Logo" className="h-8 w-8 rounded-lg object-cover bg-white shadow-sm" />
+            ) : (
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-lg shadow-sm">
+                {tenant?.name ? tenant.name.charAt(0).toUpperCase() : "F"}
+              </div>
+            )}
+            <span className="text-xl font-bold text-gray-900 dark:text-white truncate">
+              {tenant?.name ? tenant.name.split(" ").slice(0, 2).join(" ") : "Flwbite"}
+            </span>
           </Link>
 
           <button

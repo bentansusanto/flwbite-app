@@ -109,27 +109,27 @@ export const ProductTable: React.FC<Props> = ({
             <tr className="border-b border-gray-100 bg-gray-50/80 dark:border-white/5 dark:bg-white/[0.03]">
               <th className="w-8 px-3 py-3.5" />
               <th className="px-4 py-3.5 text-left">
-                <button onClick={() => onSort("name")} className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <button onClick={() => onSort("name")} className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-gray-500">
                   Produk <SortIcon field="name" sortField={sortField} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3.5 text-left">
-                <button onClick={() => onSort("category_name")} className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <button onClick={() => onSort("category_name")} className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-gray-500">
                   Kategori <SortIcon field="category_name" sortField={sortField} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3.5 text-left">
-                <button onClick={() => onSort("type")} className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <button onClick={() => onSort("type")} className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-gray-500">
                   Tipe <SortIcon field="type" sortField={sortField} sortOrder={sortOrder} />
                 </button>
               </th>
               <th className="px-4 py-3.5 text-center">
-                <button onClick={() => onSort("variants")} className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-gray-500 mx-auto">
+                <button onClick={() => onSort("variants")} className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-gray-500 mx-auto">
                   Varian <SortIcon field="variants" sortField={sortField} sortOrder={sortOrder} />
                 </button>
               </th>
-              <th className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Stok</th>
-              <th className="px-4 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Aksi</th>
+              <th className="px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-gray-500">Stok</th>
+              <th className="px-4 py-3.5 text-right text-xs font-bold uppercase tracking-wider text-gray-500">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -174,9 +174,8 @@ export const ProductTable: React.FC<Props> = ({
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
                           <div className={`flex h-8 w-8 shrink-0 overflow-hidden items-center justify-center rounded-lg ${
-                            product.type === "retail" ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10"
-                            : product.type === "f&b" ? "bg-orange-50 text-orange-600 dark:bg-orange-500/10"
-                            : "bg-purple-50 text-purple-600 dark:bg-purple-500/10"}`}>
+                            product.image ? "bg-transparent" : "bg-emerald-800 text-white dark:bg-emerald-900"
+                          }`}>
                             {product.image ? (
                               /* eslint-disable-next-line @next/next/no-img-element */
                               <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
@@ -237,7 +236,7 @@ export const ProductTable: React.FC<Props> = ({
                         <td colSpan={7} className="border-t-0 bg-gray-50/50 px-4 pb-4 pt-0 dark:bg-white/[0.01]">
                           <div className="ml-11 rounded-xl border border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-900/50">
                             <div className="border-b border-gray-100 px-4 py-2.5 dark:border-gray-800">
-                              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Varian Produk</p>
+                              <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Varian Produk</p>
                             </div>
                             {product.variants?.length > 0 ? (
                               <table className="w-full text-sm">

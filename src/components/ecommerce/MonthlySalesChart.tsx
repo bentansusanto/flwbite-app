@@ -13,7 +13,7 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 
 export default function MonthlySalesChart() {
   const options: ApexOptions = {
-    colors: ["#0166ff"],
+    colors: ["#0d9488"],
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "bar",
@@ -110,7 +110,7 @@ export default function MonthlySalesChart() {
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md sm:px-6 sm:pt-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white/90">
           Monthly Sales
         </h3>
 

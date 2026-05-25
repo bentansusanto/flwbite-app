@@ -136,7 +136,7 @@ export default function PurchaseOrdersPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -156,7 +156,7 @@ export default function PurchaseOrdersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{orders.length}</p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total POs</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total POs</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -165,7 +165,7 @@ export default function PurchaseOrdersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{orders.filter((o:any) => o.status === "pending").length}</p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Pending Orders</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Orders</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -176,7 +176,7 @@ export default function PurchaseOrdersPage() {
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">
               Rp {orders.reduce((acc: number, o: any) => acc + (o.total || 0), 0).toLocaleString()}
             </p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Value</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Value</p>
           </div>
         </div>
       </div>
@@ -205,11 +205,11 @@ export default function PurchaseOrdersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Order Details</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Supplier</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">Total Amount</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-center">Status</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">Actions</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Order Details</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Supplier</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Total Amount</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Status</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -238,7 +238,7 @@ export default function PurchaseOrdersPage() {
                     <p className="text-sm font-semibold text-gray-800 dark:text-white/90">Rp {(order.total || 0).toLocaleString()}</p>
                   </td>
                   <td className="px-5 py-4 text-center">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${getStatusStyle(order.status)}`}>
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${getStatusStyle(order.status)}`}>
                       {order.status}
                     </span>
                   </td>

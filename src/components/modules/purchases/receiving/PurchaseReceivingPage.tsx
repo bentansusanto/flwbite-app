@@ -4,7 +4,7 @@ import {
   Search, Plus, Trash2, Edit,
   Package, Truck, Calendar, FileCheck,
   CheckCircle2, Clock, AlertCircle, Filter, 
-  ChevronRight, Box, Loader2, ChevronDown
+  ChevronRight, Box, Loader2, ChevronDown, RefreshCcw
 } from "lucide-react";
 import { toast } from "sonner";
 import { AlertDialog } from "@/components/ui/alert-dialog/AlertDialog";
@@ -23,6 +23,8 @@ import { useGetSuppliersQuery } from "@/store/api/supplierApi";
 
 export default function PurchaseReceivingPage() {
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState({ 
     purchase_order_id: "", 
@@ -85,7 +87,17 @@ export default function PurchaseReceivingPage() {
       return r.id.toLowerCase().includes(search.toLowerCase()) || 
              (po?.code || "").toLowerCase().includes(search.toLowerCase());
     });
-  }, [receipts, search]);
+  }, [receipts, search, allPOs]);
+
+  // Pagination Logic
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginatedReceipts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, currentPage, pageSize]);
+
+  const startItem = filtered.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, filtered.length);
 
   // Update form items when selected PO data arrives
   useEffect(() => {
@@ -140,7 +152,7 @@ export default function PurchaseReceivingPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -160,7 +172,7 @@ export default function PurchaseReceivingPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{receipts.length}</p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Received</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Received</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -169,7 +181,7 @@ export default function PurchaseReceivingPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{poList.length}</p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Awaiting POs</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Awaiting POs</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -180,7 +192,7 @@ export default function PurchaseReceivingPage() {
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">
               {receipts.filter((r: any) => new Date(r.received_at).toDateString() === new Date().toDateString()).length}
             </p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Today's Items</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Today's Items</p>
           </div>
         </div>
       </div>
@@ -199,9 +211,14 @@ export default function PurchaseReceivingPage() {
                 className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-11 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
               />
             </div>
-            <button className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400">
-              <Filter size={16} /> Filter
-            </button>
+            <div className="flex items-center gap-2">
+              <button className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 h-11 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 transition-colors">
+                <Filter size={16} /> Filter
+              </button>
+              <button onClick={() => { setSearch(""); setCurrentPage(1); }} className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 h-11 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 transition-colors">
+                 <RefreshCcw size={16} /> Reset
+              </button>
+            </div>
           </div>
         </div>
 
@@ -209,11 +226,11 @@ export default function PurchaseReceivingPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Receipt Details</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Source PO</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Supplier</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-center">Status</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">Actions</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Receipt Details</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Source PO</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Supplier</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Status</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -224,7 +241,7 @@ export default function PurchaseReceivingPage() {
                     <p className="mt-2 text-sm text-gray-500">Loading receipts...</p>
                   </td>
                 </tr>
-              ) : filtered.map((receipt: any) => {
+              ) : paginatedReceipts.map((receipt: any) => {
                 const po = allPOs.find((p: any) => p.id === receipt.purchase_order_id);
                 const supplier = supplierData?.data?.find((s: any) => s.id === po?.supplier_id);
                 
@@ -285,6 +302,66 @@ export default function PurchaseReceivingPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Section */}
+        <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <p className="text-xs text-gray-400">
+              {filtered.length === 0 ? "0 receipt" : `${startItem}–${endItem} dari ${filtered.length} receipt`}
+            </p>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-gray-400">Tampilkan</span>
+              <select
+                value={pageSize}
+                onChange={(e) => {setPageSize(Number(e.target.value)); setCurrentPage(1);}}
+                className="appearance-none h-7 rounded-lg border border-gray-200 bg-white px-2 text-xs text-gray-700 outline-none focus:border-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+              >
+                {[5, 10, 25, 50].map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <span className="text-xs text-gray-400">per halaman</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="rotate-90" />
+              <ChevronDown size={13} className="-ml-2 rotate-90" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="rotate-90" />
+            </button>
+            
+            <span className="px-4 text-xs font-medium text-gray-600 dark:text-gray-400">
+              {currentPage} / {totalPages}
+            </span>
+
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="-rotate-90" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="-rotate-90" />
+              <ChevronDown size={13} className="-ml-2 -rotate-90" />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Modal */}
@@ -320,35 +397,41 @@ export default function PurchaseReceivingPage() {
                   )}
                 </div>
               </div>
-              <select 
-                className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all font-medium"
-                value={form.purchase_order_id}
-                onChange={e => {
-                  setForm({...form, purchase_order_id: e.target.value});
-                  setSelectedPOId(e.target.value);
-                }}
-                required
-              >
-                <option value="">Select PO number...</option>
-                {poList.map((po: any) => (
-                  <option key={po.id} value={po.id}>
-                    {po.code || po.id.slice(0, 8).toUpperCase()}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select 
+                  className="appearance-none w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all font-medium"
+                  value={form.purchase_order_id}
+                  onChange={e => {
+                    setForm({...form, purchase_order_id: e.target.value});
+                    setSelectedPOId(e.target.value);
+                  }}
+                  required
+                >
+                  <option value="">Select PO number...</option>
+                  {poList.map((po: any) => (
+                    <option key={po.id} value={po.id}>
+                      {po.code || po.id.slice(0, 8).toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
             </div>
             <div>
               <Label required>Receiving Status</Label>
-              <select 
-                className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all font-medium"
-                value={form.status}
-                onChange={e => setForm({...form, status: e.target.value})}
-                required
-              >
-                <option value="COMPLETED">COMPLETED (Semua Diterima)</option>
-                <option value="PARTIAL">PARTIAL (Diterima Sebagian)</option>
-                <option value="DRAFT">DRAFT</option>
-              </select>
+              <div className="relative">
+                <select 
+                  className="appearance-none w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all font-medium"
+                  value={form.status}
+                  onChange={e => setForm({...form, status: e.target.value})}
+                  required
+                >
+                  <option value="COMPLETED">COMPLETED (Semua Diterima)</option>
+                  <option value="PARTIAL">PARTIAL (Diterima Sebagian)</option>
+                  <option value="DRAFT">DRAFT</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
             </div>
           </div>
 

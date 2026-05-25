@@ -101,7 +101,7 @@ export default function PosSessionPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -115,11 +115,11 @@ export default function PosSessionPage() {
       {/* Stats Quick View */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-900/40 dark:backdrop-blur-md p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 flex items-center gap-4">
-          <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+          <div className="w-12 h-12 bg-brand-50 dark:bg-brand-500/10 rounded-xl flex items-center justify-center text-brand-600 dark:text-brand-400">
             <PlayCircle className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Active Sessions</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Active Sessions</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">{activeSessionsCount} <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 ml-1">Across branches</span></p>
           </div>
         </div>
@@ -128,7 +128,7 @@ export default function PosSessionPage() {
             <ArrowUpRight className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Today's Revenue</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Today's Revenue</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">{formatCurrency(todayRevenue)}</p>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function PosSessionPage() {
             <Wallet className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Cash On Hand</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Cash On Hand</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalCashOnHand)}</p>
           </div>
         </div>
@@ -152,7 +152,7 @@ export default function PosSessionPage() {
             placeholder="Search by staff name or session ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all"
           />
         </div>
 
@@ -161,18 +161,19 @@ export default function PosSessionPage() {
           <select
             value={branchFilter}
             onChange={(e) => setBranchFilter(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all appearance-none cursor-pointer dark:text-gray-300"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all appearance-none cursor-pointer dark:text-gray-300"
           >
             <option value="">{isLoadingBranches ? "Loading branches..." : "All Branches"}</option>
             {branches.map((branch: any) => (
               <option key={branch.id} value={branch.id}>{branch.name}</option>
             ))}
           </select>
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
         </div>
 
         <button
           onClick={handleRefresh}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 text-indigo-600 dark:text-indigo-400 font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-xl transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 text-brand-600 dark:text-brand-400 font-semibold hover:bg-brand-50 dark:hover:bg-brand-500/10 rounded-xl transition-colors"
         >
           <RefreshCcw className="w-4 h-4" />
           Refresh
@@ -185,12 +186,12 @@ export default function PosSessionPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-100 dark:border-white/5">
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Session & Staff</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Shift Timing</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Cash Movement</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Status</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Session & Staff</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Shift Timing</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Cash Movement</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Status</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-white/5">
@@ -204,19 +205,19 @@ export default function PosSessionPage() {
                 </tr>
               ) : paginatedSessions.map((session) => (
                 <tr key={session.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors group">
-                  <td className="px-6 py-4">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <div>
                       <p className="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[120px]">{session.id}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{session.user_name}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 bg-gray-100/80 dark:bg-gray-800 px-2 py-1 rounded-md w-fit text-xs font-bold">
                       <Building2 className="w-3.5 h-3.5" />
                       {session.branch_name}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300">
                         <Clock className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
@@ -230,23 +231,23 @@ export default function PosSessionPage() {
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="whitespace-nowrap px-6 py-4 text-right">
                     <div className="space-y-0.5">
                       <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase">Revenue</p>
                       <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(session.expected_cash - session.opening_balance)}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="whitespace-nowrap px-6 py-4 text-center">
                     {getStatusBadge(session.status.toLowerCase())}
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="whitespace-nowrap px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                        <button
                          onClick={() => {
                            setSelectedSessionId(session.id);
                            setIsDetailModalOpen(true);
                          }}
-                         className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                         className="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all"
                        >
                          <Eye className="w-4 h-4" />
                        </button>
@@ -269,7 +270,7 @@ export default function PosSessionPage() {
               <select
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
-                className="h-7 rounded-lg border border-gray-200 bg-white px-2 text-xs text-gray-700 outline-none focus:border-indigo-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 font-bold"
+                className="h-7 rounded-lg border border-gray-200 bg-white px-2 text-xs text-gray-700 outline-none focus:border-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 font-bold"
               >
                 {[5, 10, 25, 50].map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -313,7 +314,7 @@ export default function PosSessionPage() {
                     onClick={() => setCurrentPage(p)}
                     className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold transition-colors ${
                       currentPage === p
-                        ? "bg-indigo-600 text-white shadow-sm"
+                        ? "bg-brand-600 text-white shadow-sm"
                         : "border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
                     }`}
                   >
@@ -367,11 +368,11 @@ function SessionDetailModal({ isOpen, onClose, sessionId }: { isOpen: boolean; o
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-2xl" isScrollable>
-      <div className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md px-8 py-6 border-b border-gray-100 dark:border-gray-800">
+      <div className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md px-4 sm:px-6 md:px-8 py-4 sm:py-6 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center">
-              <History className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <div className="w-10 h-10 bg-brand-50 dark:bg-brand-500/10 rounded-xl flex items-center justify-center">
+              <History className="w-5 h-5 text-brand-600 dark:text-brand-400" />
             </div>
             <div>
               <div className="flex items-center gap-2.5">
@@ -388,20 +389,20 @@ function SessionDetailModal({ isOpen, onClose, sessionId }: { isOpen: boolean; o
         </div>
       </div>
 
-      <div className="px-8 pb-8 pt-6">
+      <div className="px-4 sm:px-6 md:px-8 pb-6 sm:pb-8 pt-4 sm:pt-6">
 
         {isLoading ? (
           <div className="py-20 text-center text-gray-400">Memuat detail...</div>
         ) : !session ? (
           <div className="py-20 text-center text-rose-500">Gagal memuat data sesi.</div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Time & Personnel */}
             <div className="space-y-4">
-              <h4 className="text-sm font-bold text-gray-900 dark:text-white border-l-4 border-indigo-500 pl-3">Waktu & Personel</h4>
-              <div className="grid grid-cols-2 gap-8">
+              <h4 className="text-sm font-bold text-gray-900 dark:text-white border-l-4 border-brand-500 pl-3">Waktu & Personel</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg"><Clock className="w-4 h-4 text-indigo-600 dark:text-indigo-400" /></div>
+                  <div className="p-2 bg-brand-50 dark:bg-brand-500/10 rounded-lg"><Clock className="w-4 h-4 text-brand-600 dark:text-brand-400" /></div>
                   <div>
                     <p className="text-xs text-gray-400 font-medium">Buka Sesi</p>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -459,7 +460,7 @@ function SessionDetailModal({ isOpen, onClose, sessionId }: { isOpen: boolean; o
             <div className="space-y-4">
               <h4 className="text-sm font-bold text-gray-900 dark:text-white border-l-4 border-emerald-500 pl-3">Rekonsiliasi Kas</h4>
               <div className="bg-white dark:bg-gray-800/20 border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
-                <div className="p-6 space-y-3">
+                <div className="p-4 sm:p-6 space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500 dark:text-gray-400">Saldo Awal</span>
                     <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(session.opening_balance)}</span>
@@ -478,7 +479,7 @@ function SessionDetailModal({ isOpen, onClose, sessionId }: { isOpen: boolean; o
                     <span className="text-gray-500 dark:text-gray-400">Input Kas Fisik (Saat Tutup)</span>
                     <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(session.closing_balance)}</span>
                   </div>
-                  <div className={`mt-6 p-4 rounded-2xl flex justify-between items-center transition-all ${
+                  <div className={`mt-6 p-4 rounded-2xl flex flex-col sm:flex-row gap-4 sm:gap-0 sm:justify-between sm:items-center transition-all ${
                     session.difference === 0
                       ? 'bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-gray-100'
                       : session.difference < 0
@@ -504,11 +505,11 @@ function SessionDetailModal({ isOpen, onClose, sessionId }: { isOpen: boolean; o
                   </div>
                 </div>
                 {session.notes && (
-                  <div className="p-5 bg-indigo-50/30 dark:bg-indigo-500/5 border-t border-indigo-100/50 dark:border-indigo-900/30">
+                  <div className="p-5 bg-brand-50/30 dark:bg-brand-500/5 border-t border-brand-100/50 dark:border-brand-900/30">
                     <div className="flex items-start gap-3">
-                      <div className="mt-1"><History className="w-3.5 h-3.5 text-indigo-400" /></div>
-                      <div className="italic text-sm text-indigo-900/70 dark:text-indigo-300/70">
-                        <p className="font-bold text-[10px] uppercase not-italic text-indigo-400 mb-1 tracking-widest">Catatan Sesi</p>
+                      <div className="mt-1"><History className="w-3.5 h-3.5 text-brand-400" /></div>
+                      <div className="italic text-sm text-brand-900/70 dark:text-brand-300/70">
+                        <p className="font-bold text-[10px] uppercase not-italic text-brand-400 mb-1 tracking-widest">Catatan Sesi</p>
                         "{session.notes}"
                       </div>
                     </div>

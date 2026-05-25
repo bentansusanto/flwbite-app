@@ -134,7 +134,7 @@ export default function SuppliersPage() {
   }
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -154,7 +154,7 @@ export default function SuppliersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{suppliers.length}</p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Suppliers</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Suppliers</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -163,7 +163,7 @@ export default function SuppliersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{suppliers.filter((s: any) => s.status === "active").length || 0}</p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Active Partners</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Active Partners</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -172,7 +172,7 @@ export default function SuppliersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">0</p>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Pending Orders</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Orders</p>
           </div>
         </div>
       </div>
@@ -201,11 +201,11 @@ export default function SuppliersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Supplier Name</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Contact Info</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Address</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-center">Status</th>
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">Actions</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Supplier Name</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Contact Info</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Address</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Status</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -240,7 +240,7 @@ export default function SuppliersPage() {
                     </p>
                   </td>
                   <td className="px-5 py-4 text-center">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${
                       supplier.status === "active" || !supplier.status
                         ? "bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-400"
                         : "bg-gray-100 text-gray-500 dark:bg-gray-800"

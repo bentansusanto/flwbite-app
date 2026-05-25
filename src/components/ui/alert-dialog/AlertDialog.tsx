@@ -63,7 +63,7 @@ export const AlertDialog: React.FC<AlertDialogProps> = ({
     <>
       {/* Backdrop: portal into body so it's above z-99999 navbar */}
       <div
-        className="fixed inset-0 z-[99999] bg-black/50 backdrop-blur-md"
+        className="fixed inset-0 z-[9999999] bg-black/50 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -71,7 +71,7 @@ export const AlertDialog: React.FC<AlertDialogProps> = ({
       {/* Dialog Panel Container */}
       <div
         ref={overlayRef}
-        className="fixed inset-0 z-[99999] flex items-center justify-center p-4 pointer-events-none"
+        className="fixed inset-0 z-[9999999] flex items-center justify-center p-4 pointer-events-none"
         aria-modal="true"
         role="alertdialog"
         aria-labelledby="alert-dialog-title"

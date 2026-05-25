@@ -84,7 +84,7 @@ export const CloseSessionModal: React.FC<CloseSessionModalProps> = ({ isOpen, on
                 <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
                   <div className="flex items-center gap-2 mb-2 text-gray-500 dark:text-gray-400">
                     <Receipt className="w-4 h-4" />
-                    <span className="text-xs font-medium uppercase tracking-wider">Total Penjualan</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Total Penjualan</span>
                   </div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-white">
                     Rp {summary?.total_amount?.toLocaleString() || 0}
@@ -94,7 +94,7 @@ export const CloseSessionModal: React.FC<CloseSessionModalProps> = ({ isOpen, on
                 <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-2xl border border-green-100 dark:border-green-900/30">
                   <div className="flex items-center gap-2 mb-2 text-green-600 dark:text-green-500">
                     <Banknote className="w-4 h-4" />
-                    <span className="text-xs font-medium uppercase tracking-wider">Total Cash</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Total Cash</span>
                   </div>
                   <div className="text-2xl font-bold text-green-700 dark:text-green-400">
                     Rp {summary?.expected_cash?.toLocaleString() || 0}

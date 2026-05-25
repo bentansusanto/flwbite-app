@@ -69,7 +69,7 @@ export const CustomerSelectionModal = ({
                 onClick={() => setIsAddingNew(true)}
                 variant="outline"
                 size="sm"
-                className="rounded-xl border-indigo-100 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10"
+                className="rounded-xl border-brand-100 dark:border-brand-900/30 text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10"
                 startIcon={<Plus size={16} />}
               >
                 Baru
@@ -83,7 +83,7 @@ export const CustomerSelectionModal = ({
                 placeholder="Cari Nama atau Nomor Telepon..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 border-none rounded-2xl focus:ring-2 focus:ring-indigo-600 transition-all text-sm"
+                className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 border-none rounded-2xl focus:ring-2 focus:ring-brand-600 transition-all text-sm"
               />
             </div>
           </div>
@@ -93,7 +93,7 @@ export const CustomerSelectionModal = ({
             <div className="space-y-3">
               {isLoading ? (
                 <div className="py-20 text-center">
-                   <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                   <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
                    <p className="text-gray-500 text-sm mt-4">Memuat pelanggan...</p>
                 </div>
               ) : customers.length === 0 ? (
@@ -102,7 +102,7 @@ export const CustomerSelectionModal = ({
                     <UserPlus size={32} />
                   </div>
                   <p className="text-gray-500 text-sm">Tidak ada pelanggan ditemukan.</p>
-                  <Button variant="outline" onClick={() => setIsAddingNew(true)} className="text-indigo-600 text-xs border-transparent hover:bg-transparent">
+                  <Button variant="outline" onClick={() => setIsAddingNew(true)} className="text-brand-600 text-xs border-transparent hover:bg-transparent">
                     Tambah "{search}" sebagai pelanggan baru?
                   </Button>
                 </div>
@@ -114,14 +114,14 @@ export const CustomerSelectionModal = ({
                       onSelect(customer);
                       onClose();
                     }}
-                    className="w-full flex items-center justify-between p-4 bg-white dark:bg-gray-800/30 border border-gray-100 dark:border-gray-800 rounded-2xl hover:border-indigo-600 dark:hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-500/10 transition-all group"
+                    className="w-full flex items-center justify-between p-4 bg-white dark:bg-gray-800/30 border border-gray-100 dark:border-gray-800 rounded-2xl hover:border-brand-600 dark:hover:border-brand-500/50 hover:bg-brand-50/30 dark:hover:bg-brand-500/10 transition-all group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-full flex items-center justify-center font-bold text-lg">
+                      <div className="w-12 h-12 bg-brand-100 dark:bg-brand-900/30 text-brand-600 rounded-full flex items-center justify-center font-bold text-lg">
                         {customer.name.charAt(0)}
                       </div>
                       <div className="text-left">
-                        <h4 className="font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors">
+                        <h4 className="font-bold text-gray-900 dark:text-white group-hover:text-brand-600 transition-colors">
                           {customer.name}
                         </h4>
                         <div className="flex items-center gap-3 mt-1">
@@ -141,7 +141,7 @@ export const CustomerSelectionModal = ({
                         <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">{customer.points || 0} PTS</p>
                         <p className="text-[10px] text-gray-400">Loyalty</p>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-indigo-600 transition-colors" />
+                      <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-brand-600 transition-colors" />
                     </div>
                   </button>
                 ))
@@ -206,7 +206,7 @@ export const CustomerSelectionModal = ({
               <Button type="button" variant="outline" className="flex-1" onClick={() => setIsAddingNew(false)}>
                 Kembali
               </Button>
-              <Button type="submit" loading={isCreating} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20">
+              <Button type="submit" loading={isCreating} className="flex-1 bg-brand-600 hover:bg-brand-700 text-white shadow-lg shadow-brand-500/20">
                 Simpan & Pilih
               </Button>
             </div>

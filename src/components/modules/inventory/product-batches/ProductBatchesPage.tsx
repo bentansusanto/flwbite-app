@@ -72,7 +72,7 @@ export default function ProductBatchesPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -160,14 +160,14 @@ export default function ProductBatchesPage() {
 
                 <div className="mt-6 pt-4 border-t border-gray-50 grid grid-cols-2 gap-4 relative z-10 dark:border-gray-800">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Stock Level</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Stock Level</p>
                     <div className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
                       <span className="text-sm font-bold text-gray-900 dark:text-white">{batch.quantity} {batch.unit || "pcs"}</span>
                     </div>
                   </div>
                   <div className="space-y-1 text-right">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Expiry Date</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Expiry Date</p>
                     <div className="flex items-center justify-end gap-2 text-sm font-bold text-gray-700 dark:text-gray-300">
                       <Calendar className="w-3.5 h-3.5 text-gray-400" />
                       {batch.expiry_date ? format(new Date(batch.expiry_date), "dd MMM yyyy") : "N/A"}

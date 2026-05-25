@@ -54,28 +54,28 @@ export const OrderQueueModal = ({
         isOpen={isOpen}
         onClose={onClose}
         title="Antrian Pesanan"
-        className="max-w-2xl w-[95%] mx-auto"
+        className="max-w-3xl w-[95%] sm:w-[90%] mx-auto"
       >
-        <div className="flex flex-col h-[650px]">
+        <div className="flex flex-col h-auto max-h-[50vh] sm:max-h-[60vh] lg:h-[650px] lg:max-h-[85vh]">
           {/* Tabs */}
           <div className="flex border-b border-gray-100 dark:border-gray-800">
             <button
               onClick={() => setActiveTab("pending")}
-              className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all relative ${
-                activeTab === "pending" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className={`flex-1 py-3 sm:py-4 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all relative ${
+                activeTab === "pending" ? "text-brand-600 dark:text-brand-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               }`}
             >
               Menunggu Bayar ({pendingOrders.length})
-              {activeTab === "pending" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 dark:bg-indigo-500" />}
+              {activeTab === "pending" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-600 dark:bg-brand-500" />}
             </button>
             <button
               onClick={() => setActiveTab("paid")}
-              className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all relative ${
-                activeTab === "paid" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className={`flex-1 py-3 sm:py-4 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all relative ${
+                activeTab === "paid" ? "text-brand-600 dark:text-brand-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               }`}
             >
               Sedang Disiapkan ({paidOrders.length})
-              {activeTab === "paid" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 dark:bg-indigo-500" />}
+              {activeTab === "paid" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-600 dark:bg-brand-500" />}
             </button>
           </div>
 
@@ -90,7 +90,7 @@ export const OrderQueueModal = ({
           <div className="flex-1 overflow-y-auto p-4 no-scrollbar">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : currentOrders.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-20">
@@ -107,18 +107,18 @@ export const OrderQueueModal = ({
                 {currentOrders.map((order) => (
                   <div
                     key={order.id}
-                    className="bg-white dark:bg-gray-800/30 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 hover:border-indigo-600 transition-all group"
+                    className="bg-white dark:bg-gray-800/30 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 hover:border-brand-600 transition-all group"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                           activeTab === "pending" ? "bg-orange-50 text-orange-600" : "bg-brand-50 text-brand-600"
                         }`}>
-                          <Users size={24} />
+                          <Users size={24} className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                         <div className="min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-bold text-gray-900 dark:text-white truncate">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <h4 className="font-bold text-gray-900 dark:text-white truncate max-w-[150px] sm:max-w-[200px]">
                               {order.customer_name || "Customer"}
                             </h4>
                             {order.table_number && (
@@ -127,7 +127,7 @@ export const OrderQueueModal = ({
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-3 text-xs text-gray-400">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-400">
                             <span className="flex items-center gap-1">
                               <Package size={12} /> {order.items?.length || 0} Produk
                             </span>
@@ -137,32 +137,32 @@ export const OrderQueueModal = ({
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-8 border-t sm:border-t-0 pt-4 sm:pt-0">
-                        <div className="text-left sm:text-right">
+                      <div className="flex items-center justify-between lg:justify-end gap-4 sm:gap-6 lg:gap-8 border-t lg:border-t-0 pt-4 lg:pt-0">
+                        <div className="text-left lg:text-right">
                           <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-0.5">Total</p>
-                          <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(order.final_amount || order.total_amount)}</p>
+                          <p className="text-base sm:text-lg font-bold text-brand-600 dark:text-brand-400">{formatCurrency(order.final_amount || order.total_amount)}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => setViewingOrder(order)}
-                            className="p-3 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 rounded-xl transition-all"
+                            className="p-2 sm:p-3 text-gray-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/10 rounded-xl transition-all"
                             title="Lihat Detail"
                           >
-                            <Eye size={20} />
+                            <Eye size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
                           {activeTab === "pending" ? (
                             <>
                               <button
                                 onClick={() => onCancel(order.id)}
-                                className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
+                                className="p-2 sm:p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
                                 title="Batalkan Pesanan"
                               >
-                                <Trash2 size={20} />
+                                <Trash2 size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
                               </button>
                               <Button
                                 onClick={() => onResume(order)}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-6 py-3 shadow-lg shadow-indigo-100"
-                                endIcon={<ArrowRight size={18} />}
+                                className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-sm"
+                                endIcon={<ArrowRight size={18} className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />}
                               >
                                 Panggil
                               </Button>
@@ -170,7 +170,7 @@ export const OrderQueueModal = ({
                           ) : (
                             <Button
                               onClick={() => onComplete(order.id)}
-                              className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-6 py-3"
+                              className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-sm"
                             >
                               Selesaikan
                             </Button>
@@ -203,7 +203,7 @@ export const OrderQueueModal = ({
           <div className="p-6 space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600">
+                <div className="w-10 h-10 bg-brand-50 dark:bg-brand-500/10 rounded-xl flex items-center justify-center text-brand-600">
                   <User size={20} />
                 </div>
                 <div>
@@ -221,7 +221,7 @@ export const OrderQueueModal = ({
               </div>
             </div>
 
-            <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2 no-scrollbar">
+            <div className="space-y-4 max-h-[50vh] sm:max-h-[350px] overflow-y-auto pr-2 no-scrollbar">
               {viewingOrder.items?.map((item: any, idx: number) => (
                 <div key={idx} className="flex items-start justify-between gap-4 group">
                   <div className="flex items-start gap-3">
@@ -269,7 +269,7 @@ export const OrderQueueModal = ({
               )}
               <div className="flex justify-between pt-3 border-t border-gray-100 dark:border-gray-800">
                 <span className="font-bold text-gray-900 dark:text-white">Total Akhir</span>
-                <span className="text-xl font-black text-indigo-600">{formatCurrency(viewingOrder.final_amount || viewingOrder.total_amount)}</span>
+                <span className="text-xl font-black text-brand-600">{formatCurrency(viewingOrder.final_amount || viewingOrder.total_amount)}</span>
               </div>
             </div>
 

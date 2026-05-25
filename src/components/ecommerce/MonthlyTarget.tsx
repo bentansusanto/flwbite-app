@@ -26,7 +26,7 @@ export default function MonthlyTarget() {
 
   const series = [Number(progress.toFixed(2))];
   const options: ApexOptions = {
-    colors: ["#465FFF"],
+    colors: ["#0f766e"],
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "radialBar",
@@ -65,7 +65,7 @@ export default function MonthlyTarget() {
     },
     fill: {
       type: "solid",
-      colors: ["#465FFF"],
+      colors: ["#0f766e"],
     },
     stroke: {
       lineCap: "round",
@@ -97,11 +97,11 @@ export default function MonthlyTarget() {
   }
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md h-full">
-      <div className="px-5 pt-5 bg-white shadow-default rounded-2xl pb-11 dark:bg-transparent sm:px-6 sm:pt-6">
+    <div className="rounded-3xl border border-slate-200/60 bg-white shadow-theme-sm dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md h-full overflow-hidden">
+      <div className="px-5 pt-5 bg-white rounded-t-3xl pb-11 dark:bg-transparent sm:px-6 sm:pt-6">
         <div className="flex justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white/90">
               Monthly Target
             </h3>
             <p className="mt-1 font-normal text-gray-500 text-theme-sm dark:text-gray-400">
@@ -156,7 +156,7 @@ export default function MonthlyTarget() {
         </p>
       </div>
 
-      <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
+      <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
             Target

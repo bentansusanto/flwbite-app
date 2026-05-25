@@ -26,7 +26,7 @@ export default function RolesPage() {
   }, [allRoles, search]);
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header Section */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -58,7 +58,7 @@ export default function RolesPage() {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800">
             <Lock size={32} className="text-gray-300 dark:text-gray-600" />
           </div>
-          <h4 className="mt-4 text-lg font-semibold text-gray-800 dark:text-white/90">No roles found</h4>
+          <h4 className="mt-4 text-lg font-bold text-gray-900 dark:text-white/90">No roles found</h4>
           <p className="mt-1 text-gray-500 dark:text-gray-400">No roles match your search criteria.</p>
         </div>
       ) : (

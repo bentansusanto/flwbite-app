@@ -17,93 +17,86 @@ export default function StatisticsChart() {
   const revenueData = points.map(p => p.revenue);
 
 
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+  };
+
   const options: ApexOptions = {
     legend: {
-      show: false,
+      show: true,
       position: "top",
-      horizontalAlign: "left",
+      horizontalAlign: "right",
     },
-    colors: ["#465FFF", "#9CB9FF"],
+    colors: ["#34d399", "#059669"], // emerald-400 for Orders, emerald-600 for Revenue
     chart: {
-      fontFamily: "Outfit, sans-serif",
+      fontFamily: "Inter, sans-serif",
       height: 310,
       type: "area",
-      toolbar: {
-        show: false,
-      },
+      toolbar: { show: false },
+      zoom: { enabled: false },
     },
     stroke: {
       curve: "smooth",
-      width: [2, 2],
+      width: 3,
+      colors: ["#34d399", "#059669"]
     },
     fill: {
       type: "gradient",
       gradient: {
-        opacityFrom: 0.55,
-        opacityTo: 0,
+        shadeIntensity: 1,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [20, 100, 100]
       },
     },
     markers: {
       size: 0,
       strokeColors: "#fff",
       strokeWidth: 2,
-      hover: {
-        size: 6,
-      },
+      hover: { size: 6 },
     },
     grid: {
-      xaxis: {
-        lines: {
-          show: false,
-        },
-      },
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
+      borderColor: '#f1f5f9',
+      strokeDashArray: 4,
+      padding: { left: 20, right: 20 }
     },
-    dataLabels: {
-      enabled: false,
-    },
+    dataLabels: { enabled: false },
     tooltip: {
       enabled: true,
-      x: {
-        format: "dd MMM yyyy",
-      },
+      y: {
+        formatter: (val, { seriesIndex }) => {
+          if (seriesIndex === 1) return formatCurrency(val); // Revenue
+          return val.toString() + " orders"; // Total Orders
+        }
+      }
     },
     xaxis: {
       type: "category",
       categories: categories.length > 0 ? categories : ["No Data"],
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: { style: { colors: '#94a3b8', fontWeight: 500 } }
     },
-    yaxis: {
-      labels: {
-        style: {
-          fontSize: "12px",
-          colors: ["#6B7280"],
-        },
-        formatter: (val) => {
-          if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
-          if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
-          return val.toString();
+    yaxis: [
+      {
+        seriesName: "Total Orders",
+        labels: {
+          style: { colors: '#94a3b8', fontWeight: 500 },
         }
       },
-      title: {
-        text: "",
-        style: {
-          fontSize: "0px",
-        },
-      },
-    },
+      {
+        opposite: true,
+        seriesName: "Revenue",
+        labels: {
+          style: { colors: '#94a3b8', fontWeight: 500 },
+          formatter: (val) => {
+            if (val >= 1000000) return `${(val/1000000).toFixed(1)}M`;
+            if (val >= 1000) return `${(val/1000).toFixed(0)}k`;
+            return val.toString();
+          }
+        }
+      }
+    ],
   };
 
   const series = [
@@ -129,7 +122,7 @@ export default function StatisticsChart() {
     <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md sm:px-6 sm:pt-6">
       <div className="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
         <div className="w-full">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white/90">
             Statistics
           </h3>
           <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">

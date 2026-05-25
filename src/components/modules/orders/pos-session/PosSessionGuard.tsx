@@ -141,7 +141,7 @@ export const PosSessionGuard = ({ children }: { children: React.ReactNode }) => 
   // Force Open Session Modal
   return (
     <div className="fixed inset-0 z-[999999] flex items-center justify-center bg-gray-900/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 w-full max-w-md border border-gray-100 dark:border-gray-800">
+      <div className="bg-white dark:bg-gray-900/40 dark:backdrop-blur-md rounded-3xl shadow-2xl p-8 w-full max-w-md border border-gray-100 dark:border-white/5">
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Buka Sesi Kasir</h2>
           <p className="text-gray-500 text-sm">Anda harus membuka sesi sebelum dapat memproses pesanan.</p>
@@ -165,7 +165,7 @@ export const PosSessionGuard = ({ children }: { children: React.ReactNode }) => 
                   name="branch_id"
                   value={formik.values.branch_id}
                   onChange={formik.handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition-all text-sm outline-none appearance-none"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-950 dark:text-white border border-gray-200 dark:border-white/5 rounded-2xl focus:ring-2 focus:ring-gray-900 dark:focus:ring-brand-500 transition-all text-sm outline-none appearance-none"
                 >
                   <option value="">Pilih Cabang...</option>
                   {branches.map((b: any) => (
@@ -206,7 +206,7 @@ export const PosSessionGuard = ({ children }: { children: React.ReactNode }) => 
               value={formik.values.notes}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition-all text-sm outline-none resize-none h-24"
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-gray-200 dark:border-white/5 rounded-2xl focus:ring-2 focus:ring-gray-900 dark:focus:ring-brand-500 transition-all text-sm outline-none resize-none h-24"
             />
             {formik.touched.notes && formik.errors.notes && (
               <p className="mt-1 text-xs text-red-500">{String(formik.errors.notes)}</p>
@@ -225,7 +225,7 @@ export const PosSessionGuard = ({ children }: { children: React.ReactNode }) => 
             <Button
               type="submit"
               disabled={isOpening}
-              className="flex-[2] py-3 text-base font-semibold bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl hover:scale-[1.02] transition-transform"
+              className="flex-[2] py-3 text-base font-semibold bg-brand-600 hover:bg-brand-700 text-white dark:bg-brand-600 dark:hover:bg-brand-500 dark:text-white rounded-xl hover:scale-[1.02] transition-all"
             >
               {isOpening ? "Membuka Sesi..." : "Buka Sesi"}
             </Button>

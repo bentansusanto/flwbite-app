@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import Button from "@/components/ui/button/Button";
-import { CalenderIcon } from "@/icons";
+
 import { useGetBranchesQuery } from "@/store/api/branchApi";
 import { useGetTransactionsQuery } from "@/store/api/orderApi";
 import { useGetSalesChartQuery, useGetSalesReportQuery } from "@/store/api/reportApi";
@@ -20,6 +20,7 @@ import {
   Download,
   FileSpreadsheet,
   Filter,
+  RefreshCcw,
   ShoppingCart,
   TrendingUp,
   Users,
@@ -225,61 +226,95 @@ export default function SalesReportPage() {
   };
 
   const chartOptions: ApexCharts.ApexOptions = {
+    legend: {
+      show: true,
+      position: "top",
+      horizontalAlign: "right",
+    },
+    colors: ["#34d399", "#059669"], // emerald-400 for Orders, emerald-600 for Revenue
     chart: {
-      type: 'area',
+      fontFamily: "Inter, sans-serif",
+      type: "area",
       toolbar: { show: false },
       zoom: { enabled: false },
-      fontFamily: 'Inter, sans-serif'
     },
-    dataLabels: { enabled: false },
-    stroke: { curve: 'smooth', width: 3, colors: ['#4f46e5'] },
+    stroke: {
+      curve: "smooth",
+      width: 3,
+      colors: ["#34d399", "#059669"]
+    },
     fill: {
-      type: 'gradient',
+      type: "gradient",
       gradient: {
         shadeIntensity: 1,
         opacityFrom: 0.45,
         opacityTo: 0.05,
-        stops: [20, 100, 100],
-        colorStops: [
-          { offset: 0, color: '#4f46e5', opacity: 0.4 },
-          { offset: 100, color: '#4f46e5', opacity: 0 }
-        ]
-      }
+        stops: [20, 100, 100]
+      },
     },
-    xaxis: {
-      categories: chartPoints.map(p => format(new Date(p.label), "dd MMM")),
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-      labels: { style: { colors: '#94a3b8', fontWeight: 500 } }
-    },
-    yaxis: {
-      labels: {
-        style: { colors: '#94a3b8', fontWeight: 500 },
-        formatter: (val) => {
-          if (val >= 1000000) return `${(val/1000000).toFixed(1)}M`;
-          if (val >= 1000) return `${(val/1000).toFixed(0)}k`;
-          return val.toString();
-        }
-      }
+    markers: {
+      size: 0,
+      strokeColors: "#fff",
+      strokeWidth: 2,
+      hover: { size: 6 },
     },
     grid: {
       borderColor: '#f1f5f9',
       strokeDashArray: 4,
       padding: { left: 20, right: 20 }
     },
+    dataLabels: { enabled: false },
     tooltip: {
-      x: { show: true },
-      y: { formatter: (val) => formatCurrency(val) }
-    }
+      enabled: true,
+      y: {
+        formatter: (val, { seriesIndex }) => {
+          if (seriesIndex === 1) return formatCurrency(val); // Revenue
+          return val.toString() + " orders"; // Total Orders
+        }
+      }
+    },
+    xaxis: {
+      type: "category",
+      categories: chartPoints.map(p => format(new Date(p.label), "dd MMM")),
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: { style: { colors: '#94a3b8', fontWeight: 500 } }
+    },
+    yaxis: [
+      {
+        seriesName: "Total Orders",
+        labels: {
+          style: { colors: '#94a3b8', fontWeight: 500 },
+        }
+      },
+      {
+        opposite: true,
+        seriesName: "Revenue",
+        labels: {
+          style: { colors: '#94a3b8', fontWeight: 500 },
+          formatter: (val) => {
+            if (val >= 1000000) return `${(val/1000000).toFixed(1)}M`;
+            if (val >= 1000) return `${(val/1000).toFixed(0)}k`;
+            return val.toString();
+          }
+        }
+      }
+    ],
   };
 
-  const chartSeries = [{
-    name: 'Total Sales',
-    data: chartPoints.map(p => p.revenue)
-  }];
+  const chartSeries = [
+    {
+      name: 'Total Orders',
+      data: chartPoints.map(p => p.sales)
+    },
+    {
+      name: 'Revenue',
+      data: chartPoints.map(p => p.revenue)
+    }
+  ];
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-transparent min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -300,7 +335,7 @@ export default function SalesReportPage() {
             onClick={handleExportPDF}
             disabled={isExporting}
             startIcon={isExporting ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
-            className="shadow-lg shadow-indigo-200"
+            className="shadow-lg shadow-brand-200"
           >
             {isExporting ? "Processing..." : "Export PDF"}
           </Button>
@@ -311,7 +346,7 @@ export default function SalesReportPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Gross Revenue", value: formatCurrency(reportData?.data.total_sales || 0), icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50", darkBg: "dark:bg-emerald-500/10", trend: "+12.5%", isUp: true },
-          { label: "Total Orders", value: reportData?.data.total_orders || 0, icon: ShoppingCart, color: "text-indigo-600", bg: "bg-indigo-50", darkBg: "dark:bg-indigo-500/10", trend: "+5.2%", isUp: true },
+          { label: "Total Orders", value: reportData?.data.total_orders || 0, icon: ShoppingCart, color: "text-brand-600", bg: "bg-brand-50", darkBg: "dark:bg-brand-500/10", trend: "+5.2%", isUp: true },
           { label: "Average Order", value: formatCurrency(reportData?.data.average_order || 0), icon: TrendingUp, color: "text-amber-600", bg: "bg-amber-50", darkBg: "dark:bg-amber-500/10", trend: "-2.4%", isUp: false },
           { label: "Active Customers", value: "1,284", icon: Users, color: "text-rose-600", bg: "bg-rose-50", darkBg: "dark:bg-rose-500/10", trend: "+8.1%", isUp: true },
         ].map((stat, i) => (
@@ -335,7 +370,7 @@ export default function SalesReportPage() {
 
       {/* Revenue Analytics Chart */}
       <div className="bg-white dark:bg-gray-900/40 dark:backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
-        <div className="px-6 py-5 border-b border-gray-50 dark:border-white/5 flex items-center justify-between">
+        <div className="px-6 py-5 border-b border-gray-50 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Revenue Analytics</h3>
             <p className="text-xs text-gray-400 font-medium">Daily performance tracking</p>
@@ -347,7 +382,7 @@ export default function SalesReportPage() {
                 onClick={() => handlePeriodChange(p.toLowerCase() as any)}
                 className={`px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
                   period === p.toLowerCase()
-                    ? 'bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                    ? 'bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm'
                     : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                 }`}
               >
@@ -374,21 +409,26 @@ export default function SalesReportPage() {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Transactions</h3>
               <p className="text-xs text-gray-400 font-medium italic text-emerald-400">Summary of latest sales performance</p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto">
                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search invoices..."
-                  className="pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none w-48 sm:w-64 transition-all"
+                  className="pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-brand-500 outline-none w-full sm:w-64 transition-all"
                   value={formik.values.search}
                   onChange={(e) => formik.setFieldValue("search", e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && formik.handleSubmit()}
                 />
               </div>
-              <Button onClick={() => formik.handleSubmit()} className="h-[42px] px-4 shadow-sm shadow-indigo-100/50">
-                <Filter size={16} />
-              </Button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Button onClick={() => formik.handleSubmit()} className="h-[42px] px-4 shadow-sm shadow-brand-100/50 flex-1 sm:flex-none">
+                  <Filter size={16} />
+                </Button>
+                <button onClick={() => formik.resetForm()} className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 h-[42px] text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 transition-colors flex-1 sm:flex-none">
+                  <RefreshCcw size={16} /> Reset
+                </button>
+              </div>
             </div>
           </div>
 
@@ -397,7 +437,7 @@ export default function SalesReportPage() {
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <select
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-gray-300 border-none rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none appearance-none cursor-pointer"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-gray-300 border-none rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-brand-500 outline-none appearance-none cursor-pointer"
                 value={formik.values.branch_id}
                 onChange={(e) => {
                   formik.setFieldValue("branch_id", e.target.value);
@@ -409,14 +449,15 @@ export default function SalesReportPage() {
                   <option key={b.id} value={b.id}>{b.name}</option>
                 ))}
               </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
 
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 flex items-center justify-center">
-                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-500"></div>
               </div>
               <select
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-gray-300 border-none rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none appearance-none cursor-pointer"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-gray-300 border-none rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-brand-500 outline-none appearance-none cursor-pointer"
                 value={formik.values.status}
                 onChange={(e) => {
                   formik.setFieldValue("status", e.target.value);
@@ -430,15 +471,18 @@ export default function SalesReportPage() {
                 <option value="CANCELLED">Cancelled</option>
                 <option value="REFUNDED">Refunded</option>
               </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
 
             <div className="relative md:col-span-2">
-              <CalenderIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400 z-10 pointer-events-none" />
-              <input
-                ref={datePickerRef}
-                placeholder="Select date range"
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-gray-300 border-none rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
-              />
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+              <div>
+                <input
+                  ref={datePickerRef}
+                  placeholder="Select date range"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-gray-300 border-none rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-brand-500 outline-none cursor-pointer"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -450,13 +494,13 @@ export default function SalesReportPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-white/5">
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Invoice ID</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Items</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Payment</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Amount</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Status</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Invoice ID</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Items</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Payment</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Amount</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-white/5">
@@ -467,8 +511,8 @@ export default function SalesReportPage() {
                 ) : (
                   transactions.map((sale: any) => (
                     <tr key={sale.id} className="hover:bg-gray-50/30 dark:hover:bg-white/5 transition-colors group">
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">{sale.order_number}</td>
-                      <td className="px-6 py-4 text-xs font-semibold text-gray-600 dark:text-gray-400">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">{sale.order_number}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-xs font-semibold text-gray-600 dark:text-gray-400">
                         {new Date(sale.created_at).toLocaleDateString('id-ID', {
                           day: '2-digit',
                           month: 'short',
@@ -477,13 +521,13 @@ export default function SalesReportPage() {
                           minute: '2-digit'
                         })}
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-800 dark:text-gray-300">{sale.customer_name}</td>
-                      <td className="px-6 py-4">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-800 dark:text-gray-300">{sale.customer_name}</td>
+                      <td className="whitespace-nowrap px-6 py-4">
                         <span className="text-xs font-bold bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md text-gray-600 dark:text-gray-400">{sale.items?.length || 0} items</span>
                       </td>
-                      <td className="px-6 py-4 text-xs font-bold text-gray-600 dark:text-gray-400">{sale.payment_method}</td>
-                      <td className="px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(sale.final_amount)}</td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-600 dark:text-gray-400">{sale.payment_method}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(sale.final_amount)}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-center">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight ${
                           sale.status === 'COMPLETED' || sale.status === 'PAID' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' :
                           sale.status === 'PENDING' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400' :
@@ -515,7 +559,7 @@ export default function SalesReportPage() {
                   formik.setFieldValue("page", 1);
                   formik.handleSubmit();
                 }}
-                className="h-7 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-2 text-xs text-gray-700 dark:text-gray-300 outline-none focus:border-indigo-300 font-bold"
+                className="h-7 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-2 text-xs text-gray-700 dark:text-gray-300 outline-none focus:border-brand-300 font-bold"
               >
                 {[5, 10, 25, 50].map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -525,7 +569,7 @@ export default function SalesReportPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1 justify-center sm:justify-end">
             <button
               onClick={() => {
                 formik.setFieldValue("page", 1);
@@ -569,7 +613,7 @@ export default function SalesReportPage() {
                   disabled={p === "..." || p === formik.values.page}
                   className={`flex h-7 min-w-[28px] items-center justify-center rounded-lg border text-xs font-bold transition-colors ${
                     p === formik.values.page
-                      ? "border-indigo-600 bg-indigo-600 text-white shadow-sm"
+                      ? "border-brand-600 bg-brand-600 text-white shadow-sm"
                       : p === "..."
                       ? "border-transparent text-gray-400 dark:text-gray-500 cursor-default"
                       : "border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-gray-700"

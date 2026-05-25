@@ -36,7 +36,7 @@ export default function LoyaltyPointsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -83,7 +83,7 @@ export default function LoyaltyPointsPage() {
               <TrendingUp size={20} />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider opacity-70">Current Earning Rate</p>
+              <p className="text-xs font-bold uppercase tracking-wider opacity-70">Current Earning Rate</p>
               <p className="text-sm font-bold">Rp {parseInt(config.earning_rate).toLocaleString()} spent = 1 Point earned</p>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function LoyaltyPointsPage() {
               <Gift size={20} />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider opacity-70">Redemption Value</p>
+              <p className="text-xs font-bold uppercase tracking-wider opacity-70">Redemption Value</p>
               <p className="text-sm font-bold">1 Point = Rp {parseInt(config.redemption_value).toLocaleString()} discount</p>
             </div>
           </div>

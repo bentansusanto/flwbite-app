@@ -102,6 +102,7 @@ const baseQueryWithReauth: BaseQueryFn<
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
+  keepUnusedDataFor: 300, // Extend cache to 5 minutes
   tagTypes: ["Product", "Category", "User", "Order", "Branch", "Supplier", "SupplierCategory", "PurchaseOrder", "PurchaseReceiving", "Stock", "StockTake", "ProductBatch", "StockMovement", "PosSession", "Customer", "Tax", "Promotion", "Tenant"], // Define common tags for caching
 
   endpoints: (builder) => ({}), // Endpoints will be injected from other files

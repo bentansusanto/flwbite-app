@@ -46,16 +46,27 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // If trying to access login/register with a valid token, redirect to dashboard
-  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
-  if (isPublicRoute && token) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
   // Teruskan request dengan informasi hostname di header agar aplikasi bisa baca
   const response = NextResponse.next();
   if (subdomain) {
     response.headers.set("x-tenant-subdomain", subdomain);
+  }
+
+  // 3. Logika RBAC Khusus (Role Based Access Control)
+  const role = request.cookies.get("flwbite_role")?.value;
+  
+  // Jika cashier mencoba mengakses root (dashboard), arahkan ke halaman POS
+  if (pathname === "/" && role === "cashier") {
+    return NextResponse.redirect(new URL("/orders/new", request.url));
+  }
+  
+  // Arahkan admin/owner dari halaman public login ke dashboard (atau halaman lain jika cashier)
+  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
+  if (isPublicRoute && token) {
+    if (role === "cashier") {
+      return NextResponse.redirect(new URL("/orders/new", request.url));
+    }
+    return NextResponse.redirect(new URL("/", request.url));
   }
   
   return response;

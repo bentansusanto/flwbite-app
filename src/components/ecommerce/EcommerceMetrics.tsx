@@ -17,28 +17,28 @@ export const EcommerceMetrics = () => {
     {
       label: "Revenue",
       value: formatCurrency(stats?.total_sales || 0),
-      icon: <DollarLineIcon className="text-gray-800 size-6 dark:text-white/90" />,
+      icon: <DollarLineIcon className="size-6 text-brand-600 dark:text-brand-400" />,
       trend: "+12.5%",
       isUp: true
     },
     {
       label: "Orders",
       value: (stats?.total_orders || 0).toLocaleString(),
-      icon: <BoxIconLine className="text-gray-800 size-6 dark:text-white/90" />,
+      icon: <BoxIconLine className="size-6 text-brand-600 dark:text-brand-400" />,
       trend: "+8.2%",
       isUp: true
     },
     {
       label: "Customers",
       value: (stats?.total_customers || 0).toLocaleString(),
-      icon: <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />,
+      icon: <GroupIcon className="size-6 text-brand-600 dark:text-brand-400" />,
       trend: "+11.0%",
       isUp: true
     },
     {
       label: "Avg. Order",
       value: formatCurrency(avgOrder),
-      icon: <ShootingStarIcon className="text-gray-800 size-6 dark:text-white/90" />,
+      icon: <ShootingStarIcon className="size-6 text-brand-600 dark:text-brand-400" />,
       trend: "+5.4%",
       isUp: true
     }
@@ -57,17 +57,17 @@ export const EcommerceMetrics = () => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
       {metrics.map((metric, index) => (
-        <div key={index} className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md md:p-6">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
+        <div key={index} className="rounded-3xl border border-slate-200/60 bg-white p-5 shadow-theme-sm hover:shadow-theme-md transition-all duration-300 hover:-translate-y-0.5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md md:p-6">
+          <div className="flex items-center justify-center w-12 h-12 bg-brand-50 rounded-xl dark:bg-brand-500/10">
             {metric.icon}
           </div>
 
           <div className="mt-5">
-            <span className="text-sm text-gray-500 dark:text-gray-400">
+            <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               {metric.label}
             </span>
             <div className="flex items-center justify-between gap-2 mt-2">
-              <h4 className="font-bold text-gray-800 text-title-sm dark:text-white/90 truncate">
+              <h4 className="font-bold text-gray-800 text-lg sm:text-xl dark:text-white/90 truncate">
                 {metric.value}
               </h4>
               <Badge color={metric.isUp ? "success" : "error"} className="shrink-0">

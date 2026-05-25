@@ -38,7 +38,7 @@ export default function RootLayout({
           <ThemeProvider>
             <SidebarProvider>
               <SessionManager />
-              <Toaster position="bottom-center" richColors />
+              <Toaster position="top-center" duration={2500} richColors />
               {children}
             </SidebarProvider>
           </ThemeProvider>

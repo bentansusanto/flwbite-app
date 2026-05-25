@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useGetStockMovementsByBranchQuery, useGetAllStockMovementsQuery } from "@/store/api/stockMovementApi";
 import { useGetBranchesQuery } from "@/store/api/branchApi";
 import { useAppSelector } from "@/store/hooks";
@@ -46,8 +46,20 @@ export const useStockMovements = () => {
       return matchesSearch && matchesType;
     });
   }, [movements, search, typeFilter]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedBranchId]);
+
+  const paginatedMovements = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredMovements.slice(start, start + pageSize);
+  }, [filteredMovements, currentPage, pageSize]);
 
   return {
+    currentPage, setCurrentPage, pageSize, setPageSize, paginatedMovements,
     selectedBranchId,
     setSelectedBranchId,
     search,

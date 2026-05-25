@@ -70,7 +70,7 @@ export const CheckoutModal = ({
               <div key={item.variant_id} className="flex justify-between items-start">
                 <div className="flex-1 pr-4">
                   <p className="text-[13px] font-bold text-gray-900 dark:text-white line-clamp-2">{item.name}</p>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                     {item.quantity} x {formatCurrency(item.price)}
                   </p>
                 </div>
@@ -110,7 +110,7 @@ export const CheckoutModal = ({
             )}
             <div className="flex justify-between items-center pt-5 mt-1 border-t border-gray-100 dark:border-gray-700">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Total Pay</span>
-              <span className="text-lg lg:text-xl font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(total)}</span>
+              <span className="text-lg lg:text-xl font-bold text-brand-600 dark:text-brand-400">{formatCurrency(total)}</span>
             </div>
           </div>
         </div>
@@ -128,7 +128,7 @@ export const CheckoutModal = ({
               onClick={() => setMethod("CASH")}
               className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
                 method === "CASH"
-                  ? "border-indigo-600 bg-indigo-50/30 text-indigo-600 dark:border-indigo-400 dark:bg-indigo-900/10 dark:text-indigo-400"
+                  ? "border-brand-600 bg-brand-50/30 text-brand-600 dark:border-brand-400 dark:bg-brand-900/10 dark:text-brand-400"
                   : "border-gray-100 dark:border-gray-800 text-gray-400 hover:border-gray-200"
               }`}
             >
@@ -139,7 +139,7 @@ export const CheckoutModal = ({
               onClick={() => setMethod("QRIS")}
               className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
                 method === "QRIS"
-                  ? "border-indigo-600 bg-indigo-50/30 text-indigo-600 dark:border-indigo-400 dark:bg-indigo-900/10 dark:text-indigo-400"
+                  ? "border-brand-600 bg-brand-50/30 text-brand-600 dark:border-brand-400 dark:bg-brand-900/10 dark:text-brand-400"
                   : "border-gray-100 dark:border-gray-800 text-gray-400 hover:border-gray-200"
               }`}
             >
@@ -158,7 +158,7 @@ export const CheckoutModal = ({
                     <span className="absolute left-5 top-1/2 -translate-y-1/2 text-lg font-bold text-gray-300">Rp</span>
                     <input
                       type="number"
-                      className="w-full pl-14 pr-6 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl font-bold text-lg lg:text-xl outline-none focus:ring-2 focus:ring-indigo-600 transition-all text-gray-900 dark:text-white"
+                      className="w-full pl-14 pr-6 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl font-bold text-lg lg:text-xl outline-none focus:ring-2 focus:ring-brand-600 transition-all text-gray-900 dark:text-white"
                       value={amountPaid}
                       onChange={(e) => setAmountPaid(Number(e.target.value))}
                       autoFocus
@@ -174,7 +174,7 @@ export const CheckoutModal = ({
                       onClick={() => setAmountPaid(val)}
                       className={`py-2 px-1 rounded-lg text-[11px] font-bold transition-all border ${
                         amountPaid === val
-                          ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
+                          ? "bg-brand-600 text-white border-brand-600"
                           : "bg-white dark:bg-gray-800 text-gray-600 border-gray-100 dark:border-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -198,7 +198,7 @@ export const CheckoutModal = ({
             ) : (
               <div className="h-full flex flex-col items-center justify-center p-8 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 text-center space-y-4">
                 <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm border border-gray-100 dark:border-gray-700">
-                  <QrCode className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                  <QrCode className="w-6 h-6 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-gray-900 dark:text-white">Scan QRIS Static</p>
@@ -210,18 +210,18 @@ export const CheckoutModal = ({
             )}
           </div>
 
-          <div className="flex gap-4 pt-4">
+          <div className="flex gap-3 pt-4">
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1 font-bold h-11 text-xs lg:text-sm"
+              className="flex-1 font-bold h-12 text-sm text-gray-500 border-gray-200"
             >
               Batal
             </Button>
             <Button
               onClick={() => onConfirm(method, amountPaid)}
               disabled={isLoading || (method === "CASH" && amountPaid < total)}
-              className="flex-[2] font-bold h-11 text-xs lg:text-sm bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-100"
+              className="flex-[2] font-bold h-12 text-sm bg-brand-600 hover:bg-brand-700 text-white"
             >
               {isLoading ? "Wait..." : "Confirm & Pay"}
             </Button>

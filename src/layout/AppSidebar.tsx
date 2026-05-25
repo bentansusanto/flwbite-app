@@ -198,7 +198,7 @@ const AppSidebar: React.FC = () => {
       }
       link.href = tenant.logo;
     }
-  }, [tenant?.logo]);
+  }, [tenant?.logo, pathname]);
 
   useEffect(() => {
     // Client-side only
@@ -372,7 +372,7 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-[#06060a] dark:border-white/5 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white/95 backdrop-blur-xl dark:bg-[#06060a]/95 dark:border-white/5 text-gray-900 h-[calc(100vh-4rem)] pb-20 lg:pb-0 lg:h-screen transition-all duration-300 ease-in-out z-50 border-r border-slate-200/60 shadow-theme-sm 
         ${
           isExpanded || isMobileOpen
             ? "w-[290px]"

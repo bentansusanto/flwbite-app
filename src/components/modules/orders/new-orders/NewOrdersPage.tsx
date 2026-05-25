@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Search, ShoppingCart, Trash2, Plus, Minus, ChevronRight, Filter, Power, Package, UserPlus, Users } from "lucide-react";
+import { Search, ShoppingCart, Trash2, Plus, Minus, ChevronRight, Filter, Power, Package, UserPlus, Users, LayoutGrid, ShoppingBag, Utensils, Star } from "lucide-react";
 import Button from "@/components/ui/button/Button";
 import { PosSessionGuard } from "../pos-session/PosSessionGuard";
 import { CloseSessionModal } from "../pos-session/CloseSessionModal";
@@ -31,7 +31,7 @@ interface CartItem {
 }
 
 export const NewOrdersPage = () => {
-  const [selectedBusinessType, setSelectedBusinessType] = useState<"all" | "retail" | "f&b" | "service">("all");
+  const [selectedBusinessType, setSelectedBusinessType] = useState<"retail" | "f&b" | "service" | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("All Items");
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -52,6 +52,7 @@ export const NewOrdersPage = () => {
 
   const [customerName, setCustomerName] = useState("");
   const [tableNumber, setTableNumber] = useState("");
+  const [orderType, setOrderType] = useState<"DINE_IN" | "TAKEAWAY" | "DELIVERY">("DINE_IN");
   const [notes, setNotes] = useState("");
 
   const role = Cookies.get("flwbite_role");
@@ -126,7 +127,6 @@ export const NewOrdersPage = () => {
 
   // Get categories that actually have products in them (and filter by business type if selected)
   const availableCategories = categoriesList.filter((cat: any) => {
-    if (selectedBusinessType === "all") return true;
     return products.some((p: any) => p.category_id === cat.id && p.type === selectedBusinessType);
   });
 
@@ -134,7 +134,7 @@ export const NewOrdersPage = () => {
 
   const filteredProducts = products.filter((product: any) => {
     // 1. Business Type Filter
-    const matchesBusinessType = selectedBusinessType === "all" || product.type === selectedBusinessType;
+    const matchesBusinessType = product.type === selectedBusinessType;
 
     // 2. Category Filter
     const selectedCatObj = categoriesList.find((c: any) => c.name === selectedCategory);
@@ -153,17 +153,23 @@ export const NewOrdersPage = () => {
   });
 
   const handleProductClick = (product: any) => {
-    if (product.variants?.length === 1) {
-      addToCart(product, product.variants[0]);
-    } else if (product.variants?.length > 1) {
-      setSelectedProduct(product);
-      setIsVariantModalOpen(true);
-    } else {
-      toast.error("Produk ini tidak memiliki varian.");
-    }
+    addToCart(product);
   };
 
-  const addToCart = (product: any, variant: any) => {
+  const isFnBMode = selectedBusinessType === "f&b" || cart.some(item => products.find((p: any) => p.id === item.id)?.type === "f&b");
+
+  const addToCart = (product: any, variant: any = null) => {
+    if (!variant && product.variants?.length === 1) {
+      variant = product.variants[0];
+    } else if (!variant && product.variants?.length > 1) {
+      setSelectedProduct(product);
+      setIsVariantModalOpen(true);
+      return;
+    } else if (!variant) {
+      toast.error("Produk ini tidak memiliki varian.");
+      return;
+    }
+
     setCart(prev => {
       const existing = prev.find(item => item.variant_id === variant.id);
       if (existing) {
@@ -194,22 +200,11 @@ export const NewOrdersPage = () => {
     }));
   };
   const getOrderType = () => {
-    let defaultType = selectedBusinessType === "all" ? "RETAIL" : selectedBusinessType.toUpperCase();
-    if (cart.length === 0) return defaultType;
-
-    const cartProductTypes = cart.map(item => {
-      const prod = products.find((p: any) => p.id === item.id);
-      return prod?.type?.toUpperCase();
-    }).filter(Boolean);
-
-    if (cartProductTypes.length === 0) return defaultType;
-
-    if (cartProductTypes.includes("SERVICE")) return "SERVICE";
-    if (cartProductTypes.includes("FNB") || cartProductTypes.includes("F&B")) return "FNB";
-    return cartProductTypes[0] || "RETAIL";
+    if (selectedBusinessType === "f&b") {
+      return orderType; // DINE_IN, TAKEAWAY, DELIVERY
+    }
+    return selectedBusinessType?.toUpperCase() || "RETAIL";
   };
-
-  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   const handleCheckoutConfirm = async (paymentMethod: "CASH" | "QRIS", amountPaid: number) => {
     if (!branchId) {
@@ -276,7 +271,6 @@ export const NewOrdersPage = () => {
       setCustomerName("");
       setTableNumber("");
       setNotes("");
-      setIsSaveModalOpen(false);
       setIsDrawerOpen(false);
     } catch (err: any) {
       toast.error(err?.data?.message || "Gagal menyimpan pesanan.");
@@ -520,7 +514,9 @@ export const NewOrdersPage = () => {
     <div className="space-y-4">
       {cart.length === 0 ? (
         <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
-          <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-2xl">🛒</div>
+          <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center border-8 border-white dark:border-gray-900 shadow-sm">
+            <ShoppingCart className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+          </div>
           <div>
             <p className="text-gray-900 dark:text-white font-semibold">Keranjang Kosong</p>
             <p className="text-gray-400 text-sm">Pilih produk untuk mulai memesan</p>
@@ -562,16 +558,80 @@ export const NewOrdersPage = () => {
     </div>
   );
 
+  if (selectedBusinessType === null) {
+    return (
+      <PosSessionGuard>
+        <div className="min-h-screen bg-gray-50/50 dark:bg-gray-950 flex flex-col items-center justify-center p-6">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3">Pilih Mode Bisnis</h1>
+            <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+              Sistem akan menyesuaikan fitur dan daftar produk sesuai dengan tipe bisnis yang Anda pilih.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
+            {[
+              { id: "retail", label: "Retail", icon: ShoppingBag, color: "text-brand-500 bg-brand-50 dark:bg-brand-500/10", desc: "Penjualan barang fisik, tanpa nomor meja." },
+              { id: "f&b", label: "Food & Beverage", icon: Utensils, color: "text-brand-500 bg-brand-50 dark:bg-brand-500/10", desc: "Manajemen restoran, cafe, nomor meja & pesanan." },
+              { id: "service", label: "Jasa", icon: Star, color: "text-brand-500 bg-brand-50 dark:bg-brand-500/10", desc: "Pelayanan jasa, konsultasi, dan servis." }
+            ].map((type) => {
+              const Icon = type.icon;
+              return (
+                <button
+                  key={type.id}
+                  onClick={() => setSelectedBusinessType(type.id as any)}
+                  className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-8 text-center hover:border-brand-500 hover:shadow-2xl hover:shadow-brand-500/10 transition-all group flex flex-col items-center"
+                >
+                  <div className={`w-20 h-20 ${type.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-brand-500 group-hover:text-white transition-all shadow-sm`}>
+                    <Icon className="w-10 h-10" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{type.label}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{type.desc}</p>
+                </button>
+              );
+            })}
+          </div>
+          <div className="mt-16">
+            <button
+              onClick={() => setIsCloseSessionOpen(true)}
+              className="px-6 py-3 border border-red-200 text-red-600 dark:border-red-900/30 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl font-bold flex items-center gap-2 transition-all"
+            >
+              <Power className="w-5 h-5" />
+              Tutup Sesi Kasir
+            </button>
+          </div>
+        </div>
+
+        {isCloseSessionOpen && (
+          <CloseSessionModal
+            isOpen={isCloseSessionOpen}
+            onClose={() => setIsCloseSessionOpen(false)}
+          />
+        )}
+      </PosSessionGuard>
+    );
+  }
+
   return (
     <PosSessionGuard>
-    <div className="bg-gray-50/50 dark:bg-[#06060a] p-6 h-screen overflow-hidden">
-      <div className="flex flex-col lg:flex-row h-full gap-6 overflow-hidden pb-20 lg:pb-0">
+    <div className="bg-transparent p-0 lg:p-6 h-screen overflow-hidden">
+      <div className="flex flex-col lg:flex-row h-full gap-0 lg:gap-6 overflow-hidden pb-36 lg:pb-0">
       {/* Left Side: Product Selection */}
-        <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-gray-900/40 dark:backdrop-blur-md rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-gray-900/40 dark:backdrop-blur-md rounded-none lg:rounded-3xl border-0 lg:border border-gray-200 dark:border-white/5 overflow-hidden">
         {/* Header with Close Session */}
-        <div className="px-6 pt-6 pb-2 flex justify-between items-center">
+        <div className="px-4 pt-4 lg:px-6 lg:pt-6 pb-2 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">Point of Sale</h2>
+            <button
+              onClick={() => {
+                setSelectedBusinessType(null);
+                setCart([]);
+                setOrderType("DINE_IN");
+              }}
+              className="p-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+              <LayoutGrid className="w-5 h-5" />
+              <span className="hidden lg:inline text-sm font-bold">Ganti Mode</span>
+            </button>
+            <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white ml-2">Point of Sale</h2>
             <button
               onClick={() => setIsQueueModalOpen(true)}
               className="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 transition-colors relative group"
@@ -585,57 +645,33 @@ export const NewOrdersPage = () => {
               <span className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Antrian Pesanan</span>
             </button>
           </div>
-          <Button
-            variant="outline"
+          <button
             onClick={() => setIsCloseSessionOpen(true)}
-            className="border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 px-3 lg:px-4 py-1.5 lg:py-2 h-auto text-xs lg:text-sm flex items-center gap-2"
+            className="flex items-center gap-2 px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-red-600 dark:text-red-400 bg-white dark:bg-gray-900 hover:border-red-200 dark:hover:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-500/10 text-xs lg:text-sm font-medium transition-all"
           >
             <Power className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
             <span className="hidden sm:inline">Tutup Sesi</span>
             <span className="sm:hidden">Keluar</span>
-          </Button>
+          </button>
         </div>
 
         {/* Search and Filters */}
-        <div className="p-6 border-b border-gray-100 dark:border-gray-800 space-y-5">
-          {/* Business Type Tabs */}
-          <div className="flex bg-gray-100/50 dark:bg-gray-950 p-1 rounded-2xl w-fit border border-gray-100 dark:border-white/5">
-            {[
-              { id: "all", label: "Semua", icon: "💎" },
-              { id: "retail", label: "Retail", icon: "📦" },
-              { id: "f&b", label: "F&B", icon: "🍴" },
-              { id: "service", label: "Jasa", icon: "⭐" },
-            ].map((type) => (
-              <button
-                key={type.id}
-                onClick={() => {
-                  setSelectedBusinessType(type.id as any);
-                  setSelectedCategory("All Items"); // Reset category when switching business type
-                }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                  selectedBusinessType === type.id
-                    ? "bg-white dark:bg-gray-900 text-indigo-600 shadow-sm ring-1 ring-gray-100 dark:ring-white/10"
-                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                }`}
-              >
-                <span>{type.icon}</span>
-                {type.label}
-              </button>
-            ))}
-          </div>
+        <div className="p-4 lg:p-6 border-b border-gray-100 dark:border-gray-800 space-y-4 lg:space-y-5">
 
           <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder={`Cari di ${selectedBusinessType === 'all' ? 'semua produk' : selectedBusinessType}...`}
+                placeholder={`Cari di semua produk...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-50/50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-transparent dark:border-white/5 rounded-2xl focus:ring-2 focus:ring-indigo-600 transition-all text-sm"
+                className="w-full pl-12 pr-4 py-3 bg-gray-50/50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-transparent dark:border-white/5 rounded-2xl focus:ring-2 focus:ring-brand-600 transition-all text-sm"
               />
             </div>
           </div>
+
+
 
           {/* Categories Horizontal Scroll */}
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -645,7 +681,7 @@ export const NewOrdersPage = () => {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
                   selectedCategory === cat
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-brand-600 text-white"
                     : "bg-gray-50 text-gray-500 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-800 dark:text-gray-400"
                 }`}
               >
@@ -656,10 +692,10 @@ export const NewOrdersPage = () => {
         </div>
 
         {/* Product Grid */}
-        <div className="flex-1 overflow-y-auto p-4 lg:p-6 no-scrollbar">
+        <div className="flex-1 overflow-y-auto p-2 lg:p-6 no-scrollbar">
           {isLoadingProducts ? (
             <div className="h-full flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-gray-400 py-10">
@@ -668,38 +704,33 @@ export const NewOrdersPage = () => {
               <p className="text-xs">Coba ubah kategori atau filter tipe bisnis</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 lg:gap-4">
               {filteredProducts.map((product: any) => (
                 <div
                   key={product.id}
                   onClick={() => handleProductClick(product)}
-                  className="group flex flex-col bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-2xl lg:rounded-3xl p-3 lg:p-4 cursor-pointer hover:border-indigo-600 dark:hover:border-indigo-500/50 transition-all relative overflow-hidden"
+                  className="group flex flex-col bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-2xl lg:rounded-3xl p-2 lg:p-4 cursor-pointer hover:border-brand-600 dark:hover:border-brand-500/50 transition-all relative overflow-hidden"
                 >
-                  <div className="aspect-square bg-gray-50 dark:bg-gray-800 rounded-xl lg:rounded-2xl flex items-center justify-center text-4xl mb-3 lg:mb-4 group-hover:scale-105 transition-transform overflow-hidden">
+                  <div className={`aspect-square rounded-xl lg:rounded-2xl flex items-center justify-center text-4xl mb-3 lg:mb-4 group-hover:scale-105 transition-transform overflow-hidden ${!product.image ? 'bg-emerald-800 dark:bg-emerald-900' : 'bg-gray-50 dark:bg-gray-800'}`}>
                     {product.image ? (
                       <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     ) : (
-                      "📦"
+                      <Package className="w-10 h-10 text-white opacity-80" />
                     )}
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-bold text-gray-900 dark:text-white text-[13px] lg:text-sm line-clamp-1">{product.name}</h4>
-                      <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider border transition-colors ${
-                        product.type === 'f&b' ? 'bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20' :
-                        product.type === 'service' ? 'bg-purple-50 text-purple-600 border-purple-100 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20' :
-                        'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20'
-                      }`}>
-                        {product.type === 'f&b' ? 'F&B' : product.type === 'service' ? 'Jasa' : 'Retail'}
-                      </span>
+                      <h4 className="font-bold text-gray-900 dark:text-white text-[13px] lg:text-sm line-clamp-2">{product.name}</h4>
                     </div>
-                    <p className="text-[11px] font-medium text-gray-400">{product.category?.name || "Uncategorized"}</p>
+                    {product.category?.name && (
+                      <p className="text-[11px] font-medium text-gray-400">{product.category.name}</p>
+                    )}
                     <div className="flex items-center justify-between pt-1 lg:pt-2">
-                      <span className="font-bold text-sm lg:text-base text-indigo-600">
+                      <span className="font-bold text-sm lg:text-base text-brand-600">
                         {formatCurrency(product.variants?.[0]?.price || 0)}
                       </span>
-                      <div className="p-1.5 lg:p-2 bg-indigo-600 text-white rounded-lg opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                      <div className="p-1.5 lg:p-2 bg-brand-600 text-white rounded-lg opacity-0 lg:group-hover:opacity-100 transition-opacity">
                         <Plus className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                       </div>
                     </div>
@@ -726,31 +757,52 @@ export const NewOrdersPage = () => {
             {!selectedCustomer ? (
               <button
                 onClick={() => setIsCustomerModalOpen(true)}
-                className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-2xl text-gray-400 hover:text-indigo-600 hover:border-indigo-100 dark:hover:border-indigo-900/30 transition-all group"
+                className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-2xl text-gray-400 hover:text-brand-600 hover:border-brand-100 dark:hover:border-brand-900/30 transition-all group"
               >
                 <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 <span className="text-xs font-bold uppercase tracking-wider">Tambah Pelanggan</span>
               </button>
             ) : (
-              <div className="flex items-center justify-between p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-900/30 rounded-2xl">
+              <div className="flex items-center justify-between p-3 bg-brand-50 dark:bg-brand-900/20 border border-brand-100 dark:border-brand-900/30 rounded-2xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
+                  <div className="w-8 h-8 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
                     {selectedCustomer.name.charAt(0)}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-indigo-900 dark:text-indigo-200 truncate">{selectedCustomer.name}</p>
-                    <p className="text-[10px] text-indigo-500 dark:text-indigo-400">Pelanggan Setia</p>
+                    <p className="text-xs font-bold text-brand-900 dark:text-brand-200 truncate">{selectedCustomer.name}</p>
+                    <p className="text-[10px] text-brand-500 dark:text-brand-400">Pelanggan Setia</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedCustomer(null)}
-                  className="p-1.5 text-indigo-400 dark:text-indigo-500 hover:text-red-500 transition-colors"
+                  className="p-1.5 text-brand-400 dark:text-brand-500 hover:text-red-500 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             )}
           </div>
+
+          {/* Order Type & Table Selection */}
+          {isFnBMode && (
+            <div className="pt-1 space-y-3">
+              <div className="flex bg-gray-100/50 dark:bg-gray-800/50 p-1 rounded-xl border border-gray-100 dark:border-white/5">
+                <button onClick={() => setOrderType("DINE_IN")} className={`flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all ${orderType === "DINE_IN" ? "bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm ring-1 ring-gray-200/50 dark:ring-white/10" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"}`}>Dine In</button>
+                <button onClick={() => setOrderType("TAKEAWAY")} className={`flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all ${orderType === "TAKEAWAY" ? "bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm ring-1 ring-gray-200/50 dark:ring-white/10" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"}`}>Takeaway</button>
+                <button onClick={() => setOrderType("DELIVERY")} className={`flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all ${orderType === "DELIVERY" ? "bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm ring-1 ring-gray-200/50 dark:ring-white/10" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"}`}>Delivery</button>
+              </div>
+              
+              {orderType === "DINE_IN" && (
+                <input
+                  type="text"
+                  placeholder="Nomor Meja (Contoh: 12)"
+                  value={tableNumber}
+                  onChange={(e) => setTableNumber(e.target.value)}
+                  className="w-full px-3 py-2 text-xs bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-1 focus:ring-brand-600 transition-all outline-none dark:text-white dark:placeholder-gray-500"
+                />
+              )}
+            </div>
+          )}
           {/* Active Promos & Taxes Quick View Pills */}
           <div className="flex gap-2 pt-1">
             <button
@@ -761,7 +813,7 @@ export const NewOrdersPage = () => {
             </button>
             <button
               onClick={() => setIsTaxListModalOpen(true)}
-              className="flex-1 py-2 px-3 bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-100/50 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all border border-indigo-100 dark:border-indigo-900/30"
+              className="flex-1 py-2 px-3 bg-brand-50/50 dark:bg-brand-950/20 text-brand-700 dark:text-brand-400 hover:bg-brand-100/50 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all border border-brand-100 dark:border-brand-900/30"
             >
               📄 Pajak Aktif ({activeTaxes.length})
             </button>
@@ -779,7 +831,7 @@ export const NewOrdersPage = () => {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Tambahkan catatan di sini..."
-              className="w-full p-3 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-xs text-gray-600 dark:text-gray-400 resize-none h-20 focus:ring-1 focus:ring-indigo-600 transition-all"
+              className="w-full p-3 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-xs text-gray-600 dark:text-gray-400 resize-none h-20 focus:ring-1 focus:ring-brand-600 transition-all"
             />
           </div>
           <div className="space-y-2">
@@ -808,21 +860,21 @@ export const NewOrdersPage = () => {
             )}
             <div className="flex justify-between text-lg pt-2 border-t border-gray-200 dark:border-gray-700">
               <span className="font-bold text-gray-900 dark:text-white">Total</span>
-              <span className="font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(total)}</span>
+              <span className="font-bold text-brand-600 dark:text-brand-400">{formatCurrency(total)}</span>
             </div>
           </div>
           <div className="flex gap-3">
             <Button
               variant="outline"
-              onClick={() => setIsSaveModalOpen(true)}
-              disabled={cart.length === 0}
+              onClick={handleSaveOrder}
+              disabled={cart.length === 0 || isCreating}
               className="flex-1 h-14 text-sm font-bold border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-2xl"
             >
-              Simpan
+              {isCreating ? "Menyimpan..." : "Simpan Pesanan"}
             </Button>
             <Button
               onClick={() => handlePayButtonClick(false)}
-              className="flex-[2] h-14 text-lg font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-lg shadow-indigo-500/20"
+              className="flex-[2] h-14 text-lg font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-2xl"
             >
               Bayar <ChevronRight className="ml-1 w-5 h-5" />
             </Button>
@@ -830,26 +882,24 @@ export const NewOrdersPage = () => {
         </div>
       </div>
 
-      {/* Mobile Checkout Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-[100]">
+      <div className="lg:hidden fixed bottom-16 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-[90]">
         <div className="flex items-center justify-between gap-3">
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate">Total Bayar</p>
-            <p className="text-lg font-bold text-indigo-600 truncate">{formatCurrency(total)}</p>
+            <p className="text-lg font-bold text-brand-600 truncate">{formatCurrency(total)}</p>
           </div>
           <div className="flex-[2] flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setIsSaveModalOpen(true)}
-              disabled={cart.length === 0}
-              className="w-12 h-12 p-0 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-xl flex items-center justify-center"
+            <button
+              onClick={handleSaveOrder}
+              disabled={cart.length === 0 || isCreating}
+              className="w-12 h-12 shrink-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <Package className="w-5 h-5" />
-            </Button>
+              <Package className="w-6 h-6" />
+            </button>
             <Button
               onClick={() => setIsDrawerOpen(true)}
               disabled={cart.length === 0}
-              className="flex-1 h-12 font-bold bg-indigo-600 text-white rounded-xl flex items-center justify-center gap-2"
+              className="flex-1 h-12 font-bold bg-brand-600 text-white rounded-xl flex items-center justify-center gap-2"
             >
               <ShoppingCart className="w-5 h-5" />
               Selesaikan ({cart.length})
@@ -870,31 +920,52 @@ export const NewOrdersPage = () => {
             {!selectedCustomer ? (
               <button
                 onClick={() => setIsCustomerModalOpen(true)}
-                className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-2xl text-gray-400"
+                className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-brand-200 dark:border-brand-900/30 bg-brand-50/50 dark:bg-brand-950/20 text-brand-600 dark:text-brand-400 rounded-2xl hover:bg-brand-100/50 dark:hover:bg-brand-900/40 transition-colors group"
               >
-                <UserPlus className="w-5 h-5" />
+                <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 <span className="text-xs font-bold uppercase tracking-wider">Tambah Pelanggan</span>
               </button>
             ) : (
-              <div className="flex items-center justify-between p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-900/30 rounded-2xl">
+              <div className="flex items-center justify-between p-3 bg-brand-50 dark:bg-brand-900/20 border border-brand-100 dark:border-brand-900/30 rounded-2xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
+                  <div className="w-8 h-8 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
                     {selectedCustomer.name.charAt(0)}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-indigo-900 dark:text-indigo-200 truncate">{selectedCustomer.name}</p>
-                    <p className="text-[10px] text-indigo-400">Pelanggan Setia</p>
+                    <p className="text-xs font-bold text-brand-900 dark:text-brand-200 truncate">{selectedCustomer.name}</p>
+                    <p className="text-[10px] text-brand-400">Pelanggan Setia</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedCustomer(null)}
-                  className="p-1.5 text-indigo-400"
+                  className="p-1.5 text-brand-400"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             )}
           </div>
+
+          {/* Order Type & Table Selection Mobile */}
+          {isFnBMode && (
+            <div className="mb-6 space-y-3">
+              <div className="flex bg-gray-100/50 dark:bg-gray-800/50 p-1 rounded-xl border border-gray-100 dark:border-white/5">
+                <button onClick={() => setOrderType("DINE_IN")} className={`flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all ${orderType === "DINE_IN" ? "bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm ring-1 ring-gray-200/50 dark:ring-white/10" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"}`}>Dine In</button>
+                <button onClick={() => setOrderType("TAKEAWAY")} className={`flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all ${orderType === "TAKEAWAY" ? "bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm ring-1 ring-gray-200/50 dark:ring-white/10" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"}`}>Takeaway</button>
+                <button onClick={() => setOrderType("DELIVERY")} className={`flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all ${orderType === "DELIVERY" ? "bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm ring-1 ring-gray-200/50 dark:ring-white/10" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"}`}>Delivery</button>
+              </div>
+              
+              {orderType === "DINE_IN" && (
+                <input
+                  type="text"
+                  placeholder="Nomor Meja (Contoh: 12)"
+                  value={tableNumber}
+                  onChange={(e) => setTableNumber(e.target.value)}
+                  className="w-full px-3 py-2 text-xs bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-1 focus:ring-brand-600 transition-all outline-none dark:text-white dark:placeholder-gray-500"
+                />
+              )}
+            </div>
+          )}
 
           <div className="flex-1">
             <CartItemsList />
@@ -905,7 +976,7 @@ export const NewOrdersPage = () => {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Tambahkan catatan di sini..."
-                className="w-full p-3 bg-gray-50 dark:bg-gray-800/50 border-none rounded-xl text-xs text-gray-600 dark:text-gray-400 resize-none h-20 focus:ring-1 focus:ring-indigo-600 transition-all"
+                className="w-full p-3 bg-gray-50 dark:bg-gray-800/50 border-none rounded-xl text-xs text-gray-600 dark:text-gray-400 resize-none h-20 focus:ring-1 focus:ring-brand-600 transition-all"
               />
             </div>
           </div>
@@ -937,7 +1008,7 @@ export const NewOrdersPage = () => {
               )}
               <div className="flex justify-between text-xl font-bold pt-4">
                 <span>Total</span>
-                <span className="text-indigo-600">{formatCurrency(total)}</span>
+                <span className="text-brand-600">{formatCurrency(total)}</span>
               </div>
             </div>
 
@@ -954,7 +1025,7 @@ export const NewOrdersPage = () => {
               </Button>
               <Button
                 onClick={() => handlePayButtonClick(true)}
-                className="flex-[2] h-14 font-bold bg-indigo-600 text-white rounded-2xl shadow-xl shadow-indigo-100"
+                className="flex-[2] h-14 font-bold bg-brand-600 text-white rounded-2xl"
               >
                 Bayar Sekarang <ChevronRight className="ml-1 w-5 h-5" />
               </Button>
@@ -963,59 +1034,7 @@ export const NewOrdersPage = () => {
         </div>
       </Drawer>
 
-      {/* Save Order Modal */}
-      <Modal
-        isOpen={isSaveModalOpen}
-        onClose={() => setIsSaveModalOpen(false)}
-        title="Simpan Pesanan"
-        className="max-w-md mx-auto"
-      >
-        <div className="p-6 space-y-4">
-          <p className="text-sm text-gray-500">
-            Berikan identitas untuk pesanan ini agar mudah ditemukan kembali di daftar antrian.
-          </p>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Nama Pelanggan</label>
-              <input
-                type="text"
-                placeholder="e.g. Budi, Meja 5, dsb."
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-600 transition-all text-sm"
-              />
-            </div>
-            {selectedBusinessType === "f&b" && (
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Nomor Meja</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 01, 12, A5"
-                  value={tableNumber}
-                  onChange={(e) => setTableNumber(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-600 transition-all text-sm"
-                />
-              </div>
-            )}
-          </div>
-          <div className="flex gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsSaveModalOpen(false)}
-              className="flex-1 h-12 font-bold rounded-xl"
-            >
-              Batal
-            </Button>
-            <Button
-              onClick={handleSaveOrder}
-              disabled={isCreating}
-              className="flex-1 h-12 font-bold bg-indigo-600 text-white rounded-xl"
-            >
-              {isCreating ? "Menyimpan..." : "Konfirmasi Simpan"}
-            </Button>
-          </div>
-        </div>
-      </Modal>
+
 
       {isVariantModalOpen && (
         <VariantSelectionModal
@@ -1133,7 +1152,7 @@ export const NewOrdersPage = () => {
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{promo.description}</p>
                       </div>
                       {promo.is_stackable && (
-                        <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold rounded-lg uppercase">
+                        <span className="px-2 py-0.5 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 text-[10px] font-bold rounded-lg uppercase">
                           Stackable
                         </span>
                       )}
@@ -1183,7 +1202,7 @@ export const NewOrdersPage = () => {
                         return (
                           <div key={idx} className="p-2.5 bg-gray-50 dark:bg-gray-900/50 rounded-xl text-xs text-gray-600 dark:text-gray-300 flex items-center justify-between">
                             <div>
-                              <span className="font-bold text-indigo-600 dark:text-indigo-400">{rule.condition_type === "MIN_SPEND" ? "Belanja" : rule.condition_type === "MIN_QTY" ? "Jumlah" : "Syarat"}: </span>
+                              <span className="font-bold text-brand-600 dark:text-brand-400">{rule.condition_type === "MIN_SPEND" ? "Belanja" : rule.condition_type === "MIN_QTY" ? "Jumlah" : "Syarat"}: </span>
                               <span className="font-medium text-gray-700 dark:text-gray-200">{ruleCondText}</span>
                             </div>
                             <div className="font-bold text-emerald-600 dark:text-emerald-400">
@@ -1224,7 +1243,7 @@ export const NewOrdersPage = () => {
                 );
               })
             )}
-            <Button onClick={() => setIsPromoListModalOpen(false)} className="w-full mt-4 h-12 bg-indigo-600 text-white rounded-xl">
+            <Button onClick={() => setIsPromoListModalOpen(false)} className="w-full mt-4 h-12 bg-brand-600 text-white rounded-xl">
               Tutup
             </Button>
           </div>
@@ -1253,7 +1272,7 @@ export const NewOrdersPage = () => {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-gray-900 dark:text-white text-sm">{t.name}</span>
-                        <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 text-[10px] font-bold rounded-lg">
+                        <span className="px-2 py-0.5 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 text-[10px] font-bold rounded-lg">
                           {t.value}%
                         </span>
                       </div>
@@ -1272,12 +1291,12 @@ export const NewOrdersPage = () => {
             
             <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-2xl flex justify-between items-center text-xs font-semibold text-gray-600 dark:text-gray-400 mt-2">
               <span>Total Nilai Pajak Terhitung:</span>
-              <span className="font-bold text-sm text-indigo-600 dark:text-indigo-400">
+              <span className="font-bold text-sm text-brand-600 dark:text-brand-400">
                 {formatCurrency(totalTax)}
               </span>
             </div>
             
-            <Button onClick={() => setIsTaxListModalOpen(false)} className="w-full mt-4 h-12 bg-indigo-600 text-white rounded-xl">
+            <Button onClick={() => setIsTaxListModalOpen(false)} className="w-full mt-4 h-12 bg-brand-600 text-white rounded-xl">
               Tutup
             </Button>
           </div>

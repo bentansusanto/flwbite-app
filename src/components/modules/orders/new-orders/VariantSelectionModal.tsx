@@ -53,11 +53,11 @@ export const VariantSelectionModal = ({
     >
       <div className="p-6 dark:bg-gray-900">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-3xl overflow-hidden border border-gray-100 dark:border-gray-800">
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl overflow-hidden border border-gray-100 dark:border-gray-800 ${product.image ? 'bg-gray-50 dark:bg-gray-800' : 'bg-emerald-800 dark:bg-emerald-900 text-white'}`}>
             {product.image ? (
               <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
             ) : (
-              "📦"
+              <Package className="w-8 h-8 text-white opacity-80" />
             )}
           </div>
           <div>
@@ -87,7 +87,7 @@ export const VariantSelectionModal = ({
               >
                 <div className="text-left">
                   <p className={`text-sm font-bold transition-colors ${
-                    isOutOfStock ? "text-gray-400" : "text-gray-900 dark:text-white group-hover:text-indigo-600"
+                    isOutOfStock ? "text-gray-400" : "text-gray-900 dark:text-white group-hover:text-brand-600"
                   }`}>
                     {variant.name}
                   </p>
@@ -101,12 +101,12 @@ export const VariantSelectionModal = ({
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`text-sm font-bold ${
-                    isOutOfStock ? "text-gray-300" : "text-indigo-600 dark:text-indigo-400"
+                    isOutOfStock ? "text-gray-300" : "text-brand-600 dark:text-brand-400"
                   }`}>
                     {formatCurrency(variant.price)}
                   </span>
                   {!isOutOfStock && (
-                    <div className="p-1.5 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                    <div className="p-1.5 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 group-hover:bg-brand-600 group-hover:text-white transition-all">
                       <ChevronRight className="w-4 h-4" />
                     </div>
                   )}

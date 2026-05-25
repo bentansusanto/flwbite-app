@@ -41,7 +41,7 @@ export default function TaxesPage() {
   }, [taxes, search]);
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -97,7 +97,7 @@ export default function TaxesPage() {
               <div className="mt-4">
                 <div className="flex items-center gap-2">
                   <h4 className="font-bold text-gray-800 dark:text-white/90">{tax.name}</h4>
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
                     tax.is_active ? "bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-400" : "bg-gray-100 text-gray-500 dark:bg-gray-850 dark:text-gray-400"
                   }`}>
                     {tax.is_active ? "Active" : "Inactive"}
@@ -122,7 +122,7 @@ export default function TaxesPage() {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800">
             <Percent size={32} className="text-gray-300 dark:text-gray-600" />
           </div>
-          <h4 className="mt-4 text-lg font-semibold text-gray-800 dark:text-white/90">No taxes found</h4>
+          <h4 className="mt-4 text-lg font-bold text-gray-900 dark:text-white/90">No taxes found</h4>
           <p className="mt-1 text-gray-500 dark:text-gray-400">Get started by creating your first tax rate.</p>
           <Button
             className="mt-6"

@@ -308,7 +308,7 @@ export default function PromotionForm({
 
             {/* Condition Section */}
             <div className="space-y-3">
-              <h5 className="text-xs font-semibold uppercase tracking-wider text-gray-400">Condition Trigger</h5>
+              <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400">Condition Trigger</h5>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <Label>Condition Type</Label>
@@ -421,7 +421,7 @@ export default function PromotionForm({
 
             {/* Action Section */}
             <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-800">
-              <h5 className="text-xs font-semibold uppercase tracking-wider text-gray-400">Awarded Action</h5>
+              <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400">Awarded Action</h5>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <Label>Action Type</Label>

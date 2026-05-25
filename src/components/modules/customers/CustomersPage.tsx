@@ -51,7 +51,7 @@ export default function CustomersPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -118,7 +118,7 @@ export default function CustomersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
-                <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Customer</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Customer</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Contact</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Loyalty Points</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Joined Date</th>
@@ -207,11 +207,11 @@ export default function CustomersPage() {
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <Label required>Email Address</Label>
+              <Label>Email Address</Label>
               <InputField type="email" placeholder="john@example.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
             </div>
             <div>
-              <Label required>Phone Number</Label>
+              <Label>Phone Number</Label>
               <InputField placeholder="08123456xxx" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
             </div>
           </div>

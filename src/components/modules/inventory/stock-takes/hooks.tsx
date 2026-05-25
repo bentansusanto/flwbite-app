@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { 
   useGetStockTakesQuery,
   useCreateStockTakeMutation,
@@ -64,8 +64,20 @@ export const useStockTakes = () => {
       return false;
     }
   };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedBranchId]);
+
+  const paginatedStockTakes = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredStockTakes.slice(start, start + pageSize);
+  }, [filteredStockTakes, currentPage, pageSize]);
 
   return {
+    currentPage, setCurrentPage, pageSize, setPageSize, paginatedStockTakes,
     selectedBranchId,
     setSelectedBranchId,
     search,

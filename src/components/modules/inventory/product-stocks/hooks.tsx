@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useGetStocksByBranchQuery, useGetAllStocksQuery } from "../../../../store/api/stockApi";
 import { useGetBranchesQuery } from "../../../../store/api/branchApi";
 import { useAppSelector } from "../../../../store/hooks";
@@ -26,8 +26,8 @@ export const useProductStocks = () => {
 
   const filteredStocks = useMemo(() => {
     return stocks.filter((stock: any) =>
-      stock.product_name.toLowerCase().includes(search.toLowerCase()) ||
-      stock.variant_name.toLowerCase().includes(search.toLowerCase())
+      (stock.product_name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (stock.variant_name || "").toLowerCase().includes(search.toLowerCase())
     );
   }, [stocks, search]);
 
@@ -38,8 +38,20 @@ export const useProductStocks = () => {
   const totalValue = useMemo(() => {
     return stocks.reduce((acc: number, curr: any) => acc + curr.actual_stock, 0);
   }, [stocks]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedBranchId]);
+
+  const paginatedStocks = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredStocks.slice(start, start + pageSize);
+  }, [filteredStocks, currentPage, pageSize]);
 
   return {
+    currentPage, setCurrentPage, pageSize, setPageSize, paginatedStocks,
     selectedBranchId,
     setSelectedBranchId,
     search,
