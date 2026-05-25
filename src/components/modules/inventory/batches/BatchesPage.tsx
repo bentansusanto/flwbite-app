@@ -224,7 +224,7 @@ export default function BatchesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-100 dark:border-white/5">
+              <tr className="bg-gray-50/80 dark:bg-white/3 border-b border-gray-100 dark:border-white/5">
                 <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Product Info</th>
                 <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lot Number</th>
                 <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Production</th>
@@ -312,16 +312,17 @@ export default function BatchesPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
               <Label required>Product / Variant</Label>
-              <select 
-                className="appearance-none w-full h-11 pr-10 rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-brand-500 transition-all"
-                value={form.product_id}
-                onChange={e => setForm({...form, product_id: e.target.value})}
-                required
-              >
-                <option value="">Select Product...</option>
-                <option value="1">Espresso Beans (Arabica 1kg)</option>
-                <option value="2">Fresh Milk (Diamond 1L)</option>
-              </select>
+              <div className="relative">
+                <select 
+                  className="appearance-none w-full h-11 pr-10 rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-brand-500 transition-all"
+                  value={form.product_id}
+                  onChange={e => setForm({...form, product_id: e.target.value})}
+                  required
+                >
+                  <option value="">Select Product...</option>
+                  <option value="1">Espresso Beans (Arabica 1kg)</option>
+                  <option value="2">Fresh Milk (Diamond 1L)</option>
+                </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>
             </div>
@@ -366,16 +367,19 @@ export default function BatchesPage() {
               </div>
               <div className="space-y-1">
                 <Label required>Unit</Label>
-                <select 
-                  className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-brand-500 transition-all"
-                  value={form.unit}
-                  onChange={e => setForm({...form, unit: e.target.value})}
-                  required
-                >
-                  <option value="pcs">pcs</option>
-                  <option value="kg">kg</option>
-                  <option value="liter">liter</option>
-                </select>
+                <div className="relative">
+                  <select 
+                    className="appearance-none w-full h-11 rounded-xl border border-gray-200 bg-white px-4 pr-10 text-sm font-medium outline-none focus:ring-2 focus:ring-brand-500 transition-all"
+                    value={form.unit}
+                    onChange={e => setForm({...form, unit: e.target.value})}
+                    required
+                  >
+                    <option value="pcs">pcs</option>
+                    <option value="kg">kg</option>
+                    <option value="liter">liter</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
               </div>
             </div>
 

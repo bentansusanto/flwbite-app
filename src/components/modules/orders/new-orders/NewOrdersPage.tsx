@@ -530,7 +530,7 @@ export const NewOrdersPage = () => {
               <p className="text-xs text-gray-500">{formatCurrency(item.price)}</p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center bg-gray-100 dark:bg-white/[0.05] dark:border dark:border-white/10 rounded-xl p-1">
+              <div className="flex items-center bg-gray-100 dark:bg-white/5 dark:border dark:border-white/10 rounded-xl p-1">
                 <button
                   onClick={() => updateQuantity(item.variant_id, -1)}
                   className="p-1.5 hover:bg-white dark:hover:bg-white/10 rounded-lg transition-colors text-gray-500 dark:text-gray-400"
@@ -709,7 +709,7 @@ export const NewOrdersPage = () => {
                 <div
                   key={product.id}
                   onClick={() => handleProductClick(product)}
-                  className="group flex flex-col bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-2xl lg:rounded-3xl p-2 lg:p-4 cursor-pointer hover:border-brand-600 dark:hover:border-brand-500/50 transition-all relative overflow-hidden"
+                  className="group flex flex-col bg-white dark:bg-white/2 border border-gray-100 dark:border-white/5 rounded-2xl lg:rounded-3xl p-2 lg:p-4 cursor-pointer hover:border-brand-600 dark:hover:border-brand-500/50 transition-all relative overflow-hidden"
                 >
                   <div className={`aspect-square rounded-xl lg:rounded-2xl flex items-center justify-center text-4xl mb-3 lg:mb-4 group-hover:scale-105 transition-transform overflow-hidden ${!product.image ? 'bg-emerald-800 dark:bg-emerald-900' : 'bg-gray-50 dark:bg-gray-800'}`}>
                     {product.image ? (
@@ -874,7 +874,7 @@ export const NewOrdersPage = () => {
             </Button>
             <Button
               onClick={() => handlePayButtonClick(false)}
-              className="flex-[2] h-14 text-lg font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-2xl"
+              className="flex-2 h-14 text-lg font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-2xl"
             >
               Bayar <ChevronRight className="ml-1 w-5 h-5" />
             </Button>
@@ -882,13 +882,13 @@ export const NewOrdersPage = () => {
         </div>
       </div>
 
-      <div className="lg:hidden fixed bottom-16 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-[90]">
+      <div className="lg:hidden fixed bottom-16 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 z-90">
         <div className="flex items-center justify-between gap-3">
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate">Total Bayar</p>
             <p className="text-lg font-bold text-brand-600 truncate">{formatCurrency(total)}</p>
           </div>
-          <div className="flex-[2] flex gap-2">
+          <div className="flex-2 flex gap-2">
             <button
               onClick={handleSaveOrder}
               disabled={cart.length === 0 || isCreating}
@@ -1017,7 +1017,6 @@ export const NewOrdersPage = () => {
                 variant="outline"
                 onClick={() => {
                   setIsDrawerOpen(false);
-                  setIsSaveModalOpen(true);
                 }}
                 className="flex-1 h-14 font-bold border-gray-200 text-gray-600 rounded-2xl"
               >
@@ -1025,7 +1024,7 @@ export const NewOrdersPage = () => {
               </Button>
               <Button
                 onClick={() => handlePayButtonClick(true)}
-                className="flex-[2] h-14 font-bold bg-brand-600 text-white rounded-2xl"
+                className="flex-2 h-14 font-bold bg-brand-600 text-white rounded-2xl"
               >
                 Bayar Sekarang <ChevronRight className="ml-1 w-5 h-5" />
               </Button>
