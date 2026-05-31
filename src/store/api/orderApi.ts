@@ -84,6 +84,35 @@ export const orderApi = apiSlice.injectEndpoints({
         url: `/orders/${id}/complete`,
         method: "PATCH",
       }),
+      async onQueryStarted(id, { dispatch, queryFulfilled, getState }) {
+        // Find all cached queries for getTransactions and optimistically remove the order
+        const state = getState() as any;
+        const apiState = state.api.queries;
+        
+        const patches: any[] = [];
+        
+        for (const key of Object.keys(apiState)) {
+          if (key.startsWith('getTransactions')) {
+            const patch = dispatch(
+              orderApi.util.updateQueryData('getTransactions', apiState[key].originalArgs, (draft) => {
+                if (draft.data) {
+                  const initialLength = draft.data.length;
+                  draft.data = draft.data.filter((order) => order.id !== id);
+                  if (draft.data.length < initialLength) {
+                    draft.pagination.total -= 1;
+                  }
+                }
+              })
+            );
+            patches.push(patch);
+          }
+        }
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach((patch) => patch.undo());
+        }
+      },
       invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
     }),
   }),

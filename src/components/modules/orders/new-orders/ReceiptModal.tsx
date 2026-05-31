@@ -84,21 +84,24 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
           <style>
             @page { 
               margin: 0; 
-              size: 80mm auto; 
             }
             body { 
               font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
               margin: 0; 
-              padding: 10px; 
+              padding: 0; 
               font-size: 12px;
               color: #000;
               background: #fff;
               line-height: 1.4;
+              width: 58mm;
+            }
+            * {
+              box-sizing: border-box;
             }
             .receipt-wrapper { 
               width: 100%; 
-              max-width: 300px; /* Forces thermal width */
-              margin: 0 auto; 
+              padding: 8px;
+              margin: 0; 
             }
             
             /* Clean typography and spacing */
@@ -352,11 +355,16 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
             className="w-full font-bold h-11 bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center gap-2 mt-1"
           >
             {isPrintingBt ? (
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                Menghubungkan...
+              </span>
             ) : (
-              <Bluetooth className="w-4 h-4" />
+              <span className="flex items-center gap-2">
+                <Bluetooth className="w-4 h-4" />
+                Print with Bluetooth
+              </span>
             )}
-            Print Bluetooth (58mm)
           </Button>
         </div>
       </div>

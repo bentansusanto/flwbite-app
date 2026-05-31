@@ -76,11 +76,11 @@ export async function printReceiptBluetooth(receiptData: ReceiptData): Promise<v
     // Items
     receiptData.items.forEach(item => {
       encoder.textLine(`${item.name} x${item.quantity}`);
-      const priceFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(item.price * item.quantity);
+      const priceFmt = "Rp " + (item.price * item.quantity).toLocaleString("id-ID");
       encoder.row("", priceFmt);
     });
     
-    const fmtCurrency = (amount: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(amount);
+    const fmtCurrency = (amount: number) => "Rp " + amount.toLocaleString("id-ID");
 
     encoder.dashedLine()
       .row("Subtotal:", fmtCurrency(receiptData.subtotal))
@@ -98,9 +98,7 @@ export async function printReceiptBluetooth(receiptData: ReceiptData): Promise<v
       .textLine("Terima Kasih")
       .textLine("Atas Kunjungan Anda")
       .newline()
-      .newline()
-      .newline()
-      .cut();
+      .newline();
 
     const data = encoder.encode();
     
