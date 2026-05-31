@@ -30,6 +30,7 @@ export const useLoginHook = () => {
       
       // Handle local development (localhost or IP)
       if (hostname === "localhost" || hostname === "127.0.0.1" || parts.length < 2) {
+        // Fallback ke tenant 'demo' untuk keperluan testing lokal
         setDomain("demo"); 
       } else {
         setDomain(parts[0]);

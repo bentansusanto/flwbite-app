@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
-import { Printer, X } from "lucide-react";
+import { Printer, Bluetooth, X } from "lucide-react";
 import { format } from "date-fns";
+import { printReceiptBluetooth } from "@/utils/bluetoothPrinter";
+import { toast } from "sonner";
 
 export interface ReceiptData {
   orderId: string;
@@ -31,6 +33,7 @@ interface ReceiptModalProps {
 
 export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps) => {
   const receiptRef = useRef<HTMLDivElement>(null);
+  const [isPrintingBt, setIsPrintingBt] = useState(false);
 
   if (!receiptData) return null;
 
@@ -40,6 +43,19 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
       currency: "IDR",
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const handleBluetoothPrint = async () => {
+    if (!receiptData) return;
+    setIsPrintingBt(true);
+    try {
+      await printReceiptBluetooth(receiptData);
+      toast.success("Berhasil mencetak via Bluetooth");
+    } catch (error: any) {
+      toast.error("Gagal mencetak: " + (error.message || "Pastikan Bluetooth aktif"));
+    } finally {
+      setIsPrintingBt(false);
+    }
   };
 
   const handlePrint = () => {
@@ -314,20 +330,33 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
         </div>
 
         {/* Footer Actions - Not printed */}
-        <div className="p-4 border-t border-gray-100 dark:border-gray-800 flex gap-3 bg-white dark:bg-gray-900">
+        <div className="p-4 border-t border-gray-100 dark:border-gray-800 flex gap-2 bg-white dark:bg-gray-900 flex-wrap">
           <Button
             variant="outline"
             onClick={onClose}
-            className="flex-1 font-bold h-11"
+            className="flex-1 font-bold h-11 min-w-[120px]"
           >
-            Done (Next Order)
+            Selesai
           </Button>
           <Button
             onClick={handlePrint}
-            className="flex-1 font-bold h-11 bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center gap-2"
+            variant="outline"
+            className="flex-1 font-bold h-11 min-w-[120px] flex items-center justify-center gap-2"
           >
             <Printer className="w-4 h-4" />
-            Print Receipt
+            Browser
+          </Button>
+          <Button
+            onClick={handleBluetoothPrint}
+            disabled={isPrintingBt}
+            className="w-full font-bold h-11 bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center gap-2 mt-1"
+          >
+            {isPrintingBt ? (
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <Bluetooth className="w-4 h-4" />
+            )}
+            Print Bluetooth (58mm)
           </Button>
         </div>
       </div>

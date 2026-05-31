@@ -16,7 +16,8 @@ import {
   XCircle,
   Undo2,
   Download,
-  Printer
+  Printer,
+  Bluetooth
 } from "lucide-react";
 import Button from "@/components/ui/button/Button";
 import { useGetBranchesQuery } from "@/store/api/branchApi";
@@ -47,7 +48,7 @@ export default function TransactionHistoryPage() {
   const { data: transactionsData, isLoading: isLoadingTrx, refetch } = useGetTransactionsQuery(filterFormik.values);
   const transactions: Order[] = transactionsData?.data || [];
 
-  const { handlePrintReceipt } = useTransactionActions();
+  const { handlePrintReceipt, isPrintingBt } = useTransactionActions();
 
   const getOrderTypeBadge = (trx: Order) => {
     const itemTypes = (trx.items || []).map((item: any) => {
@@ -514,11 +515,12 @@ export default function TransactionHistoryPage() {
              <Button
                 type="button"
                 variant="outline"
+                disabled={isPrintingBt}
                 className="flex-1 font-bold border-brand-200 text-brand-700 hover:bg-brand-50 hover:border-brand-300 dark:border-brand-900/50 dark:text-brand-400 dark:hover:bg-brand-900/20"
-                startIcon={<Printer size={18} />}
+                startIcon={isPrintingBt ? <span className="w-4 h-4 border-2 border-brand-500/30 border-t-brand-600 rounded-full animate-spin" /> : <Bluetooth size={18} />}
                 onClick={() => handlePrintReceipt(selectedTrx)}
               >
-                Print Receipt
+                Print Bluetooth
               </Button>
 
              {['COMPLETED', 'PAID'].includes(selectedTrx?.status?.toUpperCase() || "") && (

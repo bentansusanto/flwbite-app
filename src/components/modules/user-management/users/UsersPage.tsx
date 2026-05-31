@@ -9,6 +9,7 @@ import {
   useGetUsersQuery, useCreateUserMutation, useUpdateUserMutation,
   useDeleteUserMutation, useGetRolesQuery,
 } from "@/store/api/userManagementApi";
+import { useGetCurrentSubscriptionQuery, useGetPlanByIdQuery } from "@/store/api/subscriptionApi";
 import { useGetBranchesQuery } from "@/store/api/branchApi";
 import { AlertDialog } from "@/components/ui/alert-dialog/AlertDialog";
 import { Modal } from "@/components/ui/modal";
@@ -51,6 +52,17 @@ export default function UsersPage() {
   const [createUser, { isLoading: isCreating }] = useCreateUserMutation();
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [deleteUser] = useDeleteUserMutation();
+
+  // Subscription & Plan for limits
+  const { data: subData } = useGetCurrentSubscriptionQuery(undefined);
+  const planId = subData?.data?.plan_id;
+  const hasNoPlan = !planId || planId === "00000000-0000-0000-0000-000000000000";
+
+  const { data: planData } = useGetPlanByIdQuery(planId || "", {
+    skip: hasNoPlan,
+  });
+  // Default to 1 user if no plan is active
+  const maxUsers = planData?.data?.max_users ?? (subData && hasNoPlan ? 1 : 0);
 
   const [search, setSearch]         = useState("");
   const [filterRole, setFilterRole] = useState("all");
@@ -252,8 +264,37 @@ export default function UsersPage() {
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">User Management</h3>
           <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Kelola akun pengguna dalam bisnis Anda.</p>
         </div>
-        <Button startIcon={<Plus size={16} />} onClick={openModal}>Tambah User</Button>
+        <div className="flex items-center gap-4">
+          {maxUsers > 0 && (
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
+              Kuota User: <span className={allUsers.length >= maxUsers ? "text-red-500 font-bold" : "text-brand-600 dark:text-brand-400 font-bold"}>{allUsers.length} / {maxUsers}</span>
+            </div>
+          )}
+          <Button 
+            startIcon={<Plus size={16} />} 
+            onClick={openModal}
+            disabled={maxUsers > 0 && allUsers.length >= maxUsers}
+          >
+            Tambah User
+          </Button>
+        </div>
       </div>
+
+      {/* ── Warning Limit ────────────────────────────────────────────────────── */}
+      {maxUsers > 0 && allUsers.length >= maxUsers && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-500/10 dark:text-amber-400">
+          <div className="flex items-start gap-3">
+            <Shield className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-500" size={18} />
+            <div>
+              <p className="font-semibold">Batas Kuota User Tercapai</p>
+              <p className="mt-1">
+                Anda telah mencapai batas maksimal <b>{maxUsers} user</b> untuk paket berlangganan Anda saat ini. 
+                Silakan <a href="https://flwbite.com/pricing" target="_blank" rel="noreferrer" className="underline font-semibold text-amber-700 dark:text-amber-300">upgrade paket</a> untuk menambahkan lebih banyak user.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Filters ────────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3">

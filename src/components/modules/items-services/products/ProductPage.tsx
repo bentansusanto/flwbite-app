@@ -184,19 +184,21 @@ export const ProductPage = () => {
                           </div>
                         </label>
 
-                        <label className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_sell ? "border-emerald-200 bg-emerald-50/40 dark:border-emerald-800 dark:bg-emerald-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
-                          <div className="relative shrink-0 mt-0.5">
-                            <input type="checkbox" className="sr-only" checked={values.is_sell} onChange={(e) => setFieldValue("is_sell", e.target.checked)} />
-                            <div className={`h-5 w-9 rounded-full transition-colors ${values.is_sell ? "bg-emerald-500" : "bg-gray-200 dark:bg-gray-700"}`} />
-                            <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_sell ? "translate-x-4" : "translate-x-0.5"}`} />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Produk Dijual?</p>
-                            <p className="mt-0.5 text-xs text-gray-400">
-                              {values.is_sell ? "Bisa dibeli pelanggan." : "Hanya untuk stok internal."}
-                            </p>
-                          </div>
-                        </label>
+                        {values.type === "retail" && (
+                          <label className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_sell ? "border-emerald-200 bg-emerald-50/40 dark:border-emerald-800 dark:bg-emerald-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
+                            <div className="relative shrink-0 mt-0.5">
+                              <input type="checkbox" className="sr-only" checked={values.is_sell} onChange={(e) => setFieldValue("is_sell", e.target.checked)} />
+                              <div className={`h-5 w-9 rounded-full transition-colors ${values.is_sell ? "bg-emerald-500" : "bg-gray-200 dark:bg-gray-700"}`} />
+                              <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_sell ? "translate-x-4" : "translate-x-0.5"}`} />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Produk Dijual?</p>
+                              <p className="mt-0.5 text-xs text-gray-400">
+                                {values.is_sell ? "Bisa dibeli pelanggan." : "Hanya untuk stok internal."}
+                              </p>
+                            </div>
+                          </label>
+                        )}
                       </div>
                     </div>
                   </div>

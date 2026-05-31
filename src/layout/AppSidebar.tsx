@@ -31,6 +31,7 @@ import { useGetBranchesQuery } from "@/store/api/branchApi";
 import { useGetMeTenantQuery } from "@/store/api/tenantApi";
 import Cookies from "js-cookie";
 import { Store } from "lucide-react";
+import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -157,11 +158,11 @@ const navItems: NavItem[] = [
     path: "/tenants-admin",
     allowedRoles: ["super_admin"],
   },
-  {
-    name: "Notifications",
-    icon: <BellIcon />,
-    path: "/notifications",
-  },
+  // {
+  //   name: "Notifications",
+  //   icon: <BellIcon />,
+  //   path: "/notifications",
+  // },
   {
     name: "Settings",
     icon: <BoltIcon />,
@@ -481,6 +482,11 @@ const AppSidebar: React.FC = () => {
 
 
           </div>
+          {userRole === "owner" && (isExpanded || isHovered || isMobileOpen) && (
+            <div className="mt-8">
+              <SidebarWidget />
+            </div>
+          )}
         </nav>
       </div>
     </aside>

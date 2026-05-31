@@ -11,6 +11,7 @@ import {
 import {
   useGetMeTenantQuery, useUpdateMeTenantMutation,
 } from "@/store/api/tenantApi";
+import { useGetCurrentSubscriptionQuery, useGetPlanByIdQuery } from "@/store/api/subscriptionApi";
 import { AlertDialog } from "@/components/ui/alert-dialog/AlertDialog";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
@@ -28,6 +29,17 @@ export default function TenantPage() {
 
   const tenant = tenantRes?.data;
   const branches = useMemo(() => branchData?.data ?? [], [branchData]);
+
+  // Subscription & Plan for limits
+  const { data: subData } = useGetCurrentSubscriptionQuery(undefined);
+  const planId = subData?.data?.plan_id;
+  const hasNoPlan = !planId || planId === "00000000-0000-0000-0000-000000000000";
+
+  const { data: planData } = useGetPlanByIdQuery(planId || "", {
+    skip: hasNoPlan,
+  });
+  // Default to 1 branch if no plan is active
+  const maxBranches = planData?.data?.max_branches ?? (subData && hasNoPlan ? 1 : 0);
 
   // ─── Tenant Profile State & Handlers ─────────────────────────────────────────
   const [updateTenant, { isLoading: isUpdatingTenant }] = useUpdateMeTenantMutation();
@@ -147,8 +159,17 @@ export default function TenantPage() {
           </p>
         </div>
         {activeTab === "branches" && (
-          <div className="flex items-center gap-3">
-             <Button startIcon={<Plus size={16} />} onClick={openCreateBranch}>
+          <div className="flex items-center gap-4">
+             {maxBranches > 0 && (
+               <div className="text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
+                 Kuota Cabang: <span className={branches.length >= maxBranches ? "text-red-500 font-bold" : "text-brand-600 dark:text-brand-400 font-bold"}>{branches.length} / {maxBranches}</span>
+               </div>
+             )}
+             <Button 
+               startIcon={<Plus size={16} />} 
+               onClick={openCreateBranch}
+               disabled={maxBranches > 0 && branches.length >= maxBranches}
+             >
                Cabang Baru
              </Button>
           </div>
@@ -255,6 +276,22 @@ export default function TenantPage() {
       {/* Tab Content: Branches (Card Design) */}
       {activeTab === "branches" && (
         <div className="space-y-6">
+          {/* ── Warning Limit ────────────────────────────────────────────────────── */}
+          {maxBranches > 0 && branches.length >= maxBranches && (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-500/10 dark:text-amber-400">
+              <div className="flex items-start gap-3">
+                <Building2 className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-500" size={18} />
+                <div>
+                  <p className="font-semibold">Batas Kuota Cabang Tercapai</p>
+                  <p className="mt-1">
+                    Anda telah mencapai batas maksimal <b>{maxBranches} cabang</b> untuk paket berlangganan Anda saat ini. 
+                    Silakan <a href="https://flwbite.com/pricing" target="_blank" rel="noreferrer" className="underline font-semibold text-amber-700 dark:text-amber-300">upgrade paket</a> untuk menambahkan lebih banyak cabang.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {isLoadingBranches ? (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {[...Array(3)].map((_, i) => (
