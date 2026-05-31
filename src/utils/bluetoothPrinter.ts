@@ -48,7 +48,7 @@ export async function printReceiptBluetooth(receiptData: ReceiptData): Promise<v
     }
     
     const characteristics = await service.getCharacteristics();
-    const writeCharacteristic = characteristics.find(c => 
+    const writeCharacteristic = characteristics.find((c: any) => 
       c.properties.write || c.properties.writeWithoutResponse
     );
 
