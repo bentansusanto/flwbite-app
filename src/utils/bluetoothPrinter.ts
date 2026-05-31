@@ -3,7 +3,9 @@ import { ReceiptData } from "@/components/modules/orders/new-orders/ReceiptModal
 import { format } from "date-fns";
 
 export async function printReceiptBluetooth(receiptData: ReceiptData): Promise<void> {
-  if (!navigator.bluetooth) {
+  const nav = navigator as any;
+
+  if (!nav.bluetooth) {
     throw new Error("Web Bluetooth API is not supported in this browser. Please use Chrome on Desktop or Android.");
   }
 
@@ -22,7 +24,7 @@ export async function printReceiptBluetooth(receiptData: ReceiptData): Promise<v
       '0000180a-0000-1000-8000-00805f9b34fb'  // Device Info
     ];
 
-    const device = await navigator.bluetooth.requestDevice({
+    const device = await nav.bluetooth.requestDevice({
       acceptAllDevices: true,
       optionalServices: commonPrinterServices
     });
