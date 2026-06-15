@@ -72,7 +72,7 @@ export const ProductPage = () => {
     : buildDefaultValues(selectedType);
 
   return (
-    <div className="p-6 space-y-5 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="p-3 sm:p-4 space-y-5 bg-transparent min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -131,9 +131,9 @@ export const ProductPage = () => {
         <Formik initialValues={initialValues} validate={validateWithZod(productSchema)} onSubmit={handleSubmit} enableReinitialize>
           {({ values, errors, touched, handleChange, handleBlur, setFieldValue }) => (
             <Form className="flex flex-col max-h-[90vh]">
-              {/* Sticky Header: Product Info */}
-              <div className="p-6 sm:p-8 pb-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#06060a] z-10">
-                <div className="mb-5 flex items-start gap-3">
+              {/* Sticky Header: Title Only */}
+              <div className="p-6 sm:p-8 pb-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#06060a] z-10 shrink-0">
+                <div className="flex items-start gap-3">
                   {!selectedProduct && (
                     <button type="button" onClick={handleBackToTypeSelect} className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-gray-700 transition-colors">
                       <ArrowLeft size={15} />
@@ -147,7 +147,11 @@ export const ProductPage = () => {
                     <p className="mt-0.5 text-sm text-gray-500">{selectedProduct ? "Perbarui detail produk." : "Isi informasi dan tambahkan minimal satu varian."}</p>
                   </div>
                 </div>
+              </div>
 
+              {/* Scrollable Middle: Product Info & Variants */}
+              <div className="flex-1 overflow-y-auto p-6 sm:p-8 pt-6 no-scrollbar space-y-8">
+                {/* Product Info Section */}
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row gap-6">
                     <ImageUpload 
@@ -208,11 +212,10 @@ export const ProductPage = () => {
                     <textarea name="description" rows={1} className="w-full rounded-xl border border-gray-200 bg-transparent p-3 text-sm outline-none transition focus:border-brand-300 focus:ring-2 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90" placeholder="Deskripsi singkat produk..." value={values.description} onChange={handleChange} onBlur={handleBlur} />
                   </div>
                 </div>
-              </div>
 
-              {/* Scrollable Middle: Variants */}
-              <div className="flex-1 overflow-y-auto p-6 sm:p-8 pt-4 no-scrollbar">
-                <div className="mb-2 flex items-center justify-between">
+                {/* Variants Section */}
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
                   <Label required>Varian Produk</Label>
                   {touched.variants && typeof errors.variants === "string" && <p className="text-xs text-error-500">{errors.variants}</p>}
                 </div>
@@ -280,10 +283,11 @@ export const ProductPage = () => {
                     </div>
                   )}
                 </FieldArray>
+                </div>
               </div>
 
               {/* Sticky Footer: Actions */}
-              <div className="p-6 sm:p-8 pt-4 flex gap-3 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-[#06060a] z-10">
+              <div className="p-6 sm:p-8 pt-4 flex gap-3 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-[#06060a] z-10 shrink-0">
                 <Button type="button" className="flex-1 h-12 font-bold" variant="outline" onClick={handleCloseModal} disabled={isLoading}>Batal</Button>
                 <Button className="flex-1 h-12 font-bold" type="submit" disabled={isLoading}>{isLoading ? "Menyimpan..." : selectedProduct ? "Simpan Perubahan" : "Buat Produk"}</Button>
               </div>
