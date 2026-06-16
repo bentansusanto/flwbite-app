@@ -71,14 +71,8 @@ export const LoginForm = () => {
             </div>
             
             <div>
-              <div className="flex items-center justify-between mb-1">
+              <div className="mb-1">
                 <Label>Kata Sandi</Label>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white underline underline-offset-4"
-                >
-                  Lupa kata sandi?
-                </Link>
               </div>
               <div className="relative">
                 <Input
