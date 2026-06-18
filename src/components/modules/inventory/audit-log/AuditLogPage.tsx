@@ -135,7 +135,7 @@ export default function AuditLogPage() {
                           <span className="text-[10px] font-semibold uppercase">{log.module}</span>
                         </div>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                           {log.action.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+                           {log.action.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())}
                         </p>
                      </div>
                   </td>
