@@ -69,7 +69,6 @@ export const userManagementApi = apiSlice.injectEndpoints({
 
 export const {
   useGetUsersQuery,
-  useGetUserByIdQuery,
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,

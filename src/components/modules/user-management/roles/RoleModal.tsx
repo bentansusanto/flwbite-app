@@ -94,7 +94,7 @@ export const RoleModal: React.FC<RoleModalProps> = ({ isOpen, onClose, roleToEdi
             </div>
           ) : (
             <div className="space-y-5">
-              {Object.entries(groupedPermissions).map(([moduleName, perms]) => (
+              {Object.entries(groupedPermissions).map(([moduleName, perms]: [string, any]) => (
                 <div key={moduleName} className="p-5 rounded-2xl border border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-900/60 shadow-xs">
                   <h4 className="font-bold text-gray-900 dark:text-gray-100 capitalize mb-3.5 tracking-tight">
                     {moduleName.replace(/_/g, " ")}
