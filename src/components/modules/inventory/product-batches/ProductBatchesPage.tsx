@@ -125,9 +125,14 @@ export default function ProductBatchesPage() {
             </div>
           ))
         ) : filteredBatches.length === 0 ? (
-          <div className="col-span-full py-20 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl text-center space-y-3">
-            <Layers className="w-16 h-16 text-gray-100 dark:text-gray-800 mx-auto" />
-            <p className="text-gray-500 font-medium text-lg dark:text-gray-400">No batches found matching your criteria</p>
+          <div className="col-span-full py-16 text-center">
+            <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+              <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+                <Layers className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+              </div>
+              <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Batch</p>
+              <p className="text-sm mt-1 max-w-sm">Data batch produk tidak ditemukan. Pastikan filter pencarian sudah benar.</p>
+            </div>
           </div>
         ) : (
           filteredBatches.map((batch: any) => {

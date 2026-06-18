@@ -39,7 +39,7 @@ export default function TenantPage() {
     skip: hasNoPlan,
   });
   // Default to 1 branch if no plan is active
-  const maxBranches = planData?.data?.max_branches ?? (subData && hasNoPlan ? 1 : 0);
+  const maxBranches = tenant?.is_demo ? Infinity : (planData?.data?.max_branches ?? (subData && hasNoPlan ? 1 : 0));
 
   // ─── Tenant Profile State & Handlers ─────────────────────────────────────────
   const [updateTenant, { isLoading: isUpdatingTenant }] = useUpdateMeTenantMutation();

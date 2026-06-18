@@ -38,14 +38,44 @@ export const userManagementApi = apiSlice.injectEndpoints({
       query: () => "/permissions",
       providesTags: [{ type: "User" as const, id: "PERMISSIONS" }],
     }),
+
+    createRole: builder.mutation({
+      query: (body) => ({
+        url: "/roles",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "User" as const, id: "ROLES" }],
+    }),
+
+    updateRole: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/roles/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: [{ type: "User" as const, id: "ROLES" }],
+    }),
+
+    deleteRole: builder.mutation({
+      query: (id) => ({
+        url: `/roles/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "User" as const, id: "ROLES" }],
+    }),
   }),
 });
 
 export const {
   useGetUsersQuery,
+  useGetUserByIdQuery,
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
   useGetRolesQuery,
   useGetPermissionsQuery,
+  useCreateRoleMutation,
+  useUpdateRoleMutation,
+  useDeleteRoleMutation,
 } = userManagementApi;

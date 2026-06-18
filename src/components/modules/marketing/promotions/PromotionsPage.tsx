@@ -172,12 +172,12 @@ export default function PromotionsPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-gray-200 py-20 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800">
-            <Tag size={32} className="text-gray-300 dark:text-gray-600" />
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-gray-200 py-16 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 dark:bg-white/[0.02] mb-4 border border-gray-100 dark:border-white/5">
+            <Tag size={32} className="text-gray-400 dark:text-gray-500" />
           </div>
-          <h4 className="mt-4 text-lg font-bold text-gray-900 dark:text-white/90">No campaigns found</h4>
-          <p className="mt-1 text-gray-500 dark:text-gray-400">Get started by launching your first promotion campaign.</p>
+          <h4 className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Promosi</h4>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-sm text-center">Data promosi tidak ditemukan. Mulai dengan membuat kampanye promosi pertama Anda.</p>
           <Button
             className="mt-6"
             variant="outline"

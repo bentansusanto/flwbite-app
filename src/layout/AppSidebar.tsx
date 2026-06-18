@@ -108,7 +108,6 @@ const navItems: NavItem[] = [
     icon: <ShootingStarIcon />,
     allowedRoles: ["owner", "admin", "super_admin"],
     subItems: [
-      { name: "Loyalty Program", path: "/marketing/loyalty" },
       { name: "Promotions", path: "/marketing/promotions" },
     ],
   },

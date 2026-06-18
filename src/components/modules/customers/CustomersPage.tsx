@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from "react";
 import {
   Search, Plus, Trash2, UserCheck, UserX, Edit,
-  Mail, Phone, Calendar, Users, Star, ArrowUpRight, UserPlus
+  Mail, Phone, Calendar, Users, Star, ArrowUpRight, UserPlus, ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 import { AlertDialog } from "@/components/ui/alert-dialog/AlertDialog";
@@ -12,11 +12,7 @@ import InputField from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 
 // Mock Data
-const MOCK_CUSTOMERS = [
-  { id: "1", name: "John Doe", email: "john@example.com", phone: "08123456789", points: 1250, status: "active", joined_at: "2024-01-15" },
-  { id: "2", name: "Jane Smith", email: "jane@example.com", phone: "08987654321", points: 450, status: "active", joined_at: "2024-02-10" },
-  { id: "3", name: "Michael Brown", email: "michael@example.com", phone: "08112233445", points: 0, status: "inactive", joined_at: "2024-03-01" },
-];
+const MOCK_CUSTOMERS: any[] = [];
 
 export default function CustomersPage() {
   const [search, setSearch] = useState("");
@@ -24,6 +20,8 @@ export default function CustomersPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "", status: "active" });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const filtered = useMemo(() => {
     return MOCK_CUSTOMERS.filter(c =>
@@ -32,6 +30,11 @@ export default function CustomersPage() {
       c.phone.includes(search)
     );
   }, [search]);
+
+  const paginatedCustomers = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return filtered.slice(startIndex, startIndex + pageSize);
+  }, [filtered, currentPage, pageSize]);
 
   const openModal = (customer?: any) => {
     if (customer) {
@@ -56,7 +59,7 @@ export default function CustomersPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Customers</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your customer relationships and loyalty programs.</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your customer relationships.</p>
         </div>
         <Button onClick={() => openModal()} startIcon={<Plus size={18} />}>
           Add Customer
@@ -64,7 +67,7 @@ export default function CustomersPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-100 dark:bg-brand-500/20 text-brand-600">
             <Users size={20} />
@@ -86,15 +89,6 @@ export default function CustomersPage() {
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{MOCK_CUSTOMERS.filter(c => c.status === "active").length}</p>
             <p className="text-xs font-medium text-gray-500">Active Customers</p>
-          </div>
-        </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-500/20 text-purple-600">
-            <Star size={20} />
-          </div>
-          <div className="mt-4">
-            <p className="text-2xl font-semibold text-gray-800 dark:text-white">1,250</p>
-            <p className="text-xs font-medium text-gray-500">Avg. Loyalty Points</p>
           </div>
         </div>
       </div>
@@ -120,14 +114,13 @@ export default function CustomersPage() {
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Customer</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Contact</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Loyalty Points</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Joined Date</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Status</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
-              {filtered.map(customer => (
+              {paginatedCustomers.map(customer => (
                 <tr key={customer.id} className="group hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors">
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
@@ -149,11 +142,6 @@ export default function CustomersPage() {
                         <Phone size={13} className="text-gray-400" /> {customer.phone}
                       </p>
                     </div>
-                  </td>
-                  <td className="px-5 py-4 text-center">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:bg-amber-500/10 dark:text-amber-400">
-                      <Star size={12} /> {customer.points.toLocaleString()} pts
-                    </span>
                   </td>
                   <td className="px-5 py-4">
                     <p className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
@@ -182,8 +170,85 @@ export default function CustomersPage() {
                   </td>
                 </tr>
               ))}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+                        <Users className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      </div>
+                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Pelanggan</p>
+                      <p className="text-sm mt-1 max-w-sm">Data pelanggan tidak ditemukan. Pastikan pencarian sudah benar atau tambahkan data pelanggan baru.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Section */}
+        <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <p className="text-xs text-gray-400">
+              {filtered.length === 0 ? "0 pelanggan" : `${((currentPage - 1) * pageSize) + 1}–${Math.min(currentPage * pageSize, filtered.length)} dari ${filtered.length} pelanggan`}
+            </p>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-gray-400">Tampilkan</span>
+              <div className="relative">
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="appearance-none h-7 rounded-lg border border-gray-200 bg-white px-2 pr-6 text-xs text-gray-700 outline-none focus:border-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+                <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+              </div>
+              <span className="text-xs text-gray-400">per halaman</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="rotate-90" />
+              <ChevronDown size={13} className="-ml-2 rotate-90" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="rotate-90" />
+            </button>
+            <span className="px-4 text-xs font-medium text-gray-600 dark:text-gray-400">
+              {currentPage} / {Math.ceil(filtered.length / pageSize) || 1}
+            </span>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(Math.ceil(filtered.length / pageSize), p + 1))}
+              disabled={currentPage >= Math.ceil(filtered.length / pageSize)}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="-rotate-90" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(Math.ceil(filtered.length / pageSize))}
+              disabled={currentPage >= Math.ceil(filtered.length / pageSize)}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="-ml-1 -rotate-90" />
+              <ChevronDown size={13} className="-ml-2 -rotate-90" />
+            </button>
+          </div>
         </div>
       </div>
 

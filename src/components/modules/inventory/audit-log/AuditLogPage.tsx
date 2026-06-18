@@ -20,41 +20,7 @@ import {
 import Button from "@/components/ui/button/Button";
 
 // Mock Data
-const MOCK_LOGS = [
-  { 
-    id: "LOG-001", 
-    timestamp: "2024-05-10T11:20:00Z", 
-    user: "Budi Santoso",
-    role: "Admin",
-    action: "UPDATE_PRODUCT",
-    module: "Inventory",
-    description: "Changed stock for Espresso Beans from 40 to 45",
-    ip_address: "192.168.1.45",
-    severity: "info"
-  },
-  { 
-    id: "LOG-002", 
-    timestamp: "2024-05-10T10:45:00Z", 
-    user: "Siti Aminah",
-    role: "Staff",
-    action: "CREATE_ORDER",
-    module: "Sales",
-    description: "Created new order #INV-20240510-001",
-    ip_address: "192.168.1.52",
-    severity: "success"
-  },
-  { 
-    id: "LOG-003", 
-    timestamp: "2024-05-10T09:15:00Z", 
-    user: "System",
-    role: "System",
-    action: "LOGIN_FAILED",
-    module: "Auth",
-    description: "Multiple failed login attempts detected",
-    ip_address: "203.14.55.21",
-    severity: "warning"
-  },
-];
+const MOCK_LOGS: any[] = [];
 
 export default function AuditLogPage() {
   const [search, setSearch] = useState("");
@@ -189,6 +155,19 @@ export default function AuditLogPage() {
                   </td>
                 </tr>
               ))}
+              {MOCK_LOGS.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+                        <Activity className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      </div>
+                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Audit Log</p>
+                      <p className="text-sm mt-1 max-w-sm">Data riwayat sistem tidak ditemukan. Log aktivitas akan muncul secara otomatis.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

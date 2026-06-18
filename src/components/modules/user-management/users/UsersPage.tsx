@@ -11,6 +11,7 @@ import {
 } from "@/store/api/userManagementApi";
 import { useGetCurrentSubscriptionQuery, useGetPlanByIdQuery } from "@/store/api/subscriptionApi";
 import { useGetBranchesQuery } from "@/store/api/branchApi";
+import { useGetMeTenantQuery } from "@/store/api/tenantApi";
 import { AlertDialog } from "@/components/ui/alert-dialog/AlertDialog";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
@@ -53,6 +54,10 @@ export default function UsersPage() {
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [deleteUser] = useDeleteUserMutation();
 
+  const { data: tenantRes } = useGetMeTenantQuery(undefined);
+  const tenant = tenantRes?.data;
+  const isDemo = tenant?.is_demo;
+
   // Subscription & Plan for limits
   const { data: subData } = useGetCurrentSubscriptionQuery(undefined);
   const planId = subData?.data?.plan_id;
@@ -62,7 +67,7 @@ export default function UsersPage() {
     skip: hasNoPlan,
   });
   // Default to 1 user if no plan is active
-  const maxUsers = planData?.data?.max_users ?? (subData && hasNoPlan ? 1 : 0);
+  const maxUsers = isDemo ? Infinity : (planData?.data?.max_users ?? (subData && hasNoPlan ? 1 : 0));
 
   const [search, setSearch]         = useState("");
   const [filterRole, setFilterRole] = useState("all");
@@ -75,6 +80,8 @@ export default function UsersPage() {
   const [form, setForm]             = useState(DEFAULT_FORM);
   const [errors, setErrors]         = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
+  const [currentPage, setCurrentPage]   = useState(1);
+  const [pageSize, setPageSize]         = useState(10);
 
   const allUsers: any[]    = useMemo(() => usersData?.data ?? [], [usersData]);
   const allBranches: any[] = useMemo(() => branchesData?.data ?? [], [branchesData]);
@@ -112,6 +119,11 @@ export default function UsersPage() {
     });
     return r;
   }, [allUsers, search, filterRole, sortField, sortOrder]);
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return filtered.slice(startIndex, startIndex + pageSize);
+  }, [filtered, currentPage, pageSize]);
 
   const handleSort = (field: SortField) => {
     if (field === sortField) setSortOrder(o => o === "asc" ? "desc" : "asc");
@@ -257,9 +269,9 @@ export default function UsersPage() {
   ];
 
   return (
-    <div className="p-6 space-y-5 bg-gray-50/50 dark:bg-[#06060a] min-h-screen">
+    <div className="space-y-4 sm:space-y-6 bg-transparent">
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">User Management</h3>
           <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Kelola akun pengguna dalam bisnis Anda.</p>
@@ -305,7 +317,7 @@ export default function UsersPage() {
             className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-9 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
           />
         </div>
-        <div className="flex rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="flex rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-nowrap">
           {filterTabs.map(opt => (
             <button key={opt.value} onClick={() => setFilterRole(opt.value)}
               className={`px-4 py-2 text-sm font-medium transition-colors ${filterRole === opt.value ? "bg-brand-500 text-white" : "bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800"}`}>
@@ -316,7 +328,7 @@ export default function UsersPage() {
       </div>
 
       {/* ── Stats ──────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {(["owner", "admin", "cashier"] as const).map(r => {
           const count = allUsers.filter(u => u.role === r).length;
           const icons = { 
@@ -335,8 +347,12 @@ export default function UsersPage() {
               <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${bgColors[r]}`}>
                 {icons[r]}
               </div>
-              <p className="mt-4 text-2xl font-bold text-gray-800 dark:text-white">{count}</p>
-              <p className="text-xs font-medium text-gray-500 capitalize">{r}</p>
+              <div className="mt-4 flex items-end justify-between">
+                <div>
+                  <p className="text-2xl font-semibold text-gray-800 dark:text-white">{count}</p>
+                  <p className="text-xs font-medium text-gray-500 capitalize">Total {r}</p>
+                </div>
+              </div>
             </div>
           );
         })}
@@ -344,8 +360,12 @@ export default function UsersPage() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-100 dark:bg-brand-500/20">
             <Users size={20} className="text-brand-600" />
           </div>
-          <p className="mt-4 text-2xl font-bold text-gray-800 dark:text-white">{allUsers.length}</p>
-          <p className="text-xs font-medium text-gray-500">Total Users</p>
+          <div className="mt-4 flex items-end justify-between">
+            <div>
+              <p className="text-2xl font-semibold text-gray-800 dark:text-white">{allUsers.length}</p>
+              <p className="text-xs font-medium text-gray-500">Total Users</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -372,13 +392,18 @@ export default function UsersPage() {
                 ))
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-16 text-center text-gray-400">
-                    <Shield size={40} className="mx-auto mb-2 opacity-30" />
-                    <p className="text-sm">Tidak ada user ditemukan</p>
+                  <td colSpan={6} className="py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+                        <Users className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      </div>
+                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data User</p>
+                      <p className="text-sm mt-1 max-w-sm">Data user tidak ditemukan. Pastikan pencarian sudah benar atau tambahkan user baru.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
-                filtered.map((user: any) => (
+                paginatedUsers.map((user: any) => (
                   <tr key={user.id} className="group hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors">
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-3">
@@ -433,8 +458,69 @@ export default function UsersPage() {
             </tbody>
           </table>
         </div>
-        <div className="border-t border-gray-100 px-4 py-3 dark:border-gray-800">
-          <p className="text-xs text-gray-400">{filtered.length} dari {allUsers.length} user</p>
+
+        {/* Pagination Section */}
+        <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <p className="text-xs text-gray-400">
+              {filtered.length === 0 ? "0 user" : `${((currentPage - 1) * pageSize) + 1}–${Math.min(currentPage * pageSize, filtered.length)} dari ${filtered.length} user`}
+            </p>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-gray-400">Tampilkan</span>
+              <div className="relative">
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="appearance-none h-7 rounded-lg border border-gray-200 bg-white px-2 pr-6 text-xs text-gray-700 outline-none focus:border-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+                <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+              </div>
+              <span className="text-xs text-gray-400">per halaman</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="rotate-90" />
+              <ChevronDown size={13} className="-ml-2 rotate-90" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="rotate-90" />
+            </button>
+            <span className="px-4 text-xs font-medium text-gray-600 dark:text-gray-400">
+              {currentPage} / {Math.ceil(filtered.length / pageSize) || 1}
+            </span>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(Math.ceil(filtered.length / pageSize), p + 1))}
+              disabled={currentPage >= Math.ceil(filtered.length / pageSize)}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="-rotate-90" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(Math.ceil(filtered.length / pageSize))}
+              disabled={currentPage >= Math.ceil(filtered.length / pageSize)}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ChevronDown size={13} className="-ml-1 -rotate-90" />
+              <ChevronDown size={13} className="-ml-2 -rotate-90" />
+            </button>
+          </div>
         </div>
       </div>
 

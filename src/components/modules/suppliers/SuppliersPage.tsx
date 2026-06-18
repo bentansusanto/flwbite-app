@@ -263,13 +263,13 @@ export default function SuppliersPage() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-20 text-center">
-                    <div className="flex flex-col items-center">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800">
-                        <Truck size={26} className="text-gray-300 dark:text-gray-600" />
+                  <td colSpan={5} className="py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+                        <Truck className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                       </div>
-                      <p className="mt-3 text-sm font-medium text-gray-700 dark:text-white/90">No suppliers found</p>
-                      <p className="mt-1 text-xs text-gray-400">Try changing your search keywords.</p>
+                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Supplier</p>
+                      <p className="text-sm mt-1 max-w-sm">Data supplier tidak ditemukan. Pastikan filter pencarian sudah benar.</p>
                     </div>
                   </td>
                 </tr>

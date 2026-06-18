@@ -164,7 +164,7 @@ export const useProductHook = () => {
           description: values.description,
           category_id: values.category_id,
           type: values.type,
-          is_stock_tracked: values.is_stock_tracked,
+          is_stock_tracked: values.type === "service" ? false : values.is_stock_tracked,
           is_sell: values.type === "retail" ? values.is_sell : true,
           image: values.image,
           variants: values.variants.map((v) => ({
@@ -186,7 +186,7 @@ export const useProductHook = () => {
           description: values.description,
           category_id: values.category_id,
           type: values.type,
-          is_stock_tracked: values.is_stock_tracked,
+          is_stock_tracked: values.type === "service" ? false : values.is_stock_tracked,
           is_sell: values.type === "retail" ? values.is_sell : true,
           image: values.image,
           variants: values.variants.map((v) => ({

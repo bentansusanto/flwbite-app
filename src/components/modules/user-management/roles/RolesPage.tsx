@@ -1,8 +1,14 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import { Search, Shield, ChevronRight, Lock, X } from "lucide-react";
-import { useGetRolesQuery } from "@/store/api/userManagementApi";
+import { Search, Shield, ChevronRight, Lock, X, Plus, Pencil, Trash2 } from "lucide-react";
+import { useGetRolesQuery, useDeleteRoleMutation } from "@/store/api/userManagementApi";
+import { useGetCurrentSubscriptionQuery, useGetPlanByIdQuery } from "@/store/api/subscriptionApi";
 import { Modal } from "@/components/ui/modal";
+import Button from "@/components/ui/button/Button";
+import { useGetMeTenantQuery } from "@/store/api/tenantApi";
+import { RoleModal } from "./RoleModal";
+import { AlertDialog } from "@/components/ui/alert-dialog/AlertDialog";
+import { toast } from "sonner";
 
 const ACTION_BADGE: Record<string, string> = {
   create: "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400",
@@ -13,17 +19,61 @@ const ACTION_BADGE: Record<string, string> = {
 };
 
 export default function RolesPage() {
-  const { data: rolesData, isLoading } = useGetRolesQuery(undefined, { refetchOnMountOrArgChange: true });
+  const { data: rolesData, isLoading, refetch } = useGetRolesQuery(undefined, { refetchOnMountOrArgChange: true });
+  const [deleteRole] = useDeleteRoleMutation();
   const [search, setSearch] = useState("");
   const [selectedRole, setSelectedRole] = useState<any | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  
+  const [roleToEdit, setRoleToEdit] = useState<any | null>(null);
+  const [roleToDelete, setRoleToDelete] = useState<any | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const allRoles: any[] = useMemo(() => rolesData?.data ?? [], [rolesData]);
+  // Subscription check
+  const { data: subData } = useGetCurrentSubscriptionQuery(undefined);
+  const planId = subData?.data?.plan_id;
+  const hasNoPlan = !planId || planId === "00000000-0000-0000-0000-000000000000";
+  const { data: planData } = useGetPlanByIdQuery(planId || "", {
+    skip: hasNoPlan,
+  });
+  
+  const { data: tenantRes } = useGetMeTenantQuery(undefined);
+  const isDemo = tenantRes?.data?.is_demo;
+  const isProPlan = planData?.data?.name?.toLowerCase() === "pro";
+  const canAddRole = isProPlan || isDemo;
 
-  const filtered = useMemo(() => {
-    if (!search.trim()) return allRoles;
-    const q = search.toLowerCase();
-    return allRoles.filter(r => r.name?.toLowerCase().includes(q) || r.description?.toLowerCase().includes(q));
-  }, [allRoles, search]);
+  const filteredRoles = useMemo(() => {
+    if (!rolesData?.data) return [];
+    if (!search) return rolesData.data;
+    return rolesData.data.filter((role: any) =>
+      role.name.toLowerCase().includes(search.toLowerCase()) ||
+      (role.description && role.description.toLowerCase().includes(search.toLowerCase()))
+    );
+  }, [rolesData, search]);
+
+  const handleConfirmDelete = async () => {
+    if (!roleToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteRole(roleToDelete.id).unwrap();
+      toast.success("Berhasil menghapus role!");
+      setRoleToDelete(null);
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Gagal menghapus role.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleEditRole = (role: any) => {
+    setRoleToEdit(role);
+    setIsCreateOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsCreateOpen(false);
+    setRoleToEdit(null);
+  };
 
   return (
     <div className="space-y-4 sm:space-y-6 bg-transparent">
@@ -33,12 +83,19 @@ export default function RolesPage() {
           <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Roles & Permissions</h3>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Define access levels and manage permissions for your team.</p>
         </div>
-        <div className="relative w-full sm:w-64">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder="Cari role..." value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-transparent bg-gray-50/50 py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
-          />
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input type="text" placeholder="Cari role..." value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-transparent bg-gray-50/50 py-2.5 pl-9 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
+            />
+          </div>
+          {canAddRole && (
+            <Button startIcon={<Plus size={16} />} onClick={() => setIsCreateOpen(true)}>
+              Tambah Role
+            </Button>
+          )}
         </div>
       </div>
 
@@ -53,7 +110,7 @@ export default function RolesPage() {
             </div>
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : filteredRoles.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-gray-200 py-20 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800">
             <Lock size={32} className="text-gray-300 dark:text-gray-600" />
@@ -63,7 +120,7 @@ export default function RolesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((role: any) => {
+          {filteredRoles.map((role: any) => {
             const permissions: any[] = role.permissions ?? [];
             const grouped = permissions.reduce((acc: Record<string, any[]>, rp: any) => {
               const mod = rp.permission?.module || rp.module || "general";
@@ -75,7 +132,7 @@ export default function RolesPage() {
             return (
               <div
                 key={role.id}
-                className="group flex flex-col rounded-2xl border border-gray-100 bg-white transition-all hover:border-brand-100 hover:shadow-theme-xl dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md dark:hover:border-brand-500/20"
+                className="group flex flex-col rounded-2xl border border-gray-100 bg-white transition-all hover:border-brand-100 hover:shadow-md dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md dark:hover:border-brand-500/20"
               >
                 <div className="p-5">
                   <div className="flex items-start justify-between">
@@ -107,12 +164,34 @@ export default function RolesPage() {
                         {permissions.length} Permissions
                       </span>
                     </div>
-                    <button
-                      onClick={() => setSelectedRole(role)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 text-gray-400 transition-colors hover:bg-brand-50 hover:text-brand-600 dark:bg-gray-800 dark:hover:bg-brand-500/10"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
+                    
+                    <div className="flex items-center gap-2">
+                      {!role.is_system && (
+                        <>
+                          <button
+                            onClick={() => handleEditRole(role)}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:bg-gray-800 dark:hover:bg-blue-500/10"
+                            title="Edit Role"
+                          >
+                            <Pencil size={14} />
+                          </button>
+                          <button
+                            onClick={() => setRoleToDelete(role)}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 text-gray-400 transition-colors hover:bg-red-50 hover:text-error-500 dark:bg-gray-800 dark:hover:bg-red-500/10"
+                            title="Hapus Role"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </>
+                      )}
+                      <button
+                        onClick={() => setSelectedRole(role)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600 transition-colors hover:bg-brand-100 hover:text-brand-700 dark:bg-brand-500/10 dark:text-brand-400 dark:hover:bg-brand-500/20"
+                        title="Lihat Detail"
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -202,6 +281,24 @@ export default function RolesPage() {
           </div>
         )}
       </Modal>
+
+      <RoleModal 
+        isOpen={isCreateOpen} 
+        onClose={handleCloseModal} 
+        roleToEdit={roleToEdit} 
+      />
+
+      <AlertDialog
+        isOpen={!!roleToDelete}
+        onClose={() => setRoleToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title="Hapus Role?"
+        description={`Apakah Anda yakin ingin menghapus role "${roleToDelete?.name}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus"
+        cancelLabel="Batal"
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

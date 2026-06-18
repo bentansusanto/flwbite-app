@@ -284,8 +284,14 @@ export default function StockTakesPage() {
                 ))
               ) : filteredStockTakes.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-20 text-center text-gray-500 dark:text-gray-400 font-medium">
-                    No stock takes found.
+                  <td colSpan={5} className="px-6 py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+                        <ClipboardCheck className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      </div>
+                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Audit Stok</p>
+                      <p className="text-sm mt-1 max-w-sm">Data audit stok (stock take) tidak ditemukan. Pastikan filter pencarian sudah benar.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (

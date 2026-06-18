@@ -189,15 +189,13 @@ export default function StockMovementsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={!selectedBranchId ? 7 : 6} className="px-6 py-32 text-center text-gray-400">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
-                         <History className="w-10 h-10 text-gray-200" />
+                  <td colSpan={!selectedBranchId ? 7 : 6} className="px-6 py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+                        <History className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                       </div>
-                      <div>
-                        <p className="text-lg font-semibold text-gray-600">No movements found</p>
-                        <p className="text-sm">Try adjusting your filters or select a branch.</p>
-                      </div>
+                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Pergerakan Stok</p>
+                      <p className="text-sm mt-1 max-w-sm">Data pergerakan stok tidak ditemukan. Pastikan filter pencarian sudah benar.</p>
                     </div>
                   </td>
                 </tr>

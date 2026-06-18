@@ -18,7 +18,8 @@ import {
   XCircle,
   PlayCircle,
   ChevronDown,
-  AlertCircle
+  AlertCircle,
+  Monitor
 } from "lucide-react";
 import Button from "@/components/ui/button/Button";
 import InputField from "@/components/form/input/InputField";
@@ -201,7 +202,15 @@ export default function PosSessionPage() {
                 </tr>
               ) : paginatedSessions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-gray-400">No sessions found</td>
+                  <td colSpan={6} className="px-6 py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+                        <Monitor className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      </div>
+                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada sesi POS</p>
+                      <p className="text-sm mt-1 max-w-sm">Sesi kasir tidak ditemukan. Pastikan filter sudah benar atau belum ada sesi yang dibuka.</p>
+                    </div>
+                  </td>
                 </tr>
               ) : paginatedSessions.map((session) => (
                 <tr key={session.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors group">

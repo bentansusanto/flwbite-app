@@ -174,19 +174,21 @@ export const ProductPage = () => {
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <label className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_stock_tracked ? "border-brand-200 bg-brand-50/40 dark:border-brand-800 dark:bg-brand-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
-                          <div className="relative shrink-0 mt-0.5">
-                            <input type="checkbox" className="sr-only" checked={values.is_stock_tracked} onChange={(e) => setFieldValue("is_stock_tracked", e.target.checked)} />
-                            <div className={`h-5 w-9 rounded-full transition-colors ${values.is_stock_tracked ? "bg-brand-500" : "bg-gray-200 dark:bg-gray-700"}`} />
-                            <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_stock_tracked ? "translate-x-4" : "translate-x-0.5"}`} />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Lacak Stok?</p>
-                            <p className="mt-0.5 text-xs text-gray-400">
-                              {values.is_stock_tracked ? "Stok dipantau saat transaksi." : "Stok tidak dipantau."}
-                            </p>
-                          </div>
-                        </label>
+                        {values.type !== "service" && (
+                          <label className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_stock_tracked ? "border-brand-200 bg-brand-50/40 dark:border-brand-800 dark:bg-brand-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>
+                            <div className="relative shrink-0 mt-0.5">
+                              <input type="checkbox" className="sr-only" checked={values.is_stock_tracked} onChange={(e) => setFieldValue("is_stock_tracked", e.target.checked)} />
+                              <div className={`h-5 w-9 rounded-full transition-colors ${values.is_stock_tracked ? "bg-brand-500" : "bg-gray-200 dark:bg-gray-700"}`} />
+                              <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${values.is_stock_tracked ? "translate-x-4" : "translate-x-0.5"}`} />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Lacak Stok?</p>
+                              <p className="mt-0.5 text-xs text-gray-400">
+                                {values.is_stock_tracked ? "Stok dipantau saat transaksi." : "Stok tidak dipantau."}
+                              </p>
+                            </div>
+                          </label>
+                        )}
 
                         {values.type === "retail" && (
                           <label className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${values.is_sell ? "border-emerald-200 bg-emerald-50/40 dark:border-emerald-800 dark:bg-emerald-500/5" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/[0.03]"}`}>

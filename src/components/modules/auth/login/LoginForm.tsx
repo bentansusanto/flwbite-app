@@ -109,7 +109,7 @@ export const LoginForm = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="h-11 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200 disabled:bg-gray-400 dark:disabled:bg-gray-700 rounded-lg w-full"
+              className="h-11 bg-brand-500 text-white hover:bg-brand-600 disabled:bg-gray-400 dark:disabled:bg-gray-700 rounded-lg w-full transition-colors"
             >
               {isLoading ? "Memproses..." : "Masuk sebagai Staff"}
             </Button>
@@ -174,7 +174,7 @@ export const LoginForm = () => {
               onClick={handleCashierLogin}
               type="button"
               disabled={pin.length < 6 || isLoading}
-              className="h-14 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200 disabled:bg-gray-400 dark:disabled:bg-gray-700 rounded-xl w-full text-lg shadow-lg"
+              className="h-14 bg-brand-500 text-white hover:bg-brand-600 disabled:bg-gray-400 dark:disabled:bg-gray-700 rounded-xl w-full text-lg shadow-lg transition-colors"
             >
               {isLoading ? "Memproses..." : "Masuk Sekarang"}
             </Button>
