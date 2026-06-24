@@ -6,6 +6,7 @@ import Button from "@/components/ui/button/Button";
 import { Printer, Bluetooth, X } from "lucide-react";
 import { format } from "date-fns";
 import { printReceiptBluetooth } from "@/utils/bluetoothPrinter";
+import { printReceiptSerial } from "@/utils/serialPrinter";
 import { toast } from "sonner";
 
 export interface ReceiptData {
@@ -49,10 +50,24 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
     if (!receiptData) return;
     setIsPrintingBt(true);
     try {
-      await printReceiptBluetooth(receiptData);
-      toast.success("Berhasil mencetak via Bluetooth");
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // Mobile Chrome only supports Web Bluetooth (BLE only)
+        await printReceiptBluetooth(receiptData);
+      } else {
+        // Desktop Chrome: Web Bluetooth blocks SPP (Classic BT), so we fallback to Web Serial
+        // which works perfectly for both USB and Classic Bluetooth that maps to COM ports.
+        const nav = navigator as any;
+        if (nav.serial) {
+          await printReceiptSerial(receiptData);
+        } else {
+          await printReceiptBluetooth(receiptData);
+        }
+      }
+      toast.success("Berhasil mencetak");
     } catch (error: any) {
-      toast.error("Gagal mencetak: " + (error.message || "Pastikan Bluetooth aktif"));
+      toast.error("Gagal mencetak: " + (error.message || "Pastikan perangkat aktif"));
     } finally {
       setIsPrintingBt(false);
     }
