@@ -15,6 +15,10 @@ const baseQuery = fetchBaseQuery({
     return headers;
   },
   credentials: 'include', // Important for HttpOnly cookies (refresh_token)
+  fetchFn: (input, init) => {
+    // Add cache: 'no-store' to bypass Next.js and browser caching mechanisms for API calls
+    return fetch(input, { ...init, cache: 'no-store' });
+  },
 });
 
 // Mutex to prevent multiple simultaneous refresh calls
