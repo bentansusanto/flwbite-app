@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { useProductStocks } from "./hooks";
 import React, { useMemo, useState } from "react";
+import AddStockModal from "./AddStockModal";
+import { Plus } from "lucide-react";
 
 export default function ProductStocksPage() {
   const {
@@ -28,6 +30,7 @@ export default function ProductStocksPage() {
   } = useProductStocks();
 
   const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
+  const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
 
   const groupedStocks = useMemo(() => {
     const groups: Record<string, any> = {};
@@ -131,6 +134,12 @@ export default function ProductStocksPage() {
               />
             </div>
             <div className="flex gap-2">
+              <button
+                onClick={() => setIsAddStockModalOpen(true)}
+                className="flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors shadow-sm shadow-brand-500/20"
+              >
+                <Plus size={16} /> Add Stock
+              </button>
               <button className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400">
                 <Filter size={16} /> Filter
               </button>
@@ -332,6 +341,12 @@ export default function ProductStocksPage() {
         </div>
       </div>
       </div>
+      
+      <AddStockModal
+        isOpen={isAddStockModalOpen}
+        onClose={() => setIsAddStockModalOpen(false)}
+        branches={branches}
+      />
     </div>
   );
 }

@@ -3,6 +3,11 @@ import { useGetStocksByBranchQuery, useGetAllStocksQuery } from "../../../../sto
 import { useGetBranchesQuery } from "../../../../store/api/branchApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { RootState } from "../../../../store";
+import { useGetProductsQuery } from "../../../../store/api/productApi";
+import { useUpdateStockMutation } from "../../../../store/api/stockApi";
+import { useFormik } from "formik";
+import { toast } from "sonner";
+import { AddStockSchema, AddStockFormValues } from "./schema";
 
 export const useProductStocks = () => {
   // Try to get user from auth state if it exists, otherwise default to empty
@@ -65,4 +70,54 @@ export const useProductStocks = () => {
     totalValue,
     user
   };
+};
+
+export const useAddStockModal = (onClose: () => void) => {
+  const [updateStock, { isLoading: isUpdating }] = useUpdateStockMutation();
+  const { data: productsData, isLoading: isLoadingProducts } = useGetProductsQuery({});
+  
+  const products = productsData?.data || [];
+
+  const formik = useFormik<AddStockFormValues>({
+    initialValues: {
+      branch_id: "",
+      product_id: "",
+      variant_id: "",
+      amount: 0,
+    },
+    validate: (values) => {
+      // Input returns string, we must parse it to number before validating
+      const parsedValues = {
+        ...values,
+        amount: Number(values.amount)
+      };
+      const result = AddStockSchema.safeParse(parsedValues);
+      if (result.success) return {};
+      const errors: any = {};
+      result.error.issues.forEach((issue) => {
+        if (!errors[issue.path[0]]) {
+          errors[issue.path[0]] = issue.message;
+        }
+      });
+      return errors;
+    },
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        await updateStock({
+          branch_id: values.branch_id,
+          variant_id: values.variant_id,
+          amount: Number(values.amount),
+          action: "ADJUSTMENT"
+        }).unwrap();
+        
+        toast.success("Stok berhasil ditambahkan!");
+        resetForm();
+        onClose();
+      } catch (error: any) {
+        toast.error(error?.data?.message || "Gagal menambahkan stok");
+      }
+    },
+  });
+
+  return { formik, isUpdating, products, isLoadingProducts };
 };
