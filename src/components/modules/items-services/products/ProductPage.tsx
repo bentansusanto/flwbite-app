@@ -15,9 +15,9 @@ import Select from "@/components/form/Select";
 import ImageUpload from "@/components/form/ImageUpload";
 
 const PRODUCT_TYPES = [
-  { type: "retail" as ProductType, label: "Retail", description: "Produk fisik dijual per unit.", icon: <ShoppingBag size={28} />, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-500/10", border: "hover:border-blue-300" },
-  { type: "f&b" as ProductType, label: "Food & Beverage", description: "Menu makanan dan minuman.", icon: <Utensils size={28} />, color: "text-orange-600 dark:text-orange-400", bg: "bg-orange-50 dark:bg-orange-500/10", border: "hover:border-orange-300" },
-  { type: "service" as ProductType, label: "Service", description: "Layanan atau jasa.", icon: <Briefcase size={28} />, color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-50 dark:bg-purple-500/10", border: "hover:border-purple-300" },
+  { type: "retail" as ProductType, label: "Ritel", description: "Produk fisik dijual per unit.", icon: <ShoppingBag size={28} />, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-500/10", border: "hover:border-blue-300" },
+  { type: "f&b" as ProductType, label: "Makanan & Minuman", description: "Menu makanan dan minuman.", icon: <Utensils size={28} />, color: "text-orange-600 dark:text-orange-400", bg: "bg-orange-50 dark:bg-orange-500/10", border: "hover:border-orange-300" },
+  { type: "service" as ProductType, label: "Layanan", description: "Layanan atau jasa.", icon: <Briefcase size={28} />, color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-50 dark:bg-purple-500/10", border: "hover:border-purple-300" },
 ];
 
 const TYPE_BADGE: Record<string, string> = {
@@ -31,7 +31,7 @@ const buildDefaultValues = (type: ProductType) => ({
   is_stock_tracked: type === "retail", 
   is_sell: true,
   image: "",
-  variants: [{ name: "Default", price: 0, cost_price: null, is_active: true }],
+  variants: [{ name: "Standar", price: 0, cost_price: null, is_active: true }],
 });
 
 export const ProductPage = () => {
@@ -67,7 +67,7 @@ export const ProductPage = () => {
                 cost_price: v.cost_price ?? null,
                 is_active: v.is_active,
               }))
-            : [{ name: "Default", price: 0, cost_price: null, is_active: true }],
+            : [{ name: "Standar", price: 0, cost_price: null, is_active: true }],
       }
     : buildDefaultValues(selectedType);
 
@@ -76,10 +76,10 @@ export const ProductPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Products</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Produk</h3>
           <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Kelola semua produk dan variannya.</p>
         </div>
-        <Button onClick={handleOpenCreate} startIcon={<Plus size={16} />}>Add Product</Button>
+        <Button onClick={handleOpenCreate} startIcon={<Plus size={16} />}>Tambah Produk</Button>
       </div>
 
       {/* Table */}
@@ -164,7 +164,7 @@ export const ProductPage = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label required>Nama Produk</Label>
-                          <InputField name="name" placeholder="e.g. Kopi Susu" value={values.name} onChange={handleChange} onBlur={handleBlur} error={!!(touched.name && errors.name)} hint={touched.name && errors.name ? String(errors.name) : ""} />
+                          <InputField name="name" placeholder="cth. Kopi Susu" value={values.name} onChange={handleChange} onBlur={handleBlur} error={!!(touched.name && errors.name)} hint={touched.name && errors.name ? String(errors.name) : ""} />
                         </div>
                         <div>
                           <Label required>Kategori</Label>
@@ -228,7 +228,7 @@ export const ProductPage = () => {
                         <div key={index} className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-white/[0.02] space-y-3">
                           <div className="flex items-start gap-2.5">
                             <div className="flex-1">
-                              <InputField name={`variants.${index}.name`} placeholder="Nama varian (e.g. Small)" value={variant.name} onChange={handleChange} onBlur={handleBlur} error={!!((touched.variants as any)?.[index]?.name && (errors.variants as any)?.[index]?.name)} hint={(touched.variants as any)?.[index]?.name && (errors.variants as any)?.[index]?.name ? (errors.variants as any)[index].name : ""} />
+                              <InputField name={`variants.${index}.name`} placeholder="Nama varian (cth. Kecil)" value={variant.name} onChange={handleChange} onBlur={handleBlur} error={!!((touched.variants as any)?.[index]?.name && (errors.variants as any)?.[index]?.name)} hint={(touched.variants as any)?.[index]?.name && (errors.variants as any)?.[index]?.name ? (errors.variants as any)[index].name : ""} />
                             </div>
                             <button type="button" onClick={() => setFieldValue(`variants.${index}.is_active`, !variant.is_active)} className={`mt-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${variant.is_active ? "bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800"}`}>
                               {variant.is_active ? "Aktif" : "Nonaktif"}

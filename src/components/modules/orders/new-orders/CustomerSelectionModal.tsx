@@ -139,7 +139,7 @@ export const CustomerSelectionModal = ({
                     <div className="flex items-center gap-4">
                       <div className="text-right hidden sm:block">
                         <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">{customer.points || 0} PTS</p>
-                        <p className="text-[10px] text-gray-400">Loyalty</p>
+                        <p className="text-[10px] text-gray-400">Loyalitas</p>
                       </div>
                       <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-brand-600 transition-colors" />
                     </div>

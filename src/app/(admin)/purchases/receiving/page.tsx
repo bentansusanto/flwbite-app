@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Purchase Receiving | Flwbite POS",
-  description: "Manage and confirm incoming shipments from suppliers.",
+  description: "Kelola dan konfirmasi pengiriman masuk dari pemasok.",
 };
 
 export default function Page() {

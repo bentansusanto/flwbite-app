@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Purchase Orders | Flwbite POS",
-  description: "Create and track orders sent to your suppliers.",
+  description: "Buat dan lacak pesanan yang dikirim ke pemasok Anda.",
 };
 
 export default function Page() {

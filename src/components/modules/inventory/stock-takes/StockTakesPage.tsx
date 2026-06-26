@@ -91,18 +91,18 @@ export default function StockTakesPage() {
   const handleNext = () => {
     if (currentStep === 1) {
       if (!form.branch_id) {
-        toast.error("Please select a branch.");
+        toast.error("Silakan pilih cabang.");
         return;
       }
       if (!isFrozen) {
-        toast.error("Please confirm that operations are frozen.");
+        toast.error("Harap konfirmasi bahwa operasi sedang dihentikan.");
         return;
       }
 
       // Initialize items from branch stocks
       const stocks = branchStocksData?.data || [];
       if (stocks.length === 0) {
-        toast.error("No products found in this branch to audit.");
+        toast.error("Tidak ada produk yang ditemukan di cabang ini untuk diaudit.");
         return;
       }
 
@@ -149,21 +149,21 @@ export default function StockTakesPage() {
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight bg-emerald-50 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
             <CheckCircle2 className="w-3 h-3" />
-            Completed
+            Selesai
           </span>
         );
       case 'DRAFT':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight bg-amber-50 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">
             <Clock className="w-3 h-3" />
-            Draft
+            Draf
           </span>
         );
       case 'CANCELLED':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight bg-rose-50 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400">
             <AlertTriangle className="w-3 h-3" />
-            Cancelled
+            Dibatalkan
           </span>
         );
       default:
@@ -180,12 +180,12 @@ export default function StockTakesPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Stock Takes</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Conduct and manage inventory audits and adjustments.</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Opname Stok</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Lakukan dan kelola audit serta penyesuaian inventaris.</p>
         </div>
 
         <Button onClick={handleOpenCreate} startIcon={<Plus size={18} />} className="shadow-lg shadow-brand-500/20">
-          New Stock Take
+          Opname Stok Baru
         </Button>
       </div>
 
@@ -196,7 +196,7 @@ export default function StockTakesPage() {
             <ClipboardCheck className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Audits</p>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Audit</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">{filteredStockTakes.length}</p>
           </div>
         </div>
@@ -205,7 +205,7 @@ export default function StockTakesPage() {
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Recent Discrepancies</p>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Selisih Terbaru</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">
               {filteredStockTakes.filter((st: any) => st.status === 'completed').length}
             </p>
@@ -216,8 +216,8 @@ export default function StockTakesPage() {
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">System Status</p>
-            <p className="text-xl font-bold text-gray-900 dark:text-white">Active</p>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Status Sistem</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-white">Aktif</p>
           </div>
         </div>
       </div>
@@ -228,7 +228,7 @@ export default function StockTakesPage() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
           <input
             type="text"
-            placeholder="Search by code or notes..."
+            placeholder="Cari berdasarkan kode atau catatan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-950 border border-gray-200 dark:border-white/5 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-500/10 focus:border-brand-500 transition-all shadow-sm dark:text-white dark:placeholder-gray-500"
@@ -242,7 +242,7 @@ export default function StockTakesPage() {
             onChange={(e) => setSelectedBranchId(e.target.value)}
             className="w-full pl-10 pr-10 py-2.5 bg-white dark:bg-gray-950 border border-gray-200 dark:border-white/5 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-500/10 focus:border-brand-500 appearance-none transition-all shadow-sm dark:text-white"
           >
-            <option value="">All Branches</option>
+            <option value="">Semua Cabang</option>
             {branches.map((branch: any) => (
               <option key={branch.id} value={branch.id}>{branch.name}</option>
             ))}
@@ -268,11 +268,11 @@ export default function StockTakesPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50/80 border-b border-gray-100 dark:bg-white/[0.03] dark:border-white/5">
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date & ID</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Branch</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Items</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal & ID</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Cabang</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Item</th>
                 <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Status</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-white/5">
@@ -321,7 +321,7 @@ export default function StockTakesPage() {
                         <button
                           onClick={() => setConfirmModal({ isOpen: true, id: take.id })}
                           className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400"
-                          title="Approve Audit"
+                          title="Setujui Audit"
                         >
                           <ShieldCheck className="w-4 h-4" />
                         </button>
@@ -329,7 +329,7 @@ export default function StockTakesPage() {
                       <button
                         onClick={() => setSelectedTakeId(take.id)}
                         className="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all dark:hover:bg-brand-500/10 dark:hover:text-brand-400"
-                        title="View Details"
+                        title="Lihat Detail"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
@@ -344,10 +344,10 @@ export default function StockTakesPage() {
       <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <p className="text-xs text-gray-400">
-            {isLoadingStockTakes ? "Loading..." : filteredStockTakes.length === 0 ? "0 items" : `${((currentPage - 1) * pageSize) + 1}–${Math.min(currentPage * pageSize, filteredStockTakes.length)} of ${filteredStockTakes.length} items`}
+            {isLoadingStockTakes ? "Memuat..." : filteredStockTakes.length === 0 ? "0 item" : `${((currentPage - 1) * pageSize) + 1}–${Math.min(currentPage * pageSize, filteredStockTakes.length)} dari ${filteredStockTakes.length} item`}
           </p>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-gray-400">Show</span>
+            <span className="text-xs text-gray-400">Tampilkan</span>
             <select
               value={pageSize}
               onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
@@ -357,7 +357,7 @@ export default function StockTakesPage() {
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
-            <span className="text-xs text-gray-400">per page</span>
+            <span className="text-xs text-gray-400">per halaman</span>
           </div>
         </div>
 
@@ -406,11 +406,11 @@ export default function StockTakesPage() {
           <div className="flex items-center gap-3 mb-8">
             <div className="flex-1 pr-14">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-bold text-brand-600 uppercase tracking-widest">Step {currentStep} of 3</p>
+                <p className="text-xs font-bold text-brand-600 uppercase tracking-widest">Langkah {currentStep} dari 3</p>
                 <p className="text-sm font-bold text-gray-900 truncate dark:text-white">
-                  {currentStep === 1 && "Prepare Audit"}
-                  {currentStep === 2 && "Physical Count"}
-                  {currentStep === 3 && "Audit Summary"}
+                  {currentStep === 1 && "Persiapan Audit"}
+                  {currentStep === 2 && "Perhitungan Fisik"}
+                  {currentStep === 3 && "Ringkasan Audit"}
                 </p>
               </div>
               <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden dark:bg-gray-800">
@@ -430,8 +430,8 @@ export default function StockTakesPage() {
                    <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto text-amber-600 dark:bg-amber-500/10">
                       <AlertTriangle className="w-8 h-8" />
                    </div>
-                   <h3 className="text-lg font-bold text-gray-900 dark:text-white">Operational Freeze</h3>
-                   <p className="text-sm text-gray-500 font-medium">To ensure data accuracy, please confirm that no transactions are being processed.</p>
+                   <h3 className="text-lg font-bold text-gray-900 dark:text-white">Pembekuan Operasional</h3>
+                   <p className="text-sm text-gray-500 font-medium">Untuk memastikan akurasi data, harap konfirmasi bahwa tidak ada transaksi yang sedang diproses.</p>
                 </div>
 
                 <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-4 font-medium dark:bg-gray-800 dark:border-gray-700">
@@ -443,13 +443,13 @@ export default function StockTakesPage() {
                         className="mt-1 w-5 h-5 rounded border-gray-300 text-brand-600 focus:ring-brand-500 transition-all cursor-pointer"
                       />
                       <span className="text-sm text-gray-700 group-hover:text-gray-900 dark:text-gray-300 dark:group-hover:text-white">
-                        I confirm that all POS terminals at this branch are currently suspended and no new orders will be made during this audit.
+                        Saya mengonfirmasi bahwa semua terminal POS di cabang ini saat ini ditangguhkan dan tidak ada pesanan baru yang akan dibuat selama audit ini.
                       </span>
                    </label>
                 </div>
 
                 <div className="space-y-1">
-                  <Label required>Audit Branch</Label>
+                  <Label required>Cabang Audit</Label>
                   <div className="relative">
                     <select
                     className="appearance-none w-full h-11 pr-10 rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-brand-500 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-white"
@@ -457,7 +457,7 @@ export default function StockTakesPage() {
                     onChange={e => setForm({...form, branch_id: e.target.value})}
                     required
                   >
-                    <option value="">Select Branch...</option>
+                    <option value="">Pilih Cabang...</option>
                     {branches.map((branch: any) => (
                       <option key={branch.id} value={branch.id}>{branch.name}</option>
                     ))}
@@ -472,9 +472,9 @@ export default function StockTakesPage() {
             {currentStep === 2 && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Physical Inventory Check</h4>
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Pemeriksaan Inventaris Fisik</h4>
                   <div className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded uppercase tracking-wider dark:bg-brand-500/20">
-                    {form.items.length} Items to audit
+                    {form.items.length} Item untuk diaudit
                   </div>
                 </div>
 
@@ -499,7 +499,7 @@ export default function StockTakesPage() {
                       {(item.physical_stock !== item.system_stock) && (
                         <div className="pt-2 border-t border-gray-200/50 dark:border-gray-700">
                            <InputField
-                             placeholder="Reason for discrepancy..."
+                             placeholder="Alasan selisih..."
                              value={item.note}
                              onChange={e => updateItem(idx, 'note', e.target.value)}
                              className="h-9 text-xs bg-white dark:bg-gray-900"
@@ -517,19 +517,19 @@ export default function StockTakesPage() {
               <div className="space-y-6">
                  <div className="bg-brand-50 p-6 rounded-3xl border border-brand-100 text-center dark:bg-brand-500/10 dark:border-brand-500/20">
                     <CheckCircle2 className="w-12 h-12 text-brand-600 mx-auto mb-3" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Audit Ready</h3>
-                    <p className="text-sm text-gray-500 font-medium mt-1 dark:text-gray-400">Please review the discrepancy summary below before final approval.</p>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Audit Siap</h3>
+                    <p className="text-sm text-gray-500 font-medium mt-1 dark:text-gray-400">Silakan tinjau ringkasan selisih di bawah ini sebelum persetujuan akhir.</p>
                  </div>
 
                  <div className="space-y-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Discrepancy Summary</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Ringkasan Selisih</p>
                     <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm dark:bg-gray-900 dark:border-gray-800">
                        <table className="w-full text-left">
                           <thead className="bg-gray-50/50 border-b border-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider dark:bg-gray-800 dark:border-gray-800">
                              <tr>
                                 <th className="whitespace-nowrap px-4 py-2">Item</th>
-                                <th className="whitespace-nowrap px-4 py-2 text-center">Diff</th>
-                                <th className="whitespace-nowrap px-4 py-2">Reason</th>
+                                <th className="whitespace-nowrap px-4 py-2 text-center">Selisih</th>
+                                <th className="whitespace-nowrap px-4 py-2">Alasan</th>
                              </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
@@ -553,10 +553,10 @@ export default function StockTakesPage() {
                  </div>
 
                  <div className="space-y-1">
-                    <Label>Final Audit Note</Label>
+                    <Label>Catatan Audit Akhir</Label>
                     <textarea
                       className="w-full p-4 rounded-xl border border-gray-200 bg-white text-sm font-medium outline-none focus:ring-2 focus:ring-brand-500 transition-all min-h-[80px] dark:bg-gray-900 dark:border-gray-700 dark:text-white"
-                      placeholder="Add final comments for management..."
+                      placeholder="Tambahkan komentar akhir untuk manajemen..."
                       value={form.note}
                       onChange={e => setForm({...form, note: e.target.value})}
                     />
@@ -566,12 +566,12 @@ export default function StockTakesPage() {
 
             <div className="mt-8 flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
               {currentStep > 1 && (
-                <Button type="button" variant="outline" className="flex-1 dark:border-gray-700 dark:text-gray-300" onClick={handleBack}>Back</Button>
+                <Button type="button" variant="outline" className="flex-1 dark:border-gray-700 dark:text-gray-300" onClick={handleBack}>Kembali</Button>
               )}
               {currentStep < 3 ? (
-                <Button type="button" className="flex-1" onClick={handleNext} loading={isFetchingStocks}>Continue</Button>
+                <Button type="button" className="flex-1" onClick={handleNext} loading={isFetchingStocks}>Lanjutkan</Button>
               ) : (
-                <Button type="submit" className="flex-1" startIcon={<ShieldCheck size={18} />} loading={isCreating}>Approve Audit</Button>
+                <Button type="submit" className="flex-1" startIcon={<ShieldCheck size={18} />} loading={isCreating}>Setujui Audit</Button>
               )}
             </div>
           </form>
@@ -586,28 +586,28 @@ export default function StockTakesPage() {
               <ClipboardCheck className="w-6 h-6 text-brand-600" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Stock Take Details</h3>
-              <p className="text-sm text-gray-500 font-medium dark:text-gray-400">Audit summary and results.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Detail Opname Stok</h3>
+              <p className="text-sm text-gray-500 font-medium dark:text-gray-400">Ringkasan dan hasil audit.</p>
             </div>
           </div>
 
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-1">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Date & Time</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tanggal & Waktu</p>
                 <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                   {selectedTake && format(new Date(selectedTake.created_at), "dd MMM yyyy HH:mm")}
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Audit Code</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Kode Audit</p>
                 <div className="text-sm font-bold text-brand-600 dark:text-brand-400">{selectedTake?.code}</div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-1">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Branch</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Cabang</p>
                 <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">{selectedTake?.branch_name}</div>
               </div>
               <div className="space-y-1">
@@ -617,27 +617,27 @@ export default function StockTakesPage() {
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Audit Items</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Item Audit</p>
               <div className="max-h-[300px] overflow-auto rounded-2xl border border-gray-100 dark:border-gray-800 min-h-[100px] flex flex-col">
                 {isFetchingDetail ? (
                   <div className="flex-1 flex flex-col items-center justify-center py-10 space-y-3">
                     <RefreshCcw className="w-8 h-8 text-brand-500 animate-spin" />
-                    <p className="text-sm font-medium text-gray-400">Loading audit details...</p>
+                    <p className="text-sm font-medium text-gray-400">Memuat detail audit...</p>
                   </div>
                 ) : (
                   <table className="w-full text-left text-sm">
                     <thead className="bg-gray-50 dark:bg-gray-800 text-[10px] font-bold text-gray-400 uppercase tracking-wider sticky top-0">
                        <tr>
-                          <th className="whitespace-nowrap px-4 py-3">Product</th>
-                          <th className="whitespace-nowrap px-4 py-3 text-center">System</th>
-                          <th className="whitespace-nowrap px-4 py-3 text-center">Actual</th>
-                          <th className="whitespace-nowrap px-4 py-3 text-center">Adj</th>
+                          <th className="whitespace-nowrap px-4 py-3">Produk</th>
+                          <th className="whitespace-nowrap px-4 py-3 text-center">Sistem</th>
+                          <th className="whitespace-nowrap px-4 py-3 text-center">Aktual</th>
+                          <th className="whitespace-nowrap px-4 py-3 text-center">Penyes.</th>
                        </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                        {selectedTake?.items?.length === 0 ? (
                          <tr>
-                           <td colSpan={4} className="px-4 py-10 text-center text-gray-500">No items found in this audit.</td>
+                           <td colSpan={4} className="px-4 py-10 text-center text-gray-500">Tidak ada item yang ditemukan dalam audit ini.</td>
                          </tr>
                        ) : (
                          selectedTake?.items?.map((item: any) => (
@@ -647,7 +647,7 @@ export default function StockTakesPage() {
                                   <p className="text-[10px] text-gray-400">{item.variant_name}</p>
                                   {item.note && (
                                     <p className="text-[10px] text-rose-500 italic mt-1 font-medium bg-rose-50 px-1.5 py-0.5 rounded w-fit dark:bg-rose-500/10 dark:text-rose-400">
-                                      Reason: {item.note}
+                                      Alasan: {item.note}
                                     </p>
                                   )}
                                </td>
@@ -668,15 +668,15 @@ export default function StockTakesPage() {
             </div>
 
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Audit Note</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Catatan Audit</p>
               <div className="p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 italic font-medium dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
-                {isFetchingDetail ? "Loading notes..." : (selectedTake?.note || "No notes provided.")}
+                {isFetchingDetail ? "Memuat catatan..." : (selectedTake?.note || "Tidak ada catatan yang diberikan.")}
               </div>
             </div>
           </div>
 
           <div className="mt-8 flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
-             <Button variant="outline" className="flex-1 dark:border-gray-700 dark:text-gray-300" onClick={() => setSelectedTakeId(null)}>Close</Button>
+             <Button variant="outline" className="flex-1 dark:border-gray-700 dark:text-gray-300" onClick={() => setSelectedTakeId(null)}>Tutup</Button>
 
              {selectedTake?.status === 'DRAFT' && (
                 <Button
@@ -685,12 +685,12 @@ export default function StockTakesPage() {
                   loading={isUpdating}
                   onClick={() => setConfirmModal({ isOpen: true, id: selectedTake.id })}
                 >
-                  Approve Audit
+                  Setujui Audit
                 </Button>
              )}
 
              {selectedTake?.status === 'COMPLETED' && (
-                <Button className="flex-1" startIcon={<ArrowRightLeft size={16} />}>Export Report</Button>
+                <Button className="flex-1" startIcon={<ArrowRightLeft size={16} />}>Ekspor Laporan</Button>
              )}
           </div>
         </div>
@@ -706,9 +706,9 @@ export default function StockTakesPage() {
           <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 dark:bg-emerald-500/10">
             <ShieldCheck className="w-8 h-8 text-emerald-600" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Confirm Approval</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Konfirmasi Persetujuan</h3>
           <p className="text-gray-500 dark:text-gray-400 mb-8">
-            Are you sure you want to approve this audit? This action will permanently adjust your system stock to match the physical count.
+            Apakah Anda yakin ingin menyetujui audit ini? Tindakan ini akan menyesuaikan stok sistem Anda secara permanen agar sesuai dengan perhitungan fisik.
           </p>
           <div className="flex gap-3">
             <Button
@@ -716,7 +716,7 @@ export default function StockTakesPage() {
               className="flex-1 dark:border-gray-700 dark:text-gray-300"
               onClick={() => setConfirmModal({ isOpen: false, id: null })}
             >
-              Cancel
+              Batal
             </Button>
             <Button
               className="flex-1"
@@ -730,7 +730,7 @@ export default function StockTakesPage() {
                 }
               }}
             >
-              Confirm & Approve
+              Konfirmasi & Setujui
             </Button>
           </div>
         </div>

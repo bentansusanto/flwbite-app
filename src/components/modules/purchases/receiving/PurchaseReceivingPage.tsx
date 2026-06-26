@@ -137,17 +137,17 @@ export default function PurchaseReceivingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.purchase_order_id) {
-      toast.error("Please select a Purchase Order");
+      toast.error("Silakan pilih Purchase Order");
       return;
     }
     try {
       await receiveGoods(form).unwrap();
-      toast.success("Goods received and stock updated");
+      toast.success("Barang diterima dan stok diperbarui");
       setModalOpen(false);
       setForm({ purchase_order_id: "", branch_id: "", received_at: new Date().toISOString(), status: "COMPLETED", note: "", items: [] });
       setSelectedPOId(null);
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to receive goods");
+      toast.error(err?.data?.message || "Gagal menerima barang");
     }
   };
 
@@ -156,11 +156,11 @@ export default function PurchaseReceivingPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Purchase Receiving</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage and confirm incoming shipments from suppliers.</p>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Penerimaan Barang</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Kelola dan konfirmasi pengiriman masuk dari pemasok.</p>
         </div>
         <Button onClick={() => setModalOpen(true)} startIcon={<Plus size={18} />}>
-          Receive Goods
+          Terima Barang
         </Button>
       </div>
 
@@ -172,7 +172,7 @@ export default function PurchaseReceivingPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{receipts.length}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Received</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Diterima</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -181,7 +181,7 @@ export default function PurchaseReceivingPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{poList.length}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Awaiting POs</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Menunggu PO</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -192,7 +192,7 @@ export default function PurchaseReceivingPage() {
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">
               {receipts.filter((r: any) => new Date(r.received_at).toDateString() === new Date().toDateString()).length}
             </p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Today's Items</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Item Hari Ini</p>
           </div>
         </div>
       </div>
@@ -205,7 +205,7 @@ export default function PurchaseReceivingPage() {
               <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search receipt ID or PO number..."
+                placeholder="Cari ID penerimaan atau nomor PO..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-11 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
@@ -226,11 +226,11 @@ export default function PurchaseReceivingPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
-                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Receipt Details</th>
-                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Source PO</th>
-                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Supplier</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Detail Penerimaan</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Sumber PO</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Pemasok</th>
                 <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Status</th>
-                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -238,7 +238,7 @@ export default function PurchaseReceivingPage() {
                 <tr>
                   <td colSpan={5} className="py-20 text-center">
                     <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-500" />
-                    <p className="mt-2 text-sm text-gray-500">Loading receipts...</p>
+                    <p className="mt-2 text-sm text-gray-500">Memuat penerimaan...</p>
                   </td>
                 </tr>
               ) : paginatedReceipts.map((receipt: any) => {
@@ -265,7 +265,7 @@ export default function PurchaseReceivingPage() {
                     </td>
                     <td className="px-5 py-4">
                       <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {supplier?.name || "Unknown Supplier"}
+                        {supplier?.name || "Pemasok Tidak Diketahui"}
                       </p>
                     </td>
                     <td className="px-5 py-4 text-center">
@@ -372,8 +372,8 @@ export default function PurchaseReceivingPage() {
               <Box size={20} />
             </div>
             <div>
-              <h4 className="text-base font-bold text-gray-800 dark:text-white/90">Receive Goods</h4>
-              <p className="text-xs sm:text-sm text-gray-400">Record incoming stock from a Purchase Order.</p>
+              <h4 className="text-base font-bold text-gray-800 dark:text-white/90">Terima Barang</h4>
+              <p className="text-xs sm:text-sm text-gray-400">Catat stok masuk dari Purchase Order.</p>
             </div>
           </div>
         </div>
@@ -381,7 +381,7 @@ export default function PurchaseReceivingPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <Label required className="mb-0">Source Purchase Order</Label>
+                <Label required className="mb-0">Sumber Purchase Order</Label>
                 <div className="flex gap-2">
                   {selectedPOSupplier && (
                     <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-600 dark:bg-blue-500/10">
@@ -407,7 +407,7 @@ export default function PurchaseReceivingPage() {
                   }}
                   required
                 >
-                  <option value="">Select PO number...</option>
+                  <option value="">Pilih nomor PO...</option>
                   {poList.map((po: any) => (
                     <option key={po.id} value={po.id}>
                       {po.code || po.id.slice(0, 8).toUpperCase()}
@@ -418,7 +418,7 @@ export default function PurchaseReceivingPage() {
               </div>
             </div>
             <div>
-              <Label required>Receiving Status</Label>
+              <Label required>Status Penerimaan</Label>
               <div className="relative">
                 <select 
                   className="appearance-none w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all font-medium"
@@ -437,15 +437,15 @@ export default function PurchaseReceivingPage() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <Label>Note / Remarks</Label>
+              <Label>Catatan</Label>
               <InputField 
-                placeholder="E.g. Damaged packaging on item #2" 
+                placeholder="Cth. Kemasan rusak pada item #2" 
                 value={form.note} 
                 onChange={e => setForm({...form, note: e.target.value})} 
               />
             </div>
             <div>
-              <Label required>Received Date</Label>
+              <Label required>Tanggal Diterima</Label>
               <InputField 
                 type="date"
                 value={form.received_at.split('T')[0]} 
@@ -456,20 +456,20 @@ export default function PurchaseReceivingPage() {
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h5 className="text-xs sm:text-sm font-bold text-gray-800 dark:text-white/90 uppercase tracking-wider">Received Items</h5>
+              <h5 className="text-xs sm:text-sm font-bold text-gray-800 dark:text-white/90 uppercase tracking-wider">Item Diterima</h5>
               {isFetchingPODetails && <Loader2 className="h-4 w-4 animate-spin text-brand-500" />}
             </div>
 
             <div className="space-y-3">
               {displayItems.length === 0 && !isFetchingPODetails && (
                 <div className="text-center py-8 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
-                  <p className="text-sm text-gray-400">Select a Purchase Order to see items.</p>
+                  <p className="text-sm text-gray-400">Pilih Purchase Order untuk melihat item.</p>
                 </div>
               )}
               {displayItems.map((item, index) => (
                 <div key={index} className="grid grid-cols-12 gap-2 sm:gap-3 items-end bg-gray-50/50 p-3 rounded-xl dark:bg-gray-800/30 border border-gray-100 dark:border-gray-800">
                   <div className="col-span-12 sm:col-span-6">
-                    <Label className="text-[11px] sm:text-xs">Product Name</Label>
+                    <Label className="text-[11px] sm:text-xs">Nama Produk</Label>
                     <div className="h-10 flex items-center px-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-xs font-medium text-gray-700 dark:text-white">
                       {item.name}
                     </div>
@@ -516,9 +516,9 @@ export default function PurchaseReceivingPage() {
           </div>
 
           <div className="flex justify-end gap-3 border-t border-gray-100 pt-5 dark:border-gray-800">
-            <Button type="button" variant="outline" className="flex-1 sm:flex-none" onClick={() => setModalOpen(false)}>Cancel</Button>
+            <Button type="button" variant="outline" className="flex-1 sm:flex-none" onClick={() => setModalOpen(false)}>Batal</Button>
             <Button type="submit" className="flex-1 sm:flex-none px-8" disabled={isReceiving || !form.purchase_order_id}>
-              {isReceiving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm Receipt"}
+              {isReceiving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Konfirmasi Penerimaan"}
             </Button>
           </div>
         </form>

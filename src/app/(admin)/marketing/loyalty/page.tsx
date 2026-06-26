@@ -2,8 +2,8 @@ import LoyaltyPointsPage from "@/components/modules/marketing/loyalty/LoyaltyPoi
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Loyalty Points | Flwbite POS",
-  description: "Configure point rewards and track customer loyalty engagement.",
+  title: "Poin Loyalitas | Flwbite POS",
+  description: "Atur hadiah poin dan lacak keterlibatan loyalitas pelanggan.",
 };
 
 export default function Page() {

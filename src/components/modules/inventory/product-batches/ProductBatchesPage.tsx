@@ -66,9 +66,9 @@ export default function ProductBatchesPage() {
     const exp = new Date(expiryDate);
     const diffDays = Math.ceil((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) return { label: "Expired", color: "bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20", icon: AlertTriangle };
-    if (diffDays <= 30) return { label: "Expiring Soon", color: "bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20", icon: Clock };
-    return { label: "Good Condition", color: "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20", icon: AlertCircle };
+    if (diffDays < 0) return { label: "Kedaluwarsa", color: "bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20", icon: AlertTriangle };
+    if (diffDays <= 30) return { label: "Segera Kedaluwarsa", color: "bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20", icon: Clock };
+    return { label: "Kondisi Baik", color: "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20", icon: AlertCircle };
   };
 
   return (
@@ -76,11 +76,11 @@ export default function ProductBatchesPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Product Batches</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Track expiry dates and manage stock lots efficiently.</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Batch Produk</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Lacak tanggal kedaluwarsa dan kelola stok lot secara efisien.</p>
         </div>
         <Button onClick={() => handleOpenModal()} startIcon={<Plus size={18} />} className="shadow-lg shadow-indigo-500/20">
-          Add New Batch
+          Tambah Batch Baru
         </Button>
       </div>
 
@@ -90,7 +90,7 @@ export default function ProductBatchesPage() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
           <input
             type="text"
-            placeholder="Search by batch #, product name or SKU..."
+            placeholder="Cari berdasarkan no batch, nama produk atau SKU..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-11 rounded-2xl border border-transparent bg-white px-10 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 dark:border-white/5 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 dark:focus:ring-indigo-500/10 shadow-sm"
@@ -104,7 +104,7 @@ export default function ProductBatchesPage() {
             onChange={(e) => setSelectedBranchId(e.target.value)}
             className="w-full h-11 rounded-2xl border border-transparent bg-white px-10 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 dark:border-white/5 dark:bg-gray-950 dark:text-white dark:focus:ring-indigo-500/10 appearance-none shadow-sm"
           >
-            <option value="">All Branches</option>
+            <option value="">Semua Cabang</option>
             {branches.map((b: any) => (
               <option key={b.id} value={b.id}>{b.name}</option>
             ))}
@@ -165,14 +165,14 @@ export default function ProductBatchesPage() {
 
                 <div className="mt-6 pt-4 border-t border-gray-50 grid grid-cols-2 gap-4 relative z-10 dark:border-gray-800">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Stock Level</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tingkat Stok</p>
                     <div className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
                       <span className="text-sm font-bold text-gray-900 dark:text-white">{batch.quantity} {batch.unit || "pcs"}</span>
                     </div>
                   </div>
                   <div className="space-y-1 text-right">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Expiry Date</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tanggal Kedaluwarsa</p>
                     <div className="flex items-center justify-end gap-2 text-sm font-bold text-gray-700 dark:text-gray-300">
                       <Calendar className="w-3.5 h-3.5 text-gray-400" />
                       {batch.expiry_date ? format(new Date(batch.expiry_date), "dd MMM yyyy") : "N/A"}
@@ -186,7 +186,7 @@ export default function ProductBatchesPage() {
                       <Building2 className="w-4 h-4 text-gray-400" />
                     </div>
                     <span className="text-xs font-semibold text-gray-500 truncate max-w-[120px] dark:text-gray-400">
-                      {branches.find((b: any) => b.id === batch.branch_id)?.name || "Warehouse"}
+                      {branches.find((b: any) => b.id === batch.branch_id)?.name || "Gudang"}
                     </span>
                   </div>
                   <div className="flex gap-1">
@@ -218,10 +218,10 @@ export default function ProductBatchesPage() {
       >
         <div className="p-6 border-b border-gray-100 bg-gray-50/50 dark:bg-gray-800/50 dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            {selectedBatch ? "Edit Batch" : "Add New Batch"}
+            {selectedBatch ? "Edit Batch" : "Tambah Batch Baru"}
           </h2>
           <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-            Please fill in the batch information carefully.
+            Silakan isi informasi batch dengan teliti.
           </p>
         </div>
 
@@ -247,7 +247,7 @@ export default function ProductBatchesPage() {
             <Form className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label required>Branch</Label>
+                  <Label required>Cabang</Label>
                   <select
                     name="branch_id"
                     value={values.branch_id}
@@ -255,7 +255,7 @@ export default function ProductBatchesPage() {
                     onBlur={handleBlur}
                     className={`w-full h-11 rounded-xl border ${touched.branch_id && errors.branch_id ? 'border-rose-500 ring-1 ring-rose-500' : 'border-gray-200'} bg-white px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-white`}
                   >
-                    <option value="">Select Branch...</option>
+                    <option value="">Pilih Cabang...</option>
                     {branches.map((b: any) => (
                       <option key={b.id} value={b.id}>{b.name}</option>
                     ))}
@@ -266,7 +266,7 @@ export default function ProductBatchesPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label>Supplier</Label>
+                  <Label>Pemasok</Label>
                   <select
                     name="supplier_id"
                     value={values.supplier_id}
@@ -274,7 +274,7 @@ export default function ProductBatchesPage() {
                     onBlur={handleBlur}
                     className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-white"
                   >
-                    <option value="">Select Supplier...</option>
+                    <option value="">Pilih Pemasok...</option>
                     {suppliers.map((s: any) => (
                       <option key={s.id} value={s.id}>{s.name}</option>
                     ))}
@@ -283,7 +283,7 @@ export default function ProductBatchesPage() {
               </div>
 
               <div className="space-y-1">
-                <Label required>Product / Variant</Label>
+                <Label required>Produk / Varian</Label>
                 <select
                   name="variant_id"
                   value={values.variant_id}
@@ -296,7 +296,7 @@ export default function ProductBatchesPage() {
                   onBlur={handleBlur}
                   className={`w-full h-11 rounded-xl border ${touched.variant_id && errors.variant_id ? 'border-rose-500 ring-1 ring-rose-500' : 'border-gray-200'} bg-white px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-white`}
                 >
-                  <option value="">Select Product Variant...</option>
+                  <option value="">Pilih Varian Produk...</option>
                   {products.map((p: any) => (
                     <optgroup key={p.id} label={p.name}>
                       {p.variants?.map((v: any) => (
@@ -311,7 +311,7 @@ export default function ProductBatchesPage() {
               </div>
 
               <div className="space-y-1">
-                <Label required>Lot Number / Batch ID</Label>
+                <Label required>Nomor Lot / ID Batch</Label>
                 <InputField
                   name="batch_number"
                   placeholder="e.g. LOT-2024-001"
@@ -325,7 +325,7 @@ export default function ProductBatchesPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label>Production Date</Label>
+                  <Label>Tanggal Produksi</Label>
                   <InputField
                     type="date"
                     name="production_date"
@@ -335,7 +335,7 @@ export default function ProductBatchesPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label>Expiry Date</Label>
+                  <Label>Tanggal Kedaluwarsa</Label>
                   <InputField
                     type="date"
                     name="expiry_date"
@@ -348,7 +348,7 @@ export default function ProductBatchesPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label required>Initial Quantity</Label>
+                  <Label required>Kuantitas Awal</Label>
                   <InputField
                     type="number"
                     name="quantity"
@@ -360,7 +360,7 @@ export default function ProductBatchesPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label required>Unit</Label>
+                  <Label required>Satuan</Label>
                   <InputField
                     name="unit"
                     placeholder="box, pcs, kg..."
@@ -375,10 +375,10 @@ export default function ProductBatchesPage() {
 
               <div className="mt-8 flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-700">
                 <Button className="flex-1 dark:border-gray-700 dark:text-gray-300" variant="outline" onClick={handleCloseModal} disabled={isCreating || isUpdating}>
-                  Cancel
+                  Batal
                 </Button>
                 <Button className="flex-1" type="submit" loading={isCreating || isUpdating}>
-                  {selectedBatch ? "Save Changes" : "Create Batch"}
+                  {selectedBatch ? "Simpan Perubahan" : "Buat Batch"}
                 </Button>
               </div>
             </Form>
@@ -390,10 +390,10 @@ export default function ProductBatchesPage() {
         isOpen={isAlertOpen}
         onClose={closeDeleteAlert}
         onConfirm={handleConfirmDelete}
-        title="Delete Batch?"
-        description="Are you sure you want to delete this batch? This action cannot be undone and will affect your current stock level."
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        title="Hapus Batch?"
+        description="Apakah Anda yakin ingin menghapus batch ini? Tindakan ini tidak dapat dibatalkan dan akan memengaruhi tingkat stok Anda saat ini."
+        confirmLabel="Hapus"
+        cancelLabel="Batal"
         variant="danger"
         isLoading={isDeleting}
       />

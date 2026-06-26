@@ -19,9 +19,9 @@ export const SettingsPage = () => {
     <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full">
       {/* Header Section */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Pengaturan</h1>
         <p className="mt-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-          Customize your dashboard appearance and personal preferences.
+          Sesuaikan tampilan dashboard dan preferensi pribadi Anda.
         </p>
       </div>
 
@@ -33,7 +33,7 @@ export const SettingsPage = () => {
           <div className="px-6 py-5 border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Palette className="w-5 h-5 text-brand-500" />
-              Appearance & Theme
+              Tampilan & Tema
             </h2>
           </div>
           
@@ -42,7 +42,7 @@ export const SettingsPage = () => {
             {/* Color Theme Picker */}
             <div>
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
-                Primary Brand Color
+                Warna Utama Merek
               </h3>
               <div className="flex flex-wrap gap-4">
                 {colorPalettes.map((palette) => (
@@ -62,7 +62,7 @@ export const SettingsPage = () => {
                 ))}
               </div>
               <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-                This color will be applied to all primary buttons, active links, and visual highlights across the app.
+                Warna ini akan diterapkan pada semua tombol utama, tautan aktif, dan sorotan visual di seluruh aplikasi.
               </p>
             </div>
 
@@ -71,7 +71,7 @@ export const SettingsPage = () => {
             {/* Dark Mode Toggle */}
             <div>
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
-                Interface Theme
+                Tema Antarmuka
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 
@@ -86,7 +86,7 @@ export const SettingsPage = () => {
                 >
                   <Sun className={`w-6 h-6 ${theme === "light" ? "text-brand-600" : "text-gray-400"}`} />
                   <span className={`text-sm font-semibold ${theme === "light" ? "text-brand-700 dark:text-brand-400" : "text-gray-600 dark:text-gray-400"}`}>
-                    Light Mode
+                    Mode Terang
                   </span>
                 </button>
 
@@ -101,7 +101,7 @@ export const SettingsPage = () => {
                 >
                   <Moon className={`w-6 h-6 ${theme === "dark" ? "text-brand-600" : "text-gray-400"}`} />
                   <span className={`text-sm font-semibold ${theme === "dark" ? "text-brand-700 dark:text-brand-400" : "text-gray-600 dark:text-gray-400"}`}>
-                    Dark Mode
+                    Mode Gelap
                   </span>
                 </button>
 

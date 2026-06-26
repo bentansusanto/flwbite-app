@@ -2,8 +2,8 @@ import PromotionsPage from "@/components/modules/marketing/promotions/Promotions
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Promotions | Flwbite POS",
-  description: "Create and manage marketing campaigns and discount codes.",
+  title: "Promosi | Flwbite POS",
+  description: "Buat dan kelola kampanye pemasaran dan kode diskon.",
 };
 
 export default function Page() {

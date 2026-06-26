@@ -1,8 +1,8 @@
 import SalesReportPage from "@/components/modules/reports/sales/SalesReportPage";
 
 export const metadata = {
-  title: "Sales Report | Flwbite POS",
-  description: "Comprehensive analysis of your business sales performance and revenue trends.",
+  title: "Laporan Penjualan | Flwbite POS",
+  description: "Analisis komprehensif performa penjualan bisnis dan tren pendapatan Anda.",
 };
 
 export default function Page() {

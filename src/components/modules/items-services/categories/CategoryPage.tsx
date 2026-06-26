@@ -45,17 +45,17 @@ export const CategoryPage = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">
-            Categories
+            Kategori
           </h3>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Organize your products and services into meaningful groups.
+            Kelompokkan produk dan layanan Anda menjadi kategori yang bermakna.
           </p>
         </div>
         <Button
           onClick={() => handleOpenModal()}
           startIcon={<Plus size={18} />}
         >
-          Add Category
+          Tambah Kategori
         </Button>
       </div>
 
@@ -101,7 +101,7 @@ export const CategoryPage = () => {
                   <button
                     onClick={() => handleDelete(category.id)}
                     className="p-1.5 text-gray-400 hover:text-error-500 transition-colors"
-                    title="Delete"
+                    title="Hapus"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -113,7 +113,7 @@ export const CategoryPage = () => {
                   {category.name}
                 </h4>
                 <p className="mt-1 text-sm text-gray-500 line-clamp-2 dark:text-gray-400">
-                  {category.description || "No description provided."}
+                  {category.description || "Tidak ada deskripsi."}
                 </p>
               </div>
 
@@ -125,14 +125,14 @@ export const CategoryPage = () => {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800">
             <Folder size={32} className="text-gray-300 dark:text-gray-600" />
           </div>
-          <h4 className="mt-4 text-lg font-bold text-gray-900 dark:text-white/90">No categories found</h4>
-          <p className="mt-1 text-gray-500 dark:text-gray-400">Get started by creating your first category.</p>
+          <h4 className="mt-4 text-lg font-bold text-gray-900 dark:text-white/90">Kategori tidak ditemukan</h4>
+          <p className="mt-1 text-gray-500 dark:text-gray-400">Mulai dengan membuat kategori pertama Anda.</p>
           <Button
             className="mt-6"
             variant="outline"
             onClick={() => handleOpenModal()}
           >
-            Create Category
+            Buat Kategori
           </Button>
         </div>
       )}
@@ -145,10 +145,10 @@ export const CategoryPage = () => {
       >
         <div className="flex flex-col gap-1">
           <h4 className="text-2xl font-bold text-gray-800 dark:text-white/90">
-            {selectedCategory ? "Edit Category" : "New Category"}
+            {selectedCategory ? "Edit Kategori" : "Kategori Baru"}
           </h4>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {selectedCategory ? "Update the details of your category." : "Add a new category to organize your items."}
+            {selectedCategory ? "Perbarui detail kategori Anda." : "Tambah kategori baru untuk mengatur item Anda."}
           </p>
         </div>
 
@@ -166,10 +166,10 @@ export const CategoryPage = () => {
             <Form className="mt-8 space-y-5">
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <Label required>Category Name</Label>
+                  <Label required>Nama Kategori</Label>
                   <InputField
                     name="name"
-                    placeholder="e.g. Beverages, Main Course"
+                    placeholder="mis. Minuman, Makanan Utama"
                     value={values.name}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -179,14 +179,14 @@ export const CategoryPage = () => {
                 </div>
 
                 <div>
-                  <Label required>Business Type</Label>
+                  <Label required>Tipe Bisnis</Label>
                   <Select
                     options={[
-                      { label: "Retail", value: "retail" },
+                      { label: "Ritel", value: "retail" },
                       { label: "F&B", value: "f&b" },
-                      { label: "Service", value: "service" },
+                      { label: "Layanan", value: "service" },
                     ]}
-                    placeholder="Select business type"
+                    placeholder="Pilih tipe bisnis"
                     defaultValue={values.category_type}
                     onChange={(val) => setFieldValue("category_type", val)}
                   />
@@ -197,10 +197,10 @@ export const CategoryPage = () => {
               </div>
 
               <div>
-                <Label>Description (Optional)</Label>
+                <Label>Deskripsi (Opsional)</Label>
                 <TextArea
                   rows={3}
-                  placeholder="Tell us more about this category..."
+                  placeholder="Ceritakan lebih banyak tentang kategori ini..."
                   value={values.description}
                   onChange={(val) => setFieldValue("description", val)}
                 />
@@ -213,14 +213,14 @@ export const CategoryPage = () => {
                   onClick={handleCloseModal}
                   disabled={isLoading}
                 >
-                  Cancel
+                  Batal
                 </Button>
                 <Button
                   className="flex-1"
                   type="submit"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Saving..." : selectedCategory ? "Update" : "Create"}
+                  {isLoading ? "Menyimpan..." : selectedCategory ? "Perbarui" : "Buat"}
                 </Button>
               </div>
             </Form>

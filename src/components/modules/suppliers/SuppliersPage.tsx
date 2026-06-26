@@ -103,14 +103,14 @@ export default function SuppliersPage() {
     try {
       if (editId) {
         await updateSupplier({ id: editId, ...form }).unwrap();
-        toast.success("Supplier updated successfully");
+        toast.success("Pemasok berhasil diperbarui");
       } else {
         await createSupplier(form).unwrap();
-        toast.success("Supplier created successfully");
+        toast.success("Pemasok berhasil dibuat");
       }
       setModalOpen(false);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Something went wrong");
+      toast.error(error?.data?.message || "Terjadi kesalahan");
     }
   };
 
@@ -118,10 +118,10 @@ export default function SuppliersPage() {
     if (!deleteId) return;
     try {
       await deleteSupplier(deleteId).unwrap();
-      toast.success("Supplier deleted successfully");
+      toast.success("Pemasok berhasil dihapus");
       setDeleteId(null);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to delete supplier");
+      toast.error(error?.data?.message || "Gagal menghapus pemasok");
     }
   };
 
@@ -138,11 +138,11 @@ export default function SuppliersPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Suppliers</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your product suppliers and contact information.</p>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Pemasok</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Kelola pemasok produk dan informasi kontak Anda.</p>
         </div>
         <Button onClick={() => openModal()} startIcon={<Plus size={18} />}>
-          Add Supplier
+          Tambah Pemasok
         </Button>
       </div>
 
@@ -154,7 +154,7 @@ export default function SuppliersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{suppliers.length}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Suppliers</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Pemasok</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -163,7 +163,7 @@ export default function SuppliersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{suppliers.filter((s: any) => s.status === "active").length || 0}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Active Partners</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Mitra Aktif</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -172,7 +172,7 @@ export default function SuppliersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">0</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Orders</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pesanan Tertunda</p>
           </div>
         </div>
       </div>
@@ -185,7 +185,7 @@ export default function SuppliersPage() {
               <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search suppliers..."
+                placeholder="Cari pemasok..."
                 value={search}
                 onChange={e => handleSearchChange(e.target.value)}
                 className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-11 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
@@ -201,11 +201,11 @@ export default function SuppliersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Supplier Name</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Contact Info</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Address</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Nama Pemasok</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Info Kontak</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Alamat</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Status</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -246,7 +246,7 @@ export default function SuppliersPage() {
                         : "bg-gray-100 text-gray-500 dark:bg-gray-800"
                     }`}>
                       <div className={`h-1 w-1 rounded-full ${(supplier.status === "active" || !supplier.status) ? "bg-success-500" : "bg-gray-400"}`} />
-                      {supplier.status || "active"}
+                      {supplier.status === "active" ? "aktif" : (supplier.status === "inactive" ? "nonaktif" : (supplier.status || "aktif"))}
                     </span>
                   </td>
                   <td className="px-5 py-4 text-right">
@@ -268,8 +268,8 @@ export default function SuppliersPage() {
                       <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/[0.02] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
                         <Truck className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                       </div>
-                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Supplier</p>
-                      <p className="text-sm mt-1 max-w-sm">Data supplier tidak ditemukan. Pastikan filter pencarian sudah benar.</p>
+                      <p className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data Pemasok</p>
+                      <p className="text-sm mt-1 max-w-sm">Data pemasok tidak ditemukan. Pastikan filter pencarian sudah benar.</p>
                     </div>
                   </td>
                 </tr>
@@ -283,7 +283,7 @@ export default function SuppliersPage() {
           {/* Left: info + page size */}
           <div className="flex items-center gap-3">
             <p className="text-xs text-gray-400">
-              {filtered.length === 0 ? "0 supplier" : `${startItem}–${endItem} dari ${filtered.length} supplier`}
+              {filtered.length === 0 ? "0 pemasok" : `${startItem}–${endItem} dari ${filtered.length} pemasok`}
             </p>
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-gray-400">Tampilkan</span>
@@ -367,20 +367,20 @@ export default function SuppliersPage() {
       {/* Modal */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} className="max-w-xl">
         <div className="border-b border-gray-100 p-5 dark:border-gray-800">
-          <h4 className="text-base font-bold text-gray-800 dark:text-white/90">{editId ? "Edit Supplier" : "Add New Supplier"}</h4>
-          <p className="text-sm text-gray-400">Enter supplier contact and business details.</p>
+          <h4 className="text-base font-bold text-gray-800 dark:text-white/90">{editId ? "Edit Pemasok" : "Tambah Pemasok Baru"}</h4>
+          <p className="text-sm text-gray-400">Masukkan detail kontak dan bisnis pemasok.</p>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <Label required>Supplier Name</Label>
-              <InputField placeholder="e.g. Global Electronics" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+              <Label required>Nama Pemasok</Label>
+              <InputField placeholder="Cth. Global Electronics" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
             </div>
             <div>
-              <Label required>Category</Label>
+              <Label required>Kategori</Label>
               <Select 
                 options={categoryOptions} 
-                placeholder="Select category" 
+                placeholder="Pilih kategori" 
                 value={form.category_id}
                 onChange={val => setForm({...form, category_id: val})} 
               />
@@ -388,22 +388,22 @@ export default function SuppliersPage() {
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <Label required>Phone Number</Label>
+              <Label required>Nomor Telepon</Label>
               <InputField placeholder="08123456xxx" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
             </div>
             <div>
-              <Label required>Email Address</Label>
-              <InputField type="email" placeholder="contact@supplier.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+              <Label required>Alamat Email</Label>
+              <InputField type="email" placeholder="kontak@pemasok.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
             </div>
           </div>
           <div>
-            <Label>Address</Label>
-            <TextArea placeholder="Full business address..." value={form.address} onChange={val => setForm({...form, address: val})} />
+            <Label>Alamat</Label>
+            <TextArea placeholder="Alamat bisnis lengkap..." value={form.address} onChange={val => setForm({...form, address: val})} />
           </div>
           <div className="flex gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
-            <Button type="button" variant="outline" className="flex-1" onClick={() => setModalOpen(false)}>Cancel</Button>
+            <Button type="button" variant="outline" className="flex-1" onClick={() => setModalOpen(false)}>Batal</Button>
             <Button type="submit" className="flex-1" disabled={isCreating || isUpdating}>
-              {(isCreating || isUpdating) ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : (editId ? "Update" : "Create")}
+              {(isCreating || isUpdating) ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : (editId ? "Perbarui" : "Buat")}
             </Button>
           </div>
         </form>
@@ -413,8 +413,8 @@ export default function SuppliersPage() {
         isOpen={!!deleteId} 
         onClose={() => setDeleteId(null)} 
         onConfirm={handleDelete}
-        title="Delete Supplier?"
-        description="Are you sure you want to delete this supplier? This will affect your purchase history."
+        title="Hapus Pemasok?"
+        description="Apakah Anda yakin ingin menghapus pemasok ini? Ini akan memengaruhi riwayat pembelian Anda."
         variant="danger"
       />
     </div>

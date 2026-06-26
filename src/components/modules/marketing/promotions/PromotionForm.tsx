@@ -175,13 +175,13 @@ export default function PromotionForm({
       <div className="flex-1 overflow-y-auto p-5 space-y-6 max-h-[calc(85vh-160px)] no-scrollbar">
         {/* Campaign Details */}
       <div className="rounded-2xl border border-gray-100 bg-white p-6 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md space-y-4 shadow-sm">
-        <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">Campaign Information</h4>
+        <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">Informasi Kampanye</h4>
         
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <Label required>Campaign Name</Label>
+            <Label required>Nama Kampanye</Label>
             <InputField
-              placeholder="e.g. Coffee Lovers Discount"
+              placeholder="misal. Diskon Pencinta Kopi"
               name="name"
               value={formik.values.name}
               onChange={formik.handleChange}
@@ -193,7 +193,7 @@ export default function PromotionForm({
             <Label required>Status</Label>
             <div className="mt-2.5">
               <Switch
-                label={formik.values.status === "ACTIVE" ? "Active" : "Inactive"}
+                label={formik.values.status === "ACTIVE" ? "Aktif" : "Tidak Aktif"}
                 checked={formik.values.status === "ACTIVE"}
                 onChange={(checked) => formik.setFieldValue("status", checked ? "ACTIVE" : "INACTIVE")}
               />
@@ -203,7 +203,7 @@ export default function PromotionForm({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <Label required>Start Date</Label>
+            <Label required>Tanggal Mulai</Label>
             <InputField
               type="date"
               name="start_date"
@@ -214,7 +214,7 @@ export default function PromotionForm({
             />
           </div>
           <div>
-            <Label required>End Date</Label>
+            <Label required>Tanggal Selesai</Label>
             <InputField
               type="date"
               name="end_date"
@@ -227,9 +227,9 @@ export default function PromotionForm({
         </div>
 
         <div>
-          <Label>Campaign Description</Label>
+          <Label>Deskripsi Kampanye</Label>
           <TextArea
-            placeholder="Write details about the discount terms..."
+            placeholder="Tulis detail tentang syarat diskon..."
             value={formik.values.description}
             onChange={(val) => formik.setFieldValue("description", val)}
           />
@@ -237,7 +237,7 @@ export default function PromotionForm({
 
         <div className="flex items-center gap-6 pt-2 border-t border-gray-50 dark:border-gray-850">
           <Switch
-            label="Allow stacking with other campaigns"
+            label="Izinkan penggabungan dengan kampanye lain"
             checked={formik.values.is_stackable}
             onChange={(checked) => formik.setFieldValue("is_stackable", checked)}
           />
@@ -247,7 +247,7 @@ export default function PromotionForm({
       {/* Target Branches */}
       <div className="rounded-2xl border border-gray-100 bg-white p-6 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md space-y-4 shadow-sm">
         <div className="flex items-center justify-between">
-          <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">Target Branches</h4>
+          <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">Target Cabang</h4>
           <span className="text-xs text-red-500">{formik.errors.branches ? String(formik.errors.branches) : ""}</span>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -276,8 +276,8 @@ export default function PromotionForm({
       <div className="rounded-2xl border border-gray-100 bg-white p-6 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md space-y-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">Promotion Rules</h4>
-            <p className="text-xs text-gray-400">Configure conditional rules for when this discount is triggered.</p>
+            <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">Aturan Promosi</h4>
+            <p className="text-xs text-gray-400">Atur aturan kondisional untuk kapan diskon ini dipicu.</p>
           </div>
           <Button
             type="button"
@@ -285,7 +285,7 @@ export default function PromotionForm({
             startIcon={<Plus size={16} />}
             onClick={handleAddRule}
           >
-            Add Rule
+            Tambah Aturan
           </Button>
         </div>
 
@@ -304,14 +304,14 @@ export default function PromotionForm({
               </button>
             )}
 
-            <div className="text-sm font-bold text-brand-600 dark:text-brand-400">Rule #{idx + 1}</div>
+            <div className="text-sm font-bold text-brand-600 dark:text-brand-400">Aturan #{idx + 1}</div>
 
             {/* Condition Section */}
             <div className="space-y-3">
-              <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400">Condition Trigger</h5>
+              <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400">Pemicu Kondisi</h5>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label>Condition Type</Label>
+                  <Label>Tipe Kondisi</Label>
                   <select
                     value={rule.condition_type}
                     onChange={(e) => {
@@ -323,16 +323,16 @@ export default function PromotionForm({
                     }}
                     className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   >
-                    <option value="MIN_QTY">Minimum Quantity of Items</option>
-                    <option value="MIN_PURCHASE">Minimum Purchase Amount (Rp)</option>
-                    <option value="BUY_X_GET_Y">Buy X (Condition Qty)</option>
-                    <option value="NEW_CUSTOMER">New Customer Only</option>
-                    <option value="PRODUCT_CATEGORY">Product Category Only</option>
-                    <option value="SPECIFIC_ITEMS">Specific Products/Variants</option>
+                    <option value="MIN_QTY">Jumlah Item Minimum</option>
+                    <option value="MIN_PURCHASE">Jumlah Belanja Minimum (Rp)</option>
+                    <option value="BUY_X_GET_Y">Beli X (Kondisi Jumlah)</option>
+                    <option value="NEW_CUSTOMER">Hanya Pelanggan Baru</option>
+                    <option value="PRODUCT_CATEGORY">Hanya Kategori Produk</option>
+                    <option value="SPECIFIC_ITEMS">Produk/Varian Spesifik</option>
                   </select>
                 </div>
                 <div>
-                  <Label>Condition Value</Label>
+                  <Label>Nilai Kondisi</Label>
                   {rule.condition_type === "NEW_CUSTOMER" ? (
                     <select
                       value={rule.condition_value}
@@ -343,8 +343,8 @@ export default function PromotionForm({
                       }}
                       className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     >
-                      <option value="">Select option</option>
-                      <option value="true">True</option>
+                      <option value="">Pilih opsi</option>
+                      <option value="true">Benar</option>
                     </select>
                   ) : rule.condition_type === "PRODUCT_CATEGORY" || rule.condition_type === "SPECIFIC_ITEMS" ? (
                     <select
@@ -356,7 +356,7 @@ export default function PromotionForm({
                       }}
                       className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     >
-                      <option value="true">Apply to selected filters</option>
+                      <option value="true">Terapkan pada filter yang dipilih</option>
                     </select>
                   ) : (
                     <InputField
@@ -376,7 +376,7 @@ export default function PromotionForm({
               {/* Conditional Relational Pickers */}
               {rule.condition_type === "SPECIFIC_ITEMS" && (
                 <div>
-                  <Label>Filter Condition Products/Variants</Label>
+                  <Label>Filter Kondisi Produk/Varian</Label>
                   <div className="mt-2 flex flex-wrap gap-2 max-h-40 overflow-y-auto p-3 rounded-xl border border-gray-100 bg-white dark:border-white/5 dark:bg-gray-950">
                     {productVariants.map((v) => (
                       <button
@@ -398,7 +398,7 @@ export default function PromotionForm({
 
               {rule.condition_type === "PRODUCT_CATEGORY" && (
                 <div>
-                  <Label>Filter Condition Product Categories</Label>
+                  <Label>Filter Kondisi Kategori Produk</Label>
                   <div className="mt-2 flex flex-wrap gap-2 max-h-40 overflow-y-auto p-3 rounded-xl border border-gray-100 bg-white dark:border-white/5 dark:bg-gray-950">
                     {categories.map((c) => (
                       <button
@@ -421,10 +421,10 @@ export default function PromotionForm({
 
             {/* Action Section */}
             <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-800">
-              <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400">Awarded Action</h5>
+              <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400">Aksi yang Diberikan</h5>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label>Action Type</Label>
+                  <Label>Tipe Aksi</Label>
                   <select
                     value={rule.action_type}
                     onChange={(e) => {
@@ -435,14 +435,14 @@ export default function PromotionForm({
                     }}
                     className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   >
-                    <option value="DISCOUNT_PERCENT">Percentage Discount (%)</option>
-                    <option value="DISCOUNT_AMOUNT">Amount Discount (Rp)</option>
-                    <option value="FREE_ITEM">Free Item Quantity (Qty)</option>
-                    <option value="FIXED_PRICE">Fixed Bundle Price (Rp)</option>
+                    <option value="DISCOUNT_PERCENT">Diskon Persentase (%)</option>
+                    <option value="DISCOUNT_AMOUNT">Diskon Jumlah (Rp)</option>
+                    <option value="FREE_ITEM">Jumlah Item Gratis (Qty)</option>
+                    <option value="FIXED_PRICE">Harga Bundel Tetap (Rp)</option>
                   </select>
                 </div>
                 <div>
-                  <Label>Action Value</Label>
+                  <Label>Nilai Aksi</Label>
                   <InputField
                     type="number"
                     placeholder={rule.action_type === "DISCOUNT_PERCENT" ? "e.g. 20" : "e.g. 15000"}
@@ -460,7 +460,7 @@ export default function PromotionForm({
               {rule.action_type === "FREE_ITEM" && (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <Label>Target Free Product Variants</Label>
+                    <Label>Target Varian Produk Gratis</Label>
                     <div className="mt-2 flex flex-wrap gap-2 max-h-40 overflow-y-auto p-3 rounded-xl border border-gray-100 bg-white dark:border-white/5 dark:bg-gray-950">
                       {productVariants.map((v) => (
                         <button
@@ -479,7 +479,7 @@ export default function PromotionForm({
                     </div>
                   </div>
                   <div>
-                    <Label>Target Free Product Categories</Label>
+                    <Label>Target Kategori Produk Gratis</Label>
                     <div className="mt-2 flex flex-wrap gap-2 max-h-40 overflow-y-auto p-3 rounded-xl border border-gray-100 bg-white dark:border-white/5 dark:bg-gray-950">
                       {categories.map((c) => (
                         <button
@@ -509,10 +509,10 @@ export default function PromotionForm({
       {/* Sticky Footer */}
       <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800/60 p-5 z-20 flex gap-3 justify-end rounded-b-2xl">
         <Button type="button" variant="outline" className="w-32" onClick={onCancel}>
-          Cancel
+          Batal
         </Button>
         <Button type="submit" className="w-48" loading={isLoading}>
-          {initialData ? "Update Campaign" : "Launch Campaign"}
+          {initialData ? "Perbarui Kampanye" : "Luncurkan Kampanye"}
         </Button>
       </div>
     </form>

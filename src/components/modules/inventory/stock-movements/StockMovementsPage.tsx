@@ -41,9 +41,9 @@ export default function StockMovementsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <History className="w-7 h-7 text-brand-600 dark:text-brand-400" />
-            Stock Movements
+            Pergerakan Stok
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">Track every inventory change across your branches.</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Lacak setiap perubahan inventaris di seluruh cabang Anda.</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -54,7 +54,7 @@ export default function StockMovementsPage() {
               onChange={(e) => setSelectedBranchId(e.target.value)}
               className="pl-9 pr-10 py-2.5 bg-white dark:bg-gray-950 border border-gray-200 dark:border-white/5 rounded-xl text-sm font-medium focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all appearance-none shadow-sm cursor-pointer min-w-[200px] dark:text-white"
             >
-              <option value="">Select Branch</option>
+              <option value="">Pilih Cabang</option>
               {branches.map((branch: any) => (
                 <option key={branch.id} value={branch.id}>
                   {branch.name}
@@ -74,7 +74,7 @@ export default function StockMovementsPage() {
               <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by product, variant, or note..."
+                placeholder="Cari berdasarkan produk, varian, atau catatan..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-11 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
@@ -89,10 +89,10 @@ export default function StockMovementsPage() {
                    onChange={(e) => setTypeFilter(e.target.value)}
                    className="appearance-none h-11 rounded-xl border border-gray-200 bg-white pl-9 pr-10 text-sm font-medium outline-none focus:border-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
                  >
-                   <option value="ALL">All Types</option>
-                   <option value="IN">Stock In</option>
-                   <option value="OUT">Stock Out</option>
-                   <option value="ADJUST">Adjustment</option>
+                   <option value="ALL">Semua Tipe</option>
+                   <option value="IN">Stok Masuk</option>
+                   <option value="OUT">Stok Keluar</option>
+                   <option value="ADJUST">Penyesuaian</option>
                    <option value="TRANSFER">Transfer</option>
                  </select>
                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -108,13 +108,13 @@ export default function StockMovementsPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-100 dark:border-white/5">
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date & Time</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Product / Variant</th>
-                {!selectedBranchId && <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Branch</th>}
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantity</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Reference</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tanggal & Waktu</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Produk / Varian</th>
+                {!selectedBranchId && <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Cabang</th>}
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Tipe</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Kuantitas</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Referensi</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-white/5">
@@ -123,7 +123,7 @@ export default function StockMovementsPage() {
                   <td colSpan={!selectedBranchId ? 7 : 6} className="px-6 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="w-10 h-10 text-brand-600 animate-spin" />
-                      <p className="text-gray-500 font-medium text-lg italic">Loading movements...</p>
+                      <p className="text-gray-500 font-medium text-lg italic">Memuat pergerakan...</p>
                     </div>
                   </td>
                 </tr>
@@ -151,7 +151,7 @@ export default function StockMovementsPage() {
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md w-fit">
                           <Building2 className="w-3.5 h-3.5" />
-                          {m.branch_name || "All Branches"}
+                          {m.branch_name || "Semua Cabang"}
                         </div>
                       </td>
                     )}
@@ -180,7 +180,7 @@ export default function StockMovementsPage() {
                       <button 
                         onClick={() => setSelectedMovement(m)}
                         className="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all dark:hover:bg-brand-500/10 dark:hover:text-brand-400"
-                        title="View Details"
+                        title="Lihat Detail"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
@@ -207,10 +207,10 @@ export default function StockMovementsPage() {
       <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <p className="text-xs text-gray-400">
-            {isLoadingMovements ? "Loading..." : filteredMovements.length === 0 ? "0 items" : `${((currentPage - 1) * pageSize) + 1}–${Math.min(currentPage * pageSize, filteredMovements.length)} of ${filteredMovements.length} items`}
+            {isLoadingMovements ? "Memuat..." : filteredMovements.length === 0 ? "0 item" : `${((currentPage - 1) * pageSize) + 1}–${Math.min(currentPage * pageSize, filteredMovements.length)} dari ${filteredMovements.length} item`}
           </p>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-gray-400">Show</span>
+            <span className="text-xs text-gray-400">Tampilkan</span>
             <select
               value={pageSize}
               onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
@@ -220,7 +220,7 @@ export default function StockMovementsPage() {
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
-            <span className="text-xs text-gray-400">per page</span>
+            <span className="text-xs text-gray-400">per halaman</span>
           </div>
         </div>
 
@@ -270,32 +270,32 @@ export default function StockMovementsPage() {
               <History className="w-6 h-6 text-brand-600 dark:text-brand-400" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Movement Details</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Comprehensive information for this transaction.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Detail Pergerakan</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Informasi komprehensif untuk transaksi ini.</p>
             </div>
           </div>
 
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Date & Time</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Tanggal & Waktu</p>
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   <Calendar className="w-4 h-4 text-gray-400" />
                   {selectedMovement && format(new Date(selectedMovement.created_at), "dd MMM yyyy, HH:mm")}
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Branch</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Cabang</p>
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   <Building2 className="w-4 h-4 text-gray-400" />
-                  {selectedMovement?.branch_name || "All Branches"}
+                  {selectedMovement?.branch_name || "Semua Cabang"}
                 </div>
               </div>
             </div>
 
             <div className="p-4 bg-gray-50 dark:bg-gray-800/30 rounded-2xl border border-gray-100 dark:border-gray-800 space-y-3">
               <div className="space-y-1">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Product / Variant</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Produk / Varian</p>
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-gray-900 dark:text-white">{selectedMovement?.product_name}</span>
                   <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{selectedMovement?.variant_name}</span>
@@ -303,7 +303,7 @@ export default function StockMovementsPage() {
               </div>
               <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-200/50">
                 <div className="space-y-1">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Type</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Tipe</p>
                   <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase
                     ${selectedMovement?.type === 'IN' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 
                       selectedMovement?.type === 'OUT' ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400' : 
@@ -313,7 +313,7 @@ export default function StockMovementsPage() {
                   </span>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Kuantitas</p>
                   <p className={`text-sm font-bold ${selectedMovement?.type === 'IN' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                     {selectedMovement?.type === 'IN' ? '+' : '-'}{Math.abs(selectedMovement?.quantity || 0)}
                   </p>
@@ -323,16 +323,16 @@ export default function StockMovementsPage() {
 
             <div className="space-y-2">
               <div className="space-y-1">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Reference</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Referensi</p>
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-xl w-fit">
                   <FileText className="w-4 h-4" />
                   {selectedMovement?.reference_type}
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Note</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Catatan</p>
                 <div className="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-600 dark:text-gray-300 italic">
-                  {selectedMovement?.note || "No notes available for this movement."}
+                  {selectedMovement?.note || "Tidak ada catatan yang tersedia untuk pergerakan ini."}
                 </div>
               </div>
             </div>

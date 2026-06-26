@@ -70,7 +70,7 @@ export default function ActiveSessionsWidget() {
                 </div>
                 <div className="text-right">
                   <span className="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
-                    ACTIVE
+                    AKTIF
                   </span>
                 </div>
               </div>

@@ -69,7 +69,7 @@ export default function PosSessionPage() {
 
   const handleRefresh = () => {
     refetch();
-    toast.success("Data refreshed");
+    toast.success("Data diperbarui");
   };
 
   const getStatusBadge = (status: string) => {
@@ -107,9 +107,9 @@ export default function PosSessionPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            POS Sessions
+            Sesi POS
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 font-normal">Monitor and manage cashier shifts and daily cash flow.</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 font-normal">Pantau dan kelola shift kasir dan arus kas harian.</p>
         </div>
       </div>
 
@@ -120,8 +120,8 @@ export default function PosSessionPage() {
             <PlayCircle className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Active Sessions</p>
-            <p className="text-xl font-bold text-gray-900 dark:text-white">{activeSessionsCount} <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 ml-1">Across branches</span></p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Sesi Aktif</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-white">{activeSessionsCount} <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 ml-1">Di seluruh cabang</span></p>
           </div>
         </div>
         <div className="bg-white dark:bg-gray-900/40 dark:backdrop-blur-md p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 flex items-center gap-4">
@@ -129,7 +129,7 @@ export default function PosSessionPage() {
             <ArrowUpRight className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Today's Revenue</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Pendapatan Hari Ini</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">{formatCurrency(todayRevenue)}</p>
           </div>
         </div>
@@ -138,7 +138,7 @@ export default function PosSessionPage() {
             <Wallet className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Cash On Hand</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Uang Tunai</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalCashOnHand)}</p>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function PosSessionPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search by staff name or session ID..."
+            placeholder="Cari nama staf atau ID sesi..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all"
@@ -164,7 +164,7 @@ export default function PosSessionPage() {
             onChange={(e) => setBranchFilter(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all appearance-none cursor-pointer dark:text-gray-300"
           >
-            <option value="">{isLoadingBranches ? "Loading branches..." : "All Branches"}</option>
+            <option value="">{isLoadingBranches ? "Memuat cabang..." : "Semua Cabang"}</option>
             {branches.map((branch: any) => (
               <option key={branch.id} value={branch.id}>{branch.name}</option>
             ))}
@@ -177,7 +177,7 @@ export default function PosSessionPage() {
           className="flex items-center justify-center gap-2 px-4 py-2.5 text-brand-600 dark:text-brand-400 font-semibold hover:bg-brand-50 dark:hover:bg-brand-500/10 rounded-xl transition-colors"
         >
           <RefreshCcw className="w-4 h-4" />
-          Refresh
+          Segarkan
         </button>
       </div>
 
@@ -187,18 +187,18 @@ export default function PosSessionPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-100 dark:border-white/5">
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Session & Staff</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Shift Timing</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Cash Movement</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sesi & Staf</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cabang</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Waktu Shift</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Pergerakan Kas</th>
                 <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Status</th>
-                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-white/5">
               {isLoadingSessions ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-gray-400">Loading sessions...</td>
+                  <td colSpan={6} className="px-6 py-10 text-center text-gray-400">Memuat sesi...</td>
                 </tr>
               ) : paginatedSessions.length === 0 ? (
                 <tr>
@@ -242,7 +242,7 @@ export default function PosSessionPage() {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right">
                     <div className="space-y-0.5">
-                      <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase">Revenue</p>
+                      <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase">Pendapatan</p>
                       <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(session.expected_cash - session.opening_balance)}</p>
                     </div>
                   </td>
@@ -272,10 +272,10 @@ export default function PosSessionPage() {
         <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <p className="text-xs text-gray-400 font-medium">
-              {filteredSessions.length === 0 ? "0 sessions" : `${startItem}–${endItem} of ${filteredSessions.length} sessions`}
+              {filteredSessions.length === 0 ? "0 sesi" : `${startItem}–${endItem} dari ${filteredSessions.length} sesi`}
             </p>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-gray-400 font-medium">Show</span>
+              <span className="text-xs text-gray-400 font-medium">Tampilkan</span>
               <select
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
@@ -285,7 +285,7 @@ export default function PosSessionPage() {
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
-              <span className="text-xs text-gray-400 font-medium">per page</span>
+              <span className="text-xs text-gray-400 font-medium">per halaman</span>
             </div>
           </div>
 
@@ -294,7 +294,7 @@ export default function PosSessionPage() {
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
-              title="First page"
+              title="Halaman pertama"
             >
               <ChevronDown size={13} className="rotate-90" />
               <ChevronDown size={13} className="-ml-2 rotate-90" />
@@ -343,7 +343,7 @@ export default function PosSessionPage() {
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
-              title="Last page"
+              title="Halaman terakhir"
             >
               <ChevronDown size={13} className="-rotate-90" />
               <ChevronDown size={13} className="-ml-2 -rotate-90" />
@@ -475,7 +475,7 @@ function SessionDetailModal({ isOpen, onClose, sessionId }: { isOpen: boolean; o
                     <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(session.opening_balance)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Total Penjualan (Revenue)</span>
+                    <span className="text-gray-500 dark:text-gray-400">Total Penjualan (Pendapatan)</span>
                     <span className={`font-semibold ${session.expected_cash - session.opening_balance >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                       {session.expected_cash - session.opening_balance >= 0 ? "+" : ""}{formatCurrency(session.expected_cash - session.opening_balance)}
                     </span>
@@ -505,7 +505,7 @@ function SessionDetailModal({ isOpen, onClose, sessionId }: { isOpen: boolean; o
                       </div>
                       <div>
                         <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">Selisih Kas</span>
-                        <p className="text-sm font-bold leading-tight">DIFFERENCE</p>
+                        <p className="text-sm font-bold leading-tight">SELISIH</p>
                       </div>
                     </div>
                     <span className="text-lg font-semibold tracking-tight">

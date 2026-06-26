@@ -220,7 +220,7 @@ export const NewOrdersPage = () => {
       const orderRes = await createOrder({
         type: getOrderType(),
         branch_id: branchId,
-        customer_name: selectedCustomer?.name || "Customer",
+        customer_name: selectedCustomer?.name || "Pelanggan",
         items: cart.map(item => ({
           variant_id: item.variant_id,
           qty: item.quantity
@@ -242,10 +242,10 @@ export const NewOrdersPage = () => {
       
       setLastOrderData({
         orderId: orderId,
-        cashierName: role || "Cashier",
-        branchName: branches.find((b:any) => b.id === branchId)?.name || "Branch",
+        cashierName: role || "Kasir",
+        branchName: branches.find((b:any) => b.id === branchId)?.name || "Cabang",
         tenantName: tenantName,
-        customerName: selectedCustomer?.name || customerName || "Customer",
+        customerName: selectedCustomer?.name || customerName || "Pelanggan",
         items: cart.map(item => ({
           name: item.name,
           quantity: item.quantity,
@@ -278,7 +278,7 @@ export const NewOrdersPage = () => {
       await createOrder({
         type: getOrderType(),
         branch_id: branchId,
-        customer_name: selectedCustomer?.name || customerName || "Customer",
+        customer_name: selectedCustomer?.name || customerName || "Pelanggan",
         table_number: tableNumber,
         items: cart.map(item => ({
           variant_id: item.variant_id,
@@ -782,9 +782,9 @@ export const NewOrdersPage = () => {
       <div className="hidden lg:flex w-[400px] flex-col bg-white dark:bg-gray-900/40 dark:backdrop-blur-md rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl shadow-gray-100 dark:shadow-none">
         <div className="p-6 border-b border-gray-100 dark:border-gray-800 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-lg text-gray-900 dark:text-white">Current Order</h3>
+            <h3 className="font-bold text-lg text-gray-900 dark:text-white">Pesanan Saat Ini</h3>
             <span className="text-xs font-bold px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-500 dark:text-gray-400">
-              {cart.length} Items
+              {cart.length} Item
             </span>
           </div>
 
@@ -1247,7 +1247,7 @@ export const NewOrdersPage = () => {
                             <div className="font-bold text-emerald-600 dark:text-emerald-400">
                               {rule.action_type === "DISCOUNT_PERCENT" ? `${rule.action_value}% Off` : 
                                rule.action_type === "DISCOUNT_FIXED" ? `-${formatCurrency(Number(rule.action_value))}` : 
-                               rule.action_type === "FREE_PRODUCT" ? "Beli 2 Gratis 1" : "Free Item"}
+                               rule.action_type === "FREE_PRODUCT" ? "Beli 2 Gratis 1" : "Item Gratis"}
                             </div>
                           </div>
                         );

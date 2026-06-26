@@ -48,9 +48,9 @@ interface Props {
 
 const FILTER_TABS = [
   { label: "Semua", value: "all" },
-  { label: "Retail", value: "retail" },
+  { label: "Ritel", value: "retail" },
   { label: "F&B", value: "f&b" },
-  { label: "Service", value: "service" },
+  { label: "Layanan", value: "service" },
 ] as const;
 
 export const ProductTable: React.FC<Props> = ({

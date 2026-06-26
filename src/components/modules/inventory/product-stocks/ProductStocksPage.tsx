@@ -64,7 +64,7 @@ export default function ProductStocksPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Product Stocks</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Manage and monitor inventory levels across branches.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Kelola dan pantau tingkat inventaris di seluruh cabang.</p>
         </div>
 
         {/* Branch Selector */}
@@ -77,7 +77,7 @@ export default function ProductStocksPage() {
             onChange={(e) => setSelectedBranchId(e.target.value)}
             className="h-full appearance-none bg-transparent border-none py-0 pl-1 pr-8 text-sm font-medium focus:ring-0 text-gray-700 dark:text-white"
           >
-            <option value="" disabled>Select Branch</option>
+            <option value="" disabled>Pilih Cabang</option>
             {branches.map((branch: any) => (
               <option key={branch.id} value={branch.id}>{branch.name}</option>
             ))}
@@ -94,7 +94,7 @@ export default function ProductStocksPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{filteredStocks.length}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tracked Variants</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Varian Terpantau</p>
           </div>
         </div>
 
@@ -104,7 +104,7 @@ export default function ProductStocksPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{lowStockCount}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Low Stock Alerts</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Peringatan Stok Rendah</p>
           </div>
         </div>
 
@@ -114,7 +114,7 @@ export default function ProductStocksPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{totalValue}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Units</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Unit</p>
           </div>
         </div>
       </div>
@@ -127,7 +127,7 @@ export default function ProductStocksPage() {
               <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search products or variants..."
+                placeholder="Cari produk atau varian..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-11 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
@@ -138,7 +138,7 @@ export default function ProductStocksPage() {
                 onClick={() => setIsAddStockModalOpen(true)}
                 className="flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors shadow-sm shadow-brand-500/20"
               >
-                <Plus size={16} /> Add Stock
+                <Plus size={16} /> Tambah Stok
               </button>
               <button className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400">
                 <Filter size={16} /> Filter
@@ -152,11 +152,11 @@ export default function ProductStocksPage() {
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
                 <th className="whitespace-nowrap w-10 px-5 py-4" />
-                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Product Name</th>
-                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Variants</th>
-                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Total Stock</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Nama Produk</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Varian</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Total Stok</th>
                 <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Status</th>
-                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
+                <th className="whitespace-nowrap px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -164,7 +164,7 @@ export default function ProductStocksPage() {
                 <tr>
                   <td colSpan={!selectedBranchId ? 6 : 5} className="py-20 text-center">
                     <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-500" />
-                    <p className="mt-2 text-sm text-gray-500">Loading stock data...</p>
+                    <p className="mt-2 text-sm text-gray-500">Memuat data stok...</p>
                   </td>
                 </tr>
               ) : groupedStocks.map((group: any, index: number) => {
@@ -190,7 +190,7 @@ export default function ProductStocksPage() {
                             <p className="text-sm font-bold text-gray-800 dark:text-white/90">
                               {group.product_name}
                             </p>
-                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Product</p>
+                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Produk</p>
                           </div>
                         </div>
                       </td>
@@ -209,7 +209,7 @@ export default function ProductStocksPage() {
                           group.has_low_stock ? 'bg-error-50 text-error-600 dark:bg-error-500/10' :
                           'bg-success-50 text-success-600 dark:bg-success-500/10'
                         }`}>
-                          {group.has_low_stock ? 'Low Stock' : 'In Stock'}
+                          {group.has_low_stock ? 'Stok Rendah' : 'Tersedia'}
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-5 py-4 text-right">
@@ -229,9 +229,9 @@ export default function ProductStocksPage() {
                             <table className="w-full text-left">
                               <thead>
                                 <tr className="text-gray-400">
-                                  <th className="whitespace-nowrap px-6 py-2.5 text-xs font-bold uppercase tracking-wider">Variant Name</th>
-                                  {!selectedBranchId && <th className="whitespace-nowrap px-6 py-2.5 text-xs font-bold uppercase tracking-wider">Branch</th>}
-                                  <th className="whitespace-nowrap px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-center">Stock</th>
+                                  <th className="whitespace-nowrap px-6 py-2.5 text-xs font-bold uppercase tracking-wider">Nama Varian</th>
+                                  {!selectedBranchId && <th className="whitespace-nowrap px-6 py-2.5 text-xs font-bold uppercase tracking-wider">Cabang</th>}
+                                  <th className="whitespace-nowrap px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-center">Stok</th>
                                   <th className="whitespace-nowrap px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-center">Status</th>
                                 </tr>
                               </thead>
@@ -274,8 +274,8 @@ export default function ProductStocksPage() {
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800">
                         <Package size={26} className="text-gray-300 dark:text-gray-600" />
                       </div>
-                      <p className="mt-3 text-sm font-medium text-gray-700 dark:text-white/90">No products found</p>
-                      <p className="mt-1 text-xs text-gray-400">Try adjusting your search or selected branch.</p>
+                      <p className="mt-3 text-sm font-medium text-gray-700 dark:text-white/90">Produk tidak ditemukan</p>
+                      <p className="mt-1 text-xs text-gray-400">Coba sesuaikan pencarian atau pilihan cabang Anda.</p>
                     </div>
                   </td>
                 </tr>
@@ -287,10 +287,10 @@ export default function ProductStocksPage() {
       <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <p className="text-xs text-gray-400">
-            {isLoadingStocks ? "Loading..." : filteredStocks.length === 0 ? "0 items" : `${((currentPage - 1) * pageSize) + 1}–${Math.min(currentPage * pageSize, filteredStocks.length)} of ${filteredStocks.length} items`}
+            {isLoadingStocks ? "Memuat..." : filteredStocks.length === 0 ? "0 item" : `${((currentPage - 1) * pageSize) + 1}–${Math.min(currentPage * pageSize, filteredStocks.length)} dari ${filteredStocks.length} item`}
           </p>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-gray-400">Show</span>
+            <span className="text-xs text-gray-400">Tampilkan</span>
             <select
               value={pageSize}
               onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
@@ -300,7 +300,7 @@ export default function ProductStocksPage() {
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
-            <span className="text-xs text-gray-400">per page</span>
+            <span className="text-xs text-gray-400">per halaman</span>
           </div>
         </div>
 

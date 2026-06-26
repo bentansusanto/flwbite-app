@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Stock Movements | Flwbite POS",
-  description: "Monitor inventory changes and history across branches.",
+  description: "Pantau perubahan dan riwayat inventaris di seluruh cabang.",
 };
 
 export default function Page() {

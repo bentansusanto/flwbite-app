@@ -67,15 +67,15 @@ export const useProductBatches = () => {
 
       if (selectedBatch) {
         await updateBatch({ id: selectedBatch.id, data: payload }).unwrap();
-        toast.success("Batch updated successfully");
+        toast.success("Batch berhasil diperbarui");
       } else {
         await createBatch(payload).unwrap();
-        toast.success("Batch created successfully");
+        toast.success("Batch berhasil dibuat");
       }
       
       onSuccess();
     } catch (error: any) {
-      toast.error(error.data?.message || "Something went wrong. Please try again.");
+      toast.error(error.data?.message || "Terjadi kesalahan. Silakan coba lagi.");
     }
   };
 
@@ -93,10 +93,10 @@ export const useProductBatches = () => {
     if (!batchToDelete) return;
     try {
       await deleteBatch(batchToDelete).unwrap();
-      toast.success("Batch deleted successfully");
+      toast.success("Batch berhasil dihapus");
       closeDeleteAlert();
     } catch (error: any) {
-      toast.error(error.data?.message || "Failed to delete batch");
+      toast.error(error.data?.message || "Gagal menghapus batch");
     }
   };
 

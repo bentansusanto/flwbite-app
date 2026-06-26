@@ -49,7 +49,7 @@ export default function CustomersPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success(`Customer berhasil ${editId ? "diperbarui" : "ditambahkan"}`);
+    toast.success(`Pelanggan berhasil ${editId ? "diperbarui" : "ditambahkan"}`);
     setModalOpen(false);
   };
 
@@ -58,11 +58,11 @@ export default function CustomersPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Customers</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your customer relationships.</p>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Pelanggan</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Kelola hubungan pelanggan Anda.</p>
         </div>
         <Button onClick={() => openModal()} startIcon={<Plus size={18} />}>
-          Add Customer
+          Tambah Pelanggan
         </Button>
       </div>
 
@@ -75,7 +75,7 @@ export default function CustomersPage() {
           <div className="mt-4 flex items-end justify-between">
             <div>
               <p className="text-2xl font-semibold text-gray-800 dark:text-white">{MOCK_CUSTOMERS.length}</p>
-              <p className="text-xs font-medium text-gray-500">Total Customers</p>
+              <p className="text-xs font-medium text-gray-500">Total Pelanggan</p>
             </div>
             <span className="flex items-center gap-1 text-xs font-medium text-success-600 bg-success-50 px-2 py-1 rounded-full">
               <ArrowUpRight size={12} /> 12%
@@ -88,7 +88,7 @@ export default function CustomersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{MOCK_CUSTOMERS.filter(c => c.status === "active").length}</p>
-            <p className="text-xs font-medium text-gray-500">Active Customers</p>
+            <p className="text-xs font-medium text-gray-500">Pelanggan Aktif</p>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function CustomersPage() {
             <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search customers..."
+              placeholder="Cari pelanggan..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-11 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
@@ -112,11 +112,11 @@ export default function CustomersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Customer</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Contact</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Joined Date</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Pelanggan</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Kontak</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Tanggal Bergabung</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Status</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -260,29 +260,29 @@ export default function CustomersPage() {
               <UserPlus size={20} />
             </div>
             <div>
-              <h4 className="text-base font-bold text-gray-800 dark:text-white/90">{editId ? "Edit Customer" : "Add New Customer"}</h4>
-              <p className="text-sm text-gray-400">Complete the information below.</p>
+              <h4 className="text-base font-bold text-gray-800 dark:text-white/90">{editId ? "Edit Pelanggan" : "Tambah Pelanggan Baru"}</h4>
+              <p className="text-sm text-gray-400">Lengkapi informasi di bawah ini.</p>
             </div>
           </div>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
-            <Label required>Full Name</Label>
-            <InputField placeholder="e.g. John Doe" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+            <Label required>Nama Lengkap</Label>
+            <InputField placeholder="cth. John Doe" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <Label>Email Address</Label>
+              <Label>Alamat Email</Label>
               <InputField type="email" placeholder="john@example.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
             </div>
             <div>
-              <Label>Phone Number</Label>
+              <Label>Nomor Telepon</Label>
               <InputField placeholder="08123456xxx" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
             </div>
           </div>
           <div className="flex gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
-            <Button type="button" variant="outline" className="flex-1" onClick={() => setModalOpen(false)}>Cancel</Button>
-            <Button type="submit" className="flex-1">{editId ? "Update Customer" : "Create Customer"}</Button>
+            <Button type="button" variant="outline" className="flex-1" onClick={() => setModalOpen(false)}>Batal</Button>
+            <Button type="submit" className="flex-1">{editId ? "Perbarui Pelanggan" : "Buat Pelanggan"}</Button>
           </div>
         </form>
       </Modal>
@@ -290,9 +290,9 @@ export default function CustomersPage() {
       <AlertDialog
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
-        onConfirm={async () => { toast.success("Customer deleted"); setDeleteId(null); }}
-        title="Delete Customer?"
-        description="Are you sure you want to delete this customer? This action cannot be undone."
+        onConfirm={async () => { toast.success("Pelanggan dihapus"); setDeleteId(null); }}
+        title="Hapus Pelanggan?"
+        description="Apakah Anda yakin ingin menghapus pelanggan ini? Tindakan ini tidak dapat dibatalkan."
         variant="danger"
       />
     </div>

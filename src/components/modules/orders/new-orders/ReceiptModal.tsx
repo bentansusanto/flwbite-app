@@ -207,7 +207,7 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
         <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            Payment Successful
+            Pembayaran Berhasil
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X className="w-5 h-5" />
@@ -241,20 +241,20 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
             {/* Meta Data */}
             <div className="mb-3 space-y-1 text-[10px]">
               <div className="flex justify-between">
-                <span>Date:</span>
+                <span>Tanggal:</span>
                 <span>{format(receiptData.date, "dd/MM/yyyy HH:mm")}</span>
               </div>
               <div className="flex justify-between">
-                <span>Receipt:</span>
+                <span>Struk:</span>
                 <span>#{receiptData.orderId.substring(0, 8).toUpperCase()}</span>
               </div>
               <div className="flex justify-between">
-                <span>Cashier:</span>
+                <span>Kasir:</span>
                 <span>{receiptData.cashierName}</span>
               </div>
-              {receiptData.customerName && receiptData.customerName !== "Customer" && (
+              {receiptData.customerName && receiptData.customerName !== "Pelanggan" && receiptData.customerName !== "Customer" && (
                 <div className="flex justify-between">
-                  <span>Customer:</span>
+                  <span>Pelanggan:</span>
                   <span className="truncate max-w-[120px] text-right">{receiptData.customerName}</span>
                 </div>
               )}
@@ -289,13 +289,13 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
               </div>
               {receiptData.tax > 0 && (
                 <div className="flex justify-between">
-                  <span>Tax</span>
+                  <span>Pajak</span>
                   <span>{formatCurrency(receiptData.tax).replace("Rp", "").trim()}</span>
                 </div>
               )}
               {receiptData.discount > 0 && (
                 <div className="flex justify-between">
-                  <span>Discount</span>
+                  <span>Diskon</span>
                   <span>-{formatCurrency(receiptData.discount).replace("Rp", "").trim()}</span>
                 </div>
               )}
@@ -309,22 +309,22 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
             <div className="divider-dashed"></div>
             <div className="space-y-1.5 mb-5">
               <div className="flex justify-between">
-                <span>Payment</span>
+                <span>Pembayaran</span>
                 <span>{receiptData.paymentMethod}</span>
               </div>
               <div className="flex justify-between">
-                <span>Paid</span>
+                <span>Dibayar</span>
                 <span>{formatCurrency(receiptData.amountPaid).replace("Rp", "").trim()}</span>
               </div>
               <div className="flex justify-between">
-                <span>Change</span>
+                <span>Kembalian</span>
                 <span>{formatCurrency(receiptData.change).replace("Rp", "").trim()}</span>
               </div>
             </div>
 
             {/* Footer */}
             <div className="text-center mt-6 space-y-4">
-              <p className="font-bold uppercase text-[10px]">Thank You For Coming!</p>
+              <p className="font-bold uppercase text-[10px]">Terima Kasih!</p>
               
               {/* Fake Barcode */}
               <div className="flex justify-center">
@@ -377,7 +377,7 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
             ) : (
               <span className="flex items-center gap-2">
                 <Bluetooth className="w-4 h-4" />
-                Print with Bluetooth
+                Cetak dengan Bluetooth
               </span>
             )}
           </Button>

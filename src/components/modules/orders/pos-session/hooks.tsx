@@ -16,7 +16,7 @@ export const usePosSessionForm = (onSubmit: (values: PosSessionFormValues) => vo
         await onSubmit(values);
         formik.resetForm();
       } catch (error) {
-        toast.error("Failed to process POS session");
+        toast.error("Gagal memproses sesi POS");
       }
     },
   });
@@ -36,7 +36,7 @@ export const useCloseSessionForm = (onSubmit: (values: CloseSessionFormValues) =
         await onSubmit(values);
         formik.resetForm();
       } catch (error) {
-        toast.error("Failed to close POS session");
+        toast.error("Gagal menutup sesi POS");
       }
     },
   });

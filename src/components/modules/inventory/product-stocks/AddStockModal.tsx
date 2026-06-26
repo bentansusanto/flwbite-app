@@ -25,19 +25,19 @@ export default function AddStockModal({ isOpen, onClose, branches }: AddStockMod
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-md">
       <div className="p-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-          Add Stock
+          Tambah Stok
         </h3>
         
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Branch <span className="text-red-500">*</span>
+              Cabang <span className="text-red-500">*</span>
             </label>
             <Select
               options={branches.map((b) => ({ value: b.id, label: b.name }))}
               value={formik.values.branch_id}
               onChange={(value) => formik.setFieldValue("branch_id", value)}
-              placeholder="Select Branch"
+              placeholder="Pilih Cabang"
             />
             {formik.touched.branch_id && formik.errors.branch_id && (
               <p className="text-red-500 text-xs mt-1">{formik.errors.branch_id}</p>
@@ -46,7 +46,7 @@ export default function AddStockModal({ isOpen, onClose, branches }: AddStockMod
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Product <span className="text-red-500">*</span>
+              Produk <span className="text-red-500">*</span>
             </label>
             <Select
               options={products.map((p: any) => ({ value: p.id, label: p.name }))}
@@ -55,7 +55,7 @@ export default function AddStockModal({ isOpen, onClose, branches }: AddStockMod
                 formik.setFieldValue("product_id", value);
                 formik.setFieldValue("variant_id", ""); // reset variant when product changes
               }}
-              placeholder={isLoadingProducts ? "Loading products..." : "Select Product"}
+              placeholder={isLoadingProducts ? "Memuat produk..." : "Pilih Produk"}
             />
             {formik.touched.product_id && formik.errors.product_id && (
               <p className="text-red-500 text-xs mt-1">{formik.errors.product_id}</p>
@@ -64,13 +64,13 @@ export default function AddStockModal({ isOpen, onClose, branches }: AddStockMod
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Variant <span className="text-red-500">*</span>
+              Varian <span className="text-red-500">*</span>
             </label>
             <Select
               options={variants.map((v: any) => ({ value: v.id, label: v.name }))}
               value={formik.values.variant_id}
               onChange={(value) => formik.setFieldValue("variant_id", value)}
-              placeholder={!formik.values.product_id ? "Select a product first" : "Select Variant"}
+              placeholder={!formik.values.product_id ? "Pilih produk terlebih dahulu" : "Pilih Varian"}
             />
             {formik.touched.variant_id && formik.errors.variant_id && (
               <p className="text-red-500 text-xs mt-1">{formik.errors.variant_id}</p>
@@ -79,7 +79,7 @@ export default function AddStockModal({ isOpen, onClose, branches }: AddStockMod
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Amount to Add <span className="text-red-500">*</span>
+              Jumlah yang Ditambahkan <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
@@ -105,7 +105,7 @@ export default function AddStockModal({ isOpen, onClose, branches }: AddStockMod
                 onClose();
               }}
             >
-              Cancel
+              Batal
             </Button>
             <Button
               variant="primary"
@@ -114,7 +114,7 @@ export default function AddStockModal({ isOpen, onClose, branches }: AddStockMod
               disabled={isUpdating}
               loading={isUpdating}
             >
-              Add Stock
+              Tambah Stok
             </Button>
           </div>
         </form>

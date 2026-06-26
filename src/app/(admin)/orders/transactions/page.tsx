@@ -2,7 +2,7 @@ import TransactionHistoryPage from "@/components/modules/orders/transaction-hist
 
 export const metadata = {
   title: "Transaction History | Flwbite POS",
-  description: "Review and analyze all your business sales transactions.",
+  description: "Tinjau dan analisis semua transaksi penjualan bisnis Anda.",
 };
 
 export default function Page() {

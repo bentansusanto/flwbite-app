@@ -119,7 +119,7 @@ export const OrderQueueModal = ({
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
                             <h4 className="font-bold text-gray-900 dark:text-white truncate max-w-[150px] sm:max-w-[200px]">
-                              {order.customer_name || "Customer"}
+                              {order.customer_name || "Pelanggan"}
                             </h4>
                             {order.table_number && (
                               <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-500 text-[10px] font-bold rounded-md">
@@ -207,8 +207,8 @@ export const OrderQueueModal = ({
                   <User size={20} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 dark:text-white">{viewingOrder.customer_name || "Customer"}</h4>
-                  <p className="text-xs text-gray-400">Order ID: {viewingOrder.order_number || viewingOrder.id.slice(0, 8)}</p>
+                  <h4 className="font-bold text-gray-900 dark:text-white">{viewingOrder.customer_name || "Pelanggan"}</h4>
+                  <p className="text-xs text-gray-400">ID Pesanan: {viewingOrder.order_number || viewingOrder.id.slice(0, 8)}</p>
                 </div>
               </div>
               <div className="text-right">

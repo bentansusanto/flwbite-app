@@ -153,7 +153,7 @@ export default function TenantPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Tenants & Cabang</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Tenant & Cabang</h3>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Kelola profil bisnis (tenant) dan seluruh cabang outlet Anda.
           </p>
@@ -220,7 +220,7 @@ export default function TenantPage() {
                 <div>
                   <h4 className="text-lg font-bold text-gray-900 dark:text-white">{tenant?.name}</h4>
                   <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
-                    <Globe size={14} /> {tenant?.domain || "N/A"}
+                    <Globe size={14} /> {tenant?.domain || "Tidak ada"}
                   </p>
                 </div>
               </div>
@@ -342,7 +342,7 @@ export default function TenantPage() {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Users size={14} className="text-gray-400" />
-                      <span>{branch.staff_count || 0} Staff</span>
+                      <span>{branch.staff_count || 0} Staf</span>
                     </div>
                   </div>
 

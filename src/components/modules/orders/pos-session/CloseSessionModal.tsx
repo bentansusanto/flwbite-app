@@ -94,7 +94,7 @@ export const CloseSessionModal: React.FC<CloseSessionModalProps> = ({ isOpen, on
                 <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-2xl border border-green-100 dark:border-green-900/30">
                   <div className="flex items-center gap-2 mb-2 text-green-600 dark:text-green-500">
                     <Banknote className="w-4 h-4" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Total Cash</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Total Kas</span>
                   </div>
                   <div className="text-2xl font-bold text-green-700 dark:text-green-400">
                     Rp {summary?.expected_cash?.toLocaleString() || 0}
@@ -162,7 +162,7 @@ export const CloseSessionModal: React.FC<CloseSessionModalProps> = ({ isOpen, on
                         ? 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400'
                         : 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400'
                   }`}>
-                    <span className="text-sm font-semibold">Selisih Uang (Difference):</span>
+                    <span className="text-sm font-semibold">Selisih Uang:</span>
                     <span className="font-bold">
                       {diff > 0 ? '+' : ''}Rp {diff.toLocaleString()}
                     </span>

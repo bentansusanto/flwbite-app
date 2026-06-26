@@ -46,10 +46,10 @@ export const useStockTakes = () => {
   const handleCreate = async (data: any) => {
     try {
       await createStockTake(data).unwrap();
-      toast.success("Stock take submitted successfully");
+      toast.success("Opname stok berhasil dikirim");
       return true;
     } catch (error: any) {
-      toast.error(error.data?.message || "Failed to submit stock take");
+      toast.error(error.data?.message || "Gagal mengirim opname stok");
       return false;
     }
   };
@@ -57,10 +57,10 @@ export const useStockTakes = () => {
   const handleUpdate = async (id: string, data: any) => {
     try {
       await updateStockTake({ id, data }).unwrap();
-      toast.success("Stock take updated successfully");
+      toast.success("Opname stok berhasil diperbarui");
       return true;
     } catch (error: any) {
-      toast.error(error.data?.message || "Failed to update stock take");
+      toast.error(error.data?.message || "Gagal memperbarui opname stok");
       return false;
     }
   };

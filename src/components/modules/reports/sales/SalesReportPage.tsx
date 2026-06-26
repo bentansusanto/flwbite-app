@@ -132,19 +132,19 @@ export default function SalesReportPage() {
     if (!allData || allData.length === 0) return;
 
     const summaryData = [
-      ["SALES PERFORMANCE REPORT"],
-      ["Period", formik.values.start_date && formik.values.end_date ? `${formik.values.start_date} to ${formik.values.end_date}` : period.toUpperCase()],
-      ["Branch", branches.find((b: any) => b.id === formik.values.branch_id)?.name || "All Branches"],
-      ["Total Transactions", allData.length],
-      ["Total Revenue", formatCurrency(allData.reduce((acc: number, curr: any) => acc + curr.final_amount, 0))],
+      ["LAPORAN PERFORMA PENJUALAN"],
+      ["Periode", formik.values.start_date && formik.values.end_date ? `${formik.values.start_date} hingga ${formik.values.end_date}` : period.toUpperCase()],
+      ["Cabang", branches.find((b: any) => b.id === formik.values.branch_id)?.name || "Semua Cabang"],
+      ["Total Transaksi", allData.length],
+      ["Total Pendapatan", formatCurrency(allData.reduce((acc: number, curr: any) => acc + curr.final_amount, 0))],
       [], // Spacer
-      ["Invoice ID", "Date", "Customer", "Items", "Payment", "Status", "Amount"]
+      ["ID Faktur", "Tanggal", "Pelanggan", "Item", "Pembayaran", "Status", "Jumlah"]
     ];
 
     const tableData = allData.map((sale: any) => [
       sale.order_number,
       format(new Date(sale.created_at), "dd MMM yyyy HH:mm"),
-      sale.customer_name || "Guest",
+      sale.customer_name || "Tamu",
       sale.items?.length || 0,
       sale.payment_method,
       sale.status,
@@ -171,8 +171,8 @@ export default function SalesReportPage() {
     const doc = new jsPDF();
     const totalRevenue = allData.reduce((acc: number, curr: any) => acc + curr.final_amount, 0);
     const dateRange = formik.values.start_date && formik.values.end_date
-      ? `${formik.values.start_date} to ${formik.values.end_date}`
-      : `Period: ${period.toUpperCase()}`;
+      ? `${formik.values.start_date} hingga ${formik.values.end_date}`
+      : `Periode: ${period.toUpperCase()}`;
 
     // Header Design
     doc.setFillColor(79, 70, 229); // Indigo-600
@@ -181,11 +181,11 @@ export default function SalesReportPage() {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
-    doc.text("SALES REPORT", 14, 20);
+    doc.text("LAPORAN PENJUALAN", 14, 20);
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`Branch: ${branches.find((b: any) => b.id === formik.values.branch_id)?.name || "All Branches"}`, 14, 28);
+    doc.text(`Cabang: ${branches.find((b: any) => b.id === formik.values.branch_id)?.name || "Semua Cabang"}`, 14, 28);
     doc.text(`${dateRange}`, 14, 34);
 
     // Summary Box
@@ -193,7 +193,7 @@ export default function SalesReportPage() {
     doc.roundedRect(140, 10, 56, 20, 2, 2, 'F');
     doc.setTextColor(100, 116, 139); // Slate-500
     doc.setFontSize(8);
-    doc.text("TOTAL REVENUE", 145, 16);
+    doc.text("TOTAL PENDAPATAN", 145, 16);
     doc.setTextColor(79, 70, 229); // Indigo-600
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
@@ -202,14 +202,14 @@ export default function SalesReportPage() {
     const tableData = allData.map((sale: any) => [
       sale.order_number,
       format(new Date(sale.created_at), "dd MMM yyyy"),
-      sale.customer_name || "Guest",
+      sale.customer_name || "Tamu",
       sale.payment_method,
       sale.status,
       { content: formatCurrency(sale.final_amount), styles: { halign: 'right' } }
     ]);
 
     autoTable(doc, {
-      head: [["Invoice ID", "Date", "Customer", "Payment", "Status", "Amount"]],
+      head: [["ID Faktur", "Tanggal", "Pelanggan", "Pembayaran", "Status", "Jumlah"]],
       body: tableData,
       startY: 50,
       theme: 'striped',
@@ -269,7 +269,7 @@ export default function SalesReportPage() {
       y: {
         formatter: (val, { seriesIndex }) => {
           if (seriesIndex === 1) return formatCurrency(val); // Revenue
-          return val.toString() + " orders"; // Total Orders
+          return val.toString() + " pesanan"; // Total Pesanan
         }
       }
     },
@@ -282,14 +282,14 @@ export default function SalesReportPage() {
     },
     yaxis: [
       {
-        seriesName: "Total Orders",
+        seriesName: "Total Pesanan",
         labels: {
           style: { colors: '#94a3b8', fontWeight: 500 },
         }
       },
       {
         opposite: true,
-        seriesName: "Revenue",
+        seriesName: "Pendapatan",
         labels: {
           style: { colors: '#94a3b8', fontWeight: 500 },
           formatter: (val) => {
@@ -304,11 +304,11 @@ export default function SalesReportPage() {
 
   const chartSeries = [
     {
-      name: 'Total Orders',
+      name: 'Total Pesanan',
       data: chartPoints.map(p => p.sales)
     },
     {
-      name: 'Revenue',
+      name: 'Pendapatan',
       data: chartPoints.map(p => p.revenue)
     }
   ];
@@ -318,8 +318,8 @@ export default function SalesReportPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Sales Report</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 font-normal text-sm">Monitor and analyze your revenue performance over time.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan Penjualan</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 font-normal text-sm">Pantau dan analisis performa pendapatan Anda dari waktu ke waktu.</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -329,7 +329,7 @@ export default function SalesReportPage() {
             disabled={isExporting}
             startIcon={isExporting ? <Loader2 size={18} className="animate-spin" /> : <FileSpreadsheet size={18} className="text-emerald-600" />}
           >
-            {isExporting ? "Processing..." : "Export Excel"}
+            {isExporting ? "Memproses..." : "Ekspor Excel"}
           </Button>
           <Button
             onClick={handleExportPDF}
@@ -337,7 +337,7 @@ export default function SalesReportPage() {
             startIcon={isExporting ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
             className="shadow-lg shadow-brand-200"
           >
-            {isExporting ? "Processing..." : "Export PDF"}
+            {isExporting ? "Memproses..." : "Ekspor PDF"}
           </Button>
         </div>
       </div>
@@ -345,10 +345,10 @@ export default function SalesReportPage() {
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Gross Revenue", value: formatCurrency(reportData?.data.total_sales || 0), icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50", darkBg: "dark:bg-emerald-500/10", trend: "+12.5%", isUp: true },
-          { label: "Total Orders", value: reportData?.data.total_orders || 0, icon: ShoppingCart, color: "text-brand-600", bg: "bg-brand-50", darkBg: "dark:bg-brand-500/10", trend: "+5.2%", isUp: true },
-          { label: "Average Order", value: formatCurrency(reportData?.data.average_order || 0), icon: TrendingUp, color: "text-amber-600", bg: "bg-amber-50", darkBg: "dark:bg-amber-500/10", trend: "-2.4%", isUp: false },
-          { label: "Active Customers", value: "1,284", icon: Users, color: "text-rose-600", bg: "bg-rose-50", darkBg: "dark:bg-rose-500/10", trend: "+8.1%", isUp: true },
+          { label: "Pendapatan Kotor", value: formatCurrency(reportData?.data.total_sales || 0), icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50", darkBg: "dark:bg-emerald-500/10", trend: "+12.5%", isUp: true },
+          { label: "Total Pesanan", value: reportData?.data.total_orders || 0, icon: ShoppingCart, color: "text-brand-600", bg: "bg-brand-50", darkBg: "dark:bg-brand-500/10", trend: "+5.2%", isUp: true },
+          { label: "Rata-rata Pesanan", value: formatCurrency(reportData?.data.average_order || 0), icon: TrendingUp, color: "text-amber-600", bg: "bg-amber-50", darkBg: "dark:bg-amber-500/10", trend: "-2.4%", isUp: false },
+          { label: "Pelanggan Aktif", value: "1,284", icon: Users, color: "text-rose-600", bg: "bg-rose-50", darkBg: "dark:bg-rose-500/10", trend: "+8.1%", isUp: true },
         ].map((stat, i) => (
           <div key={i} className="bg-white dark:bg-gray-900/40 dark:backdrop-blur-md p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 group hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-3">
@@ -372,21 +372,25 @@ export default function SalesReportPage() {
       <div className="bg-white dark:bg-gray-900/40 dark:backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
         <div className="px-6 py-5 border-b border-gray-50 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Revenue Analytics</h3>
-            <p className="text-xs text-gray-400 font-medium">Daily performance tracking</p>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Analitik Pendapatan</h3>
+            <p className="text-xs text-gray-400 font-medium">Pelacakan performa harian</p>
           </div>
           <div className="flex bg-gray-50 dark:bg-gray-800 p-1 rounded-xl">
-            {['DAILY', 'WEEKLY', 'MONTHLY'].map((p: string) => (
+            {[
+              { label: 'HARIAN', value: 'daily' },
+              { label: 'MINGGUAN', value: 'weekly' },
+              { label: 'BULANAN', value: 'monthly' }
+            ].map((p) => (
               <button
-                key={p}
-                onClick={() => handlePeriodChange(p.toLowerCase() as any)}
+                key={p.value}
+                onClick={() => handlePeriodChange(p.value as any)}
                 className={`px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
-                  period === p.toLowerCase()
+                  period === p.value
                     ? 'bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm'
                     : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                 }`}
               >
-                {p}
+                {p.label}
               </button>
             ))}
           </div>
@@ -406,15 +410,15 @@ export default function SalesReportPage() {
         <div className="px-6 py-5 border-b border-gray-50 dark:border-white/5 bg-white dark:bg-transparent space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Transactions</h3>
-              <p className="text-xs text-gray-400 font-medium italic text-emerald-400">Summary of latest sales performance</p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Transaksi Terbaru</h3>
+              <p className="text-xs text-gray-400 font-medium italic text-emerald-400">Ringkasan performa penjualan terbaru</p>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
               <div className="relative w-full sm:w-auto">
                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search invoices..."
+                  placeholder="Cari faktur..."
                   className="pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-brand-500 outline-none w-full sm:w-64 transition-all"
                   value={formik.values.search}
                   onChange={(e) => formik.setFieldValue("search", e.target.value)}
@@ -426,7 +430,7 @@ export default function SalesReportPage() {
                   <Filter size={16} />
                 </Button>
                 <button onClick={() => formik.resetForm()} className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 h-[42px] text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 transition-colors flex-1 sm:flex-none">
-                  <RefreshCcw size={16} /> Reset
+                  <RefreshCcw size={16} /> Atur Ulang
                 </button>
               </div>
             </div>
@@ -444,7 +448,7 @@ export default function SalesReportPage() {
                   formik.handleSubmit();
                 }}
               >
-                <option value="">All Branches</option>
+                <option value="">Semua Cabang</option>
                 {branches.map((b: any) => (
                   <option key={b.id} value={b.id}>{b.name}</option>
                 ))}
@@ -464,12 +468,12 @@ export default function SalesReportPage() {
                   formik.handleSubmit();
                 }}
               >
-                <option value="">All Status</option>
-                <option value="PAID">Paid</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="PENDING">Pending</option>
-                <option value="CANCELLED">Cancelled</option>
-                <option value="REFUNDED">Refunded</option>
+                <option value="">Semua Status</option>
+                <option value="PAID">Dibayar</option>
+                <option value="COMPLETED">Selesai</option>
+                <option value="PENDING">Tertunda</option>
+                <option value="CANCELLED">Dibatalkan</option>
+                <option value="REFUNDED">Dikembalikan</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -479,7 +483,7 @@ export default function SalesReportPage() {
               <div>
                 <input
                   ref={datePickerRef}
-                  placeholder="Select date range"
+                  placeholder="Pilih rentang tanggal"
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-gray-300 border-none rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-brand-500 outline-none cursor-pointer"
                 />
               </div>
@@ -489,24 +493,24 @@ export default function SalesReportPage() {
 
         <div className="overflow-x-auto">
           {isLoadingTrx ? (
-            <div className="py-20 text-center text-gray-400 dark:text-gray-500 font-medium">Fetching transactions...</div>
+            <div className="py-20 text-center text-gray-400 dark:text-gray-500 font-medium">Mengambil transaksi...</div>
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-white/5">
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Invoice ID</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Items</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Payment</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Amount</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID Faktur</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tanggal</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pelanggan</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Item</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pembayaran</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Jumlah</th>
                   <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-white/5">
                 {transactions.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-10 text-center text-gray-400 dark:text-gray-500 font-medium">No transactions found</td>
+                    <td colSpan={7} className="px-6 py-10 text-center text-gray-400 dark:text-gray-500 font-medium">Tidak ada transaksi ditemukan</td>
                   </tr>
                 ) : (
                   transactions.map((sale: any) => (
@@ -523,7 +527,7 @@ export default function SalesReportPage() {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-800 dark:text-gray-300">{sale.customer_name}</td>
                       <td className="whitespace-nowrap px-6 py-4">
-                        <span className="text-xs font-bold bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md text-gray-600 dark:text-gray-400">{sale.items?.length || 0} items</span>
+                        <span className="text-xs font-bold bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md text-gray-600 dark:text-gray-400">{sale.items?.length || 0} item</span>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-600 dark:text-gray-400">{sale.payment_method}</td>
                       <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(sale.final_amount)}</td>
@@ -548,10 +552,10 @@ export default function SalesReportPage() {
         <div className="flex flex-col gap-3 border-t border-gray-100 dark:border-white/5 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between bg-gray-50/30 dark:bg-transparent">
           <div className="flex items-center gap-3">
             <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">
-              {transactions.length === 0 ? "0 transactions" : `${((formik.values.page - 1) * formik.values.limit) + 1}–${Math.min(formik.values.page * formik.values.limit, pagination?.total || 0)} of ${pagination?.total || 0} transactions`}
+              {transactions.length === 0 ? "0 transaksi" : `${((formik.values.page - 1) * formik.values.limit) + 1}–${Math.min(formik.values.page * formik.values.limit, pagination?.total || 0)} dari ${pagination?.total || 0} transaksi`}
             </p>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">Show</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">Tampilkan</span>
               <select
                 value={formik.values.limit}
                 onChange={(e) => {
@@ -565,7 +569,7 @@ export default function SalesReportPage() {
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
-              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">per page</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">per halaman</span>
             </div>
           </div>
 
@@ -577,7 +581,7 @@ export default function SalesReportPage() {
               }}
               disabled={formik.values.page === 1}
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 transition-colors"
-              title="First page"
+              title="Halaman pertama"
             >
               <ChevronDown size={13} className="rotate-90" />
               <ChevronDown size={13} className="-ml-2 rotate-90" />
@@ -589,7 +593,7 @@ export default function SalesReportPage() {
               }}
               disabled={formik.values.page === 1}
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 transition-colors"
-              title="Previous page"
+              title="Halaman sebelumnya"
             >
               <ChevronDown size={13} className="rotate-90" />
             </button>
@@ -631,7 +635,7 @@ export default function SalesReportPage() {
               }}
               disabled={formik.values.page >= (pagination?.total_pages || 1)}
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 transition-colors"
-              title="Next page"
+              title="Halaman berikutnya"
             >
               <ChevronDown size={13} className="-rotate-90" />
             </button>
@@ -642,7 +646,7 @@ export default function SalesReportPage() {
               }}
               disabled={formik.values.page >= (pagination?.total_pages || 1)}
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 transition-colors"
-              title="Last page"
+              title="Halaman terakhir"
             >
               <ChevronDown size={13} className="-rotate-90" />
               <ChevronDown size={13} className="-ml-2 -rotate-90" />

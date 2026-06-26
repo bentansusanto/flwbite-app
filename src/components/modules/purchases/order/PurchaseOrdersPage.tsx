@@ -114,11 +114,11 @@ export default function PurchaseOrdersPage() {
     e.preventDefault();
     try {
       await createPO(form).unwrap();
-      toast.success("Purchase Order created successfully");
+      toast.success("Purchase Order berhasil dibuat");
       setModalOpen(false);
       setForm({ branch_id: "", supplier_id: "", note: "", items: [{ variant_id: "", quantity: 1, price: 0 }] });
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to create PO");
+      toast.error(err?.data?.message || "Gagal membuat PO");
     }
   };
 
@@ -140,11 +140,11 @@ export default function PurchaseOrdersPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Purchase Orders</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Create and track orders sent to your suppliers.</p>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Purchase Order</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Buat dan lacak pesanan yang dikirim ke pemasok Anda.</p>
         </div>
         <Button onClick={() => setModalOpen(true)} startIcon={<Plus size={18} />}>
-          Create PO
+          Buat PO
         </Button>
       </div>
 
@@ -156,7 +156,7 @@ export default function PurchaseOrdersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{orders.length}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total POs</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total PO</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -165,7 +165,7 @@ export default function PurchaseOrdersPage() {
           </div>
           <div className="mt-4">
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">{orders.filter((o:any) => o.status === "pending").length}</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending Orders</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pesanan Tertunda</p>
           </div>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm transition-all hover:shadow-md">
@@ -176,7 +176,7 @@ export default function PurchaseOrdersPage() {
             <p className="text-2xl font-semibold text-gray-800 dark:text-white">
               Rp {orders.reduce((acc: number, o: any) => acc + (o.total || 0), 0).toLocaleString()}
             </p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Value</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Nilai</p>
           </div>
         </div>
       </div>
@@ -189,7 +189,7 @@ export default function PurchaseOrdersPage() {
               <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search PO Code or supplier..."
+                placeholder="Cari Kode PO atau pemasok..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-11 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
@@ -205,11 +205,11 @@ export default function PurchaseOrdersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/[0.03]">
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Order Details</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Supplier</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Total Amount</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Detail Pesanan</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Pemasok</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Total Harga</th>
                 <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Status</th>
-                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
+                <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -217,7 +217,7 @@ export default function PurchaseOrdersPage() {
                 <tr>
                   <td colSpan={5} className="py-20 text-center">
                     <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-500" />
-                    <p className="mt-2 text-sm text-gray-500">Loading purchase orders...</p>
+                    <p className="mt-2 text-sm text-gray-500">Memuat purchase order...</p>
                   </td>
                 </tr>
               ) : paginatedOrders.map((order: any) => (
@@ -232,7 +232,7 @@ export default function PurchaseOrdersPage() {
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {suppliers.find((s: any) => s.id === order.supplier_id)?.name || "Unknown"}
                     </p>
-                    <p className="text-xs text-gray-400">{order.items?.length || 0} items ordered</p>
+                    <p className="text-xs text-gray-400">{order.items?.length || 0} item dipesan</p>
                   </td>
                   <td className="px-5 py-4 text-right">
                     <p className="text-sm font-semibold text-gray-800 dark:text-white/90">Rp {(order.total || 0).toLocaleString()}</p>
@@ -251,7 +251,7 @@ export default function PurchaseOrdersPage() {
                         <button 
                           onClick={(e) => { e.stopPropagation(); setCancelId(order.id); }} 
                           className="p-2 text-gray-400 hover:text-error-500 hover:bg-error-50 rounded-lg dark:hover:bg-error-500/10 transition-colors"
-                          title="Cancel Order"
+                          title="Batalkan Pesanan"
                         >
                           <AlertCircle size={16} />
                         </button>
@@ -346,36 +346,36 @@ export default function PurchaseOrdersPage() {
               <ShoppingCart size={20} />
             </div>
             <div>
-              <h4 className="text-base font-bold text-gray-800 dark:text-white/90">Create Purchase Order</h4>
-              <p className="text-xs sm:text-sm text-gray-400">Add products and quantities for this order.</p>
+              <h4 className="text-base font-bold text-gray-800 dark:text-white/90">Buat Purchase Order</h4>
+              <p className="text-xs sm:text-sm text-gray-400">Tambahkan produk dan kuantitas untuk pesanan ini.</p>
             </div>
           </div>
         </div>
         <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <Label required>Target Branch</Label>
+              <Label required>Cabang Tujuan</Label>
               <select 
                 className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all"
                 value={form.branch_id}
                 onChange={e => setForm({...form, branch_id: e.target.value})}
                 required
               >
-                <option value="">Select Branch...</option>
+                <option value="">Pilih Cabang...</option>
                 {branches.map((b: any) => (
                   <option key={b.id} value={b.id}>{b.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <Label required>Supplier</Label>
+              <Label required>Pemasok</Label>
               <select 
                 className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all"
                 value={form.supplier_id}
                 onChange={e => setForm({...form, supplier_id: e.target.value})}
                 required
               >
-                <option value="">Select Supplier...</option>
+                <option value="">Pilih Pemasok...</option>
                 {suppliers.map((s: any) => (
                   <option key={s.id} value={s.id}>{s.name}</option>
                 ))}
@@ -385,9 +385,9 @@ export default function PurchaseOrdersPage() {
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h5 className="text-xs sm:text-sm font-bold text-gray-800 dark:text-white/90 uppercase tracking-wider">Order Items</h5>
+              <h5 className="text-xs sm:text-sm font-bold text-gray-800 dark:text-white/90 uppercase tracking-wider">Item Pesanan</h5>
               <Button type="button" variant="outline" size="sm" onClick={addItem} startIcon={<Plus size={14} />}>
-                Add Item
+                Tambah Item
               </Button>
             </div>
 
@@ -395,14 +395,14 @@ export default function PurchaseOrdersPage() {
               {form.items.map((item, index) => (
                 <div key={index} className="grid grid-cols-12 gap-2 sm:gap-3 items-end bg-gray-50/50 p-3 rounded-xl dark:bg-gray-800/30 border border-gray-100 dark:border-gray-800">
                   <div className="col-span-12 sm:col-span-5">
-                    <Label className="text-[11px] sm:text-xs">Product / Variant</Label>
+                    <Label className="text-[11px] sm:text-xs">Produk / Varian</Label>
                     <select 
                       className="w-full h-10 rounded-lg border border-gray-200 bg-white px-3 text-xs outline-none focus:border-brand-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all"
                       value={item.variant_id}
                       onChange={e => updateItem(index, 'variant_id', e.target.value)}
                       required
                     >
-                      <option value="">Select Product...</option>
+                      <option value="">Pilih Produk...</option>
                       {variantOptions.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
@@ -410,7 +410,7 @@ export default function PurchaseOrdersPage() {
                   </div>
                   
                   <div className="col-span-3 sm:col-span-2">
-                    <Label className="text-[11px] sm:text-xs">Qty</Label>
+                    <Label className="text-[11px] sm:text-xs">Kuantitas</Label>
                     <InputField 
                       type="number" 
                       min="1" 
@@ -420,7 +420,7 @@ export default function PurchaseOrdersPage() {
                     />
                   </div>
                   <div className="col-span-7 sm:col-span-4">
-                    <Label className="text-[11px] sm:text-xs">Unit Price (Rp)</Label>
+                    <Label className="text-[11px] sm:text-xs">Harga Satuan (Rp)</Label>
                     <InputField 
                       type="number" 
                       placeholder="0" 
@@ -444,11 +444,11 @@ export default function PurchaseOrdersPage() {
           </div>
 
           <div>
-            <Label>Order Note (Optional)</Label>
+            <Label>Catatan Pesanan (Opsional)</Label>
             <textarea 
               rows={2}
               className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm outline-none focus:border-brand-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white transition-all"
-              placeholder="E.g. Delivery before 10 AM, handle with care..."
+              placeholder="Cth. Pengiriman sebelum jam 10 pagi, tangani dengan hati-hati..."
               value={form.note}
               onChange={e => setForm({...form, note: e.target.value})}
             />
@@ -456,13 +456,13 @@ export default function PurchaseOrdersPage() {
 
           <div className="flex flex-col items-end gap-2 border-t border-gray-100 pt-5 dark:border-gray-800">
             <div className="flex items-center gap-6">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-widest">Grand Total</span>
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-widest">Total Keseluruhan</span>
               <span className="text-lg font-bold text-gray-800 dark:text-white">Rp {calculateTotal().toLocaleString()}</span>
             </div>
             <div className="flex gap-3 w-full sm:w-auto mt-4">
-              <Button type="button" variant="outline" className="flex-1 sm:flex-none" onClick={() => setModalOpen(false)}>Cancel</Button>
+              <Button type="button" variant="outline" className="flex-1 sm:flex-none" onClick={() => setModalOpen(false)}>Batal</Button>
               <Button type="submit" className="flex-1 sm:flex-none px-8" disabled={isCreating}>
-                {isCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Order"}
+                {isCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Buat Pesanan"}
               </Button>
             </div>
           </div>
@@ -475,15 +475,15 @@ export default function PurchaseOrdersPage() {
         onConfirm={async () => { 
           try {
             await cancelPO(cancelId!).unwrap();
-            toast.success("Purchase Order cancelled successfully");
+            toast.success("Purchase Order berhasil dibatalkan");
           } catch (err: any) {
-            toast.error(err?.data?.message || "Failed to cancel PO");
+            toast.error(err?.data?.message || "Gagal membatalkan PO");
           } finally {
             setCancelId(null);
           }
         }}
-        title="Cancel Purchase Order?"
-        description="This will mark the order as CANCELLED. You will still be able to see it in the history for tracking purposes."
+        title="Batalkan Purchase Order?"
+        description="Ini akan menandai pesanan sebagai DIBATALKAN. Anda masih dapat melihatnya di riwayat untuk tujuan pelacakan."
         variant="danger"
         isLoading={isCancelling}
       />

@@ -62,7 +62,7 @@ export const CheckoutModal = ({
         {/* Left Side: Order Summary */}
         <div className="w-full md:w-5/12 bg-gray-50 dark:bg-gray-800/50 p-6 lg:p-7 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800 flex flex-col">
           <div className="flex items-center gap-3 mb-6">
-            <h3 className="text-base lg:text-lg font-bold text-gray-900 dark:text-white">Receipt Summary</h3>
+            <h3 className="text-base lg:text-lg font-bold text-gray-900 dark:text-white">Ringkasan Struk</h3>
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar mb-6 max-h-[250px] md:max-h-none">
@@ -109,7 +109,7 @@ export const CheckoutModal = ({
               </div>
             )}
             <div className="flex justify-between items-center pt-5 mt-1 border-t border-gray-100 dark:border-gray-700">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Total Pay</span>
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Total Bayar</span>
               <span className="text-lg lg:text-xl font-bold text-brand-600 dark:text-brand-400">{formatCurrency(total)}</span>
             </div>
           </div>
@@ -118,8 +118,8 @@ export const CheckoutModal = ({
         {/* Right Side: Payment Selection */}
         <div className="w-full md:w-7/12 p-6 lg:p-8 flex flex-col space-y-6">
           <div>
-            <h2 className="text-base lg:text-lg font-bold text-gray-900 dark:text-white">Payment Method</h2>
-            <p className="text-[12px] text-gray-500 mt-0.5">Select payment method and confirm transaction.</p>
+            <h2 className="text-base lg:text-lg font-bold text-gray-900 dark:text-white">Metode Pembayaran</h2>
+            <p className="text-[12px] text-gray-500 mt-0.5">Pilih metode pembayaran dan konfirmasi transaksi.</p>
           </div>
 
           {/* Payment Method Selector */}
@@ -201,7 +201,7 @@ export const CheckoutModal = ({
                   <QrCode className="w-6 h-6 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-gray-900 dark:text-white">Scan QRIS Static</p>
+                  <p className="text-sm font-bold text-gray-900 dark:text-white">Pindai QRIS Statis</p>
                   <p className="text-[11px] text-gray-500 mt-1 max-w-[240px]">
                     Pastikan pembayaran telah masuk ke rekening Anda sebelum mengkonfirmasi.
                   </p>
@@ -223,7 +223,7 @@ export const CheckoutModal = ({
               disabled={isLoading || (method === "CASH" && amountPaid < total)}
               className="flex-[2] font-bold h-12 text-sm bg-brand-600 hover:bg-brand-700 text-white"
             >
-              {isLoading ? "Wait..." : "Confirm & Pay"}
+              {isLoading ? "Tunggu..." : "Konfirmasi & Bayar"}
             </Button>
           </div>
         </div>

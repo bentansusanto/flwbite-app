@@ -103,13 +103,13 @@ export default function PromotionsPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Promotions</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white/90">Promosi</h3>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Create and manage dynamic discount campaigns, quantity bundles, and category promos.
+            Buat dan kelola kampanye diskon dinamis, bundel jumlah, dan promo kategori.
           </p>
         </div>
         <Button onClick={() => handleOpenModal(null)} startIcon={<Plus size={18} />}>
-          New Promotion
+          Promosi Baru
         </Button>
       </div>
 
@@ -122,7 +122,7 @@ export default function PromotionsPage() {
           <p className="mt-4 text-2xl font-semibold text-gray-800 dark:text-white">
             {isFetching ? "..." : promotions.length}
           </p>
-          <p className="text-xs font-medium text-gray-500">Total Campaigns</p>
+          <p className="text-xs font-medium text-gray-500">Total Kampanye</p>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 dark:bg-green-500/20 text-green-600">
@@ -131,7 +131,7 @@ export default function PromotionsPage() {
           <p className="mt-4 text-2xl font-semibold text-gray-800 dark:text-white">
             {isFetching ? "..." : activeCount}
           </p>
-          <p className="text-xs font-medium text-gray-500">Active Now</p>
+          <p className="text-xs font-medium text-gray-500">Aktif Sekarang</p>
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md shadow-sm">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 dark:bg-red-500/20 text-red-600">
@@ -140,7 +140,7 @@ export default function PromotionsPage() {
           <p className="mt-4 text-2xl font-semibold text-gray-800 dark:text-white">
             {isFetching ? "..." : expiredCount}
           </p>
-          <p className="text-xs font-medium text-gray-500">Expired</p>
+          <p className="text-xs font-medium text-gray-500">Kedaluwarsa</p>
         </div>
       </div>
 
@@ -149,7 +149,7 @@ export default function PromotionsPage() {
         <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
           type="text"
-          placeholder="Search campaigns..."
+          placeholder="Cari kampanye..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full h-11 rounded-xl border border-transparent bg-gray-50/50 pl-11 pr-4 text-sm outline-none transition focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 dark:border-white/5 dark:bg-gray-950 dark:text-white/90 dark:placeholder-gray-500"
@@ -183,7 +183,7 @@ export default function PromotionsPage() {
             variant="outline"
             onClick={() => handleOpenModal(null)}
           >
-            Launch Campaign
+            Luncurkan Kampanye
           </Button>
         </div>
       ) : (
@@ -231,7 +231,7 @@ export default function PromotionsPage() {
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-gray-500 line-clamp-2 dark:text-gray-400">
-                    {promo.description || "No description provided."}
+                    {promo.description || "Tidak ada deskripsi."}
                   </p>
                 </div>
 
@@ -259,7 +259,7 @@ export default function PromotionsPage() {
                 <div className="mt-6 space-y-2 border-t border-gray-50 pt-4 dark:border-gray-800">
                   <div className="flex items-center justify-between text-xs font-medium">
                     <span className="text-gray-400 uppercase tracking-widest flex items-center gap-1">
-                      <Calendar size={12} /> Validity
+                      <Calendar size={12} /> Masa Berlaku
                     </span>
                     <span className="text-gray-600 dark:text-gray-300">
                       {new Date(promo.start_date).toLocaleDateString("id-ID", {
@@ -285,9 +285,9 @@ export default function PromotionsPage() {
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} className="max-w-4xl max-h-[85vh] flex flex-col" showCloseButton={false}>
         <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 p-5 dark:border-gray-800 z-50 rounded-t-2xl">
           <h4 className="text-base font-bold text-gray-800 dark:text-white/90">
-            {selectedPromotion ? "Edit Promotion Campaign" : "Launch New Campaign"}
+            {selectedPromotion ? "Edit Kampanye Promosi" : "Luncurkan Kampanye Baru"}
           </h4>
-          <p className="text-sm text-gray-400">Configure your marketing target branches and complex promotion rules.</p>
+          <p className="text-sm text-gray-400">Atur target cabang pemasaran Anda dan aturan promosi yang kompleks.</p>
         </div>
         <PromotionForm
           initialData={selectedPromotion}
@@ -305,8 +305,8 @@ export default function PromotionsPage() {
         isOpen={isAlertOpen}
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
-        title="Delete Campaign?"
-        description="This will permanently end this marketing campaign and deactivate all discount rules. Continue?"
+        title="Hapus Kampanye?"
+        description="Ini akan mengakhiri kampanye pemasaran ini secara permanen dan menonaktifkan semua aturan diskon. Lanjutkan?"
         variant="danger"
       />
     </div>

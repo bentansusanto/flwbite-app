@@ -76,7 +76,7 @@ export default function TransactionHistoryPage() {
       case "SERVICE":
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400 border border-violet-200/40 dark:border-violet-900/30">
-            Service
+            Jasa
           </span>
         );
       case "FNB":
@@ -90,7 +90,7 @@ export default function TransactionHistoryPage() {
       default:
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-200/40 dark:border-blue-900/30">
-            Product
+            Produk
           </span>
         );
     }
@@ -105,17 +105,17 @@ export default function TransactionHistoryPage() {
   const handleRefund = async () => {
     if (!selectedTrx) return;
     if (!refundReason.trim()) {
-      toast.error("Refund reason is required");
+      toast.error("Alasan pengembalian dana wajib diisi");
       return;
     }
     try {
       await refundOrder({ id: selectedTrx.id, reason: refundReason }).unwrap();
-      toast.success(`Transaction ${selectedTrx.order_number} has been refunded.`);
+      toast.success(`Transaksi ${selectedTrx.order_number} telah dikembalikan.`);
       setIsRefundConfirmOpen(false);
       setIsDetailOpen(false);
       setRefundReason("");
     } catch (error: any) {
-      toast.error(error.data?.message || "Failed to process refund");
+      toast.error(error.data?.message || "Gagal memproses pengembalian dana");
     }
   };
 
@@ -126,7 +126,7 @@ export default function TransactionHistoryPage() {
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
             <CheckCircle2 className="w-3 h-3" />
-            Completed
+            Selesai
           </span>
         );
       case 'CANCELLED':
@@ -134,14 +134,14 @@ export default function TransactionHistoryPage() {
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400">
             <XCircle className="w-3 h-3" />
-            Cancelled
+            Dibatalkan
           </span>
         );
       case 'REFUNDED':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
             <Undo2 className="w-3 h-3" />
-            Refunded
+            Dikembalikan
           </span>
         );
       default:
@@ -173,9 +173,9 @@ export default function TransactionHistoryPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Transaction History
+            Riwayat Transaksi
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 font-normal">View and analyze all sales transactions across your business.</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 font-normal">Lihat dan analisis semua transaksi penjualan bisnis Anda.</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -185,7 +185,7 @@ export default function TransactionHistoryPage() {
             onClick={() => refetch()}
             loading={isLoadingTrx}
           >
-            Refresh
+            Segarkan
           </Button>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default function TransactionHistoryPage() {
             <History className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Transactions</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Transaksi</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">{transactions.length}</p>
           </div>
         </div>
@@ -206,7 +206,7 @@ export default function TransactionHistoryPage() {
             <Banknote className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Revenue</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Pendapatan</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">
               {formatCurrency(transactions.filter(t => !['REFUNDED', 'VOIDED', 'CANCELLED'].includes(t.status.toUpperCase())).reduce((acc, t) => acc + t.final_amount, 0))}
             </p>
@@ -217,10 +217,10 @@ export default function TransactionHistoryPage() {
             <Undo2 className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Refunds / Cancelled</p>
+            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Dikembalikan / Dibatalkan</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white">
               {transactions.filter(t => ['REFUNDED', 'VOIDED', 'CANCELLED'].includes(t.status.toUpperCase())).length}
-              <span className="text-xs font-medium text-rose-600 ml-1">items</span>
+              <span className="text-xs font-medium text-rose-600 ml-1">item</span>
             </p>
           </div>
         </div>
@@ -234,7 +234,7 @@ export default function TransactionHistoryPage() {
             <input
               type="text"
               name="search"
-              placeholder="Search by Order Number or Customer..."
+              placeholder="Cari berdasarkan Nomor Pesanan atau Pelanggan..."
               value={filterFormik.values.search}
               onChange={filterFormik.handleChange}
               className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 dark:text-white dark:placeholder-gray-500 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all"
@@ -249,7 +249,7 @@ export default function TransactionHistoryPage() {
               onChange={filterFormik.handleChange}
               className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-950 border border-transparent dark:border-white/5 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all appearance-none cursor-pointer font-medium text-gray-700 dark:text-gray-300"
             >
-              <option value="">{isLoadingBranches ? "Loading branches..." : "All Branches"}</option>
+              <option value="">{isLoadingBranches ? "Memuat cabang..." : "Semua Cabang"}</option>
               {branches.map((branch: any) => (
                 <option key={branch.id} value={branch.id}>{branch.name}</option>
               ))}
@@ -276,18 +276,18 @@ export default function TransactionHistoryPage() {
           {isLoadingTrx ? (
             <div className="p-20 text-center space-y-4">
               <div className="w-12 h-12 border-4 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <p className="text-gray-500 font-medium italic">Fetching transaction history...</p>
+              <p className="text-gray-500 font-medium italic">Mengambil riwayat transaksi...</p>
             </div>
           ) : (
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-100 dark:border-white/5">
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order No & Date</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Customer</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Final Amount</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">No Pesanan & Tanggal</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Pelanggan</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Tipe</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Total Akhir</th>
                   <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Status</th>
-                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                  <th className="whitespace-nowrap px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-white/5">
@@ -301,7 +301,7 @@ export default function TransactionHistoryPage() {
                         </p>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{trx.customer_name || "Walk-in Customer"}</td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{trx.customer_name || "Pelanggan Walk-in"}</td>
                     <td className="whitespace-nowrap px-6 py-4">
                       {getOrderTypeBadge(trx)}
                     </td>
@@ -346,10 +346,10 @@ export default function TransactionHistoryPage() {
         <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3.5 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <p className="text-xs text-gray-400 font-medium">
-              {filteredTrx.length === 0 ? "0 transactions" : `${startItem}–${endItem} of ${filteredTrx.length} transactions`}
+              {filteredTrx.length === 0 ? "0 transaksi" : `${startItem}–${endItem} dari ${filteredTrx.length} transaksi`}
             </p>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-gray-400 font-medium">Show</span>
+              <span className="text-xs text-gray-400 font-medium">Tampilkan</span>
               <select
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
@@ -359,7 +359,7 @@ export default function TransactionHistoryPage() {
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
-              <span className="text-xs text-gray-400 font-medium">per page</span>
+              <span className="text-xs text-gray-400 font-medium">per halaman</span>
             </div>
           </div>
 
@@ -368,7 +368,7 @@ export default function TransactionHistoryPage() {
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
-              title="First page"
+              title="Halaman pertama"
             >
               <ChevronDown size={13} className="rotate-90" />
               <ChevronDown size={13} className="-ml-2 rotate-90" />
@@ -417,7 +417,7 @@ export default function TransactionHistoryPage() {
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:classNamebg-gray-800 disabled:opacity-40 transition-colors"
-              title="Last page"
+              title="Halaman terakhir"
             >
               <ChevronDown size={13} className="-rotate-90" />
               <ChevronDown size={13} className="-ml-2 -rotate-90" />
@@ -443,17 +443,17 @@ export default function TransactionHistoryPage() {
 
           <div className="grid grid-cols-2 gap-y-6 gap-x-12 mb-8 bg-gray-50 dark:bg-gray-800/30 p-6 rounded-2xl border border-gray-100 dark:border-gray-800">
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Customer</p>
-              <p className="text-sm font-bold text-gray-900 dark:text-white">{selectedTrx?.customer_name || "Walk-in Customer"}</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Pelanggan</p>
+              <p className="text-sm font-bold text-gray-900 dark:text-white">{selectedTrx?.customer_name || "Pelanggan Walk-in"}</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Type</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Tipe</p>
               <div className="mt-1">
                 {selectedTrx && getOrderTypeBadge(selectedTrx)}
               </div>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Final Amount</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Total Akhir</p>
               <p className="text-sm font-bold text-gray-900 dark:text-white">
                 {formatCurrency(selectedTrx?.final_amount || 0)}
               </p>
@@ -467,21 +467,21 @@ export default function TransactionHistoryPage() {
           </div>
 
           <div className="mb-8">
-            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 px-1 uppercase tracking-wider text-xs">Order Items</h4>
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 px-1 uppercase tracking-wider text-xs">Item Pesanan</h4>
             <div className="border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-gray-800/50 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest border-b border-gray-100 dark:border-gray-800">
-                    <th className="whitespace-nowrap px-4 py-3">Item Name</th>
-                    <th className="whitespace-nowrap px-4 py-3 text-center">Qty</th>
-                    <th className="whitespace-nowrap px-4 py-3 text-right">Price</th>
+                    <th className="whitespace-nowrap px-4 py-3">Nama Item</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-center">Jml</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right">Harga</th>
                     <th className="whitespace-nowrap px-4 py-3 text-right">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-white/5">
                   {selectedTrx?.items.map((item: any) => (
                     <tr key={item.id} className="text-sm font-medium">
-                      <td className="whitespace-nowrap px-4 py-3 text-gray-800 dark:text-gray-200">{item.variant_name || "Unknown Product"}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-gray-800 dark:text-gray-200">{item.variant_name || "Produk Tidak Dikenal"}</td>
                       <td className="whitespace-nowrap px-4 py-3 text-center text-gray-600 dark:text-gray-400">{item.qty}</td>
                       <td className="whitespace-nowrap px-4 py-3 text-right text-gray-500 dark:text-gray-500">{formatCurrency(item.price)}</td>
                       <td className="whitespace-nowrap px-4 py-3 text-right font-bold text-gray-900 dark:text-white">{formatCurrency(item.total)}</td>
@@ -493,7 +493,7 @@ export default function TransactionHistoryPage() {
 
             {selectedTrx?.notes && (
               <div className="mt-4 p-4 bg-orange-50/30 dark:bg-orange-500/5 rounded-2xl border border-dashed border-orange-200/50 dark:border-orange-500/20">
-                <p className="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase mb-1.5 tracking-widest">Order Notes</p>
+                <p className="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase mb-1.5 tracking-widest">Catatan Pesanan</p>
                 <p className="text-[13px] text-gray-700 dark:text-gray-300 leading-relaxed font-medium italic">
                   "{selectedTrx.notes}"
                 </p>
@@ -507,24 +507,24 @@ export default function TransactionHistoryPage() {
               <span className="text-gray-900 dark:text-white">{formatCurrency(selectedTrx?.total_amount || 0)}</span>
             </div>
             <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-400">
-              <span>Tax</span>
+              <span>Pajak</span>
               <span className="text-gray-900 dark:text-white">{formatCurrency(selectedTrx?.tax_amount || 0)}</span>
             </div>
             <div className="flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-2">
-              <span>Total Paid</span>
+              <span>Total Dibayar</span>
               <span className="text-brand-600 dark:text-brand-400">{formatCurrency(selectedTrx?.final_amount || 0)}</span>
             </div>
           </div>
 
           {selectedTrx?.status === 'REFUNDED' && selectedTrx?.refund_reason && (
             <div className="mb-8 p-4 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-900/30 rounded-2xl">
-              <p className="text-[10px] font-bold text-red-500 uppercase mb-1.5 tracking-widest">Refund Reason</p>
+              <p className="text-[10px] font-bold text-red-500 uppercase mb-1.5 tracking-widest">Alasan Pengembalian</p>
               <p className="text-sm font-medium text-red-700 dark:text-red-400 leading-relaxed">{selectedTrx.refund_reason}</p>
             </div>
           )}
 
           <div className="flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
-             <Button type="button" variant="outline" className="flex-1 font-bold dark:border-gray-700 dark:text-gray-300" onClick={() => setIsDetailOpen(false)}>Close</Button>
+             <Button type="button" variant="outline" className="flex-1 font-bold dark:border-gray-700 dark:text-gray-300" onClick={() => setIsDetailOpen(false)}>Tutup</Button>
              
              <Button
                 type="button"
@@ -534,7 +534,7 @@ export default function TransactionHistoryPage() {
                 startIcon={isPrintingBt ? <span className="w-4 h-4 border-2 border-brand-500/30 border-t-brand-600 rounded-full animate-spin" /> : <Bluetooth size={18} />}
                 onClick={() => handlePrintReceipt(selectedTrx)}
               >
-                Print Bluetooth
+                Cetak Bluetooth
               </Button>
 
              {['COMPLETED', 'PAID'].includes(selectedTrx?.status?.toUpperCase() || "") && (
@@ -544,7 +544,7 @@ export default function TransactionHistoryPage() {
                 startIcon={<Undo2 size={18} />}
                 onClick={() => setIsRefundConfirmOpen(true)}
                >
-                 Refund Order
+                 Kembalikan Pesanan
                </Button>
              )}
           </div>
@@ -557,27 +557,27 @@ export default function TransactionHistoryPage() {
           <div className="w-16 h-16 bg-amber-50 dark:bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600 dark:text-amber-400 border-4 border-amber-100 dark:border-amber-900/30">
             <Undo2 className="w-8 h-8" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Process Refund?</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Proses Pengembalian Dana?</h3>
           <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
-            This will mark transaction <span className="font-bold text-gray-800 dark:text-gray-200">{selectedTrx?.order_number}</span> as refunded. This action is tracked in the audit log.
+            Ini akan menandai transaksi <span className="font-bold text-gray-800 dark:text-gray-200">{selectedTrx?.order_number}</span> sebagai dikembalikan. Tindakan ini dilacak dalam log audit.
           </p>
 
           <div className="text-left mb-8">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Reason for Refund <span className="text-red-500">*</span>
+              Alasan Pengembalian Dana <span className="text-red-500">*</span>
             </label>
             <textarea
               value={refundReason}
               onChange={(e) => setRefundReason(e.target.value)}
-              placeholder="e.g., Wrong item selected by customer"
+              placeholder="contoh: Pelanggan salah memilih item"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none h-24"
             ></textarea>
           </div>
 
           <div className="flex gap-3">
-             <Button variant="outline" className="flex-1 dark:border-gray-700 dark:text-gray-300" onClick={() => { setIsRefundConfirmOpen(false); setRefundReason(""); }} disabled={isRefunding}>Cancel</Button>
+             <Button variant="outline" className="flex-1 dark:border-gray-700 dark:text-gray-300" onClick={() => { setIsRefundConfirmOpen(false); setRefundReason(""); }} disabled={isRefunding}>Batal</Button>
              <Button className="flex-1 bg-amber-600 hover:bg-amber-700 text-white shadow-lg shadow-amber-500/20" onClick={handleRefund} disabled={isRefunding || !refundReason.trim()}>
-               {isRefunding ? 'Processing...' : 'Confirm Refund'}
+               {isRefunding ? 'Memproses...' : 'Konfirmasi Pengembalian'}
              </Button>
           </div>
         </div>
