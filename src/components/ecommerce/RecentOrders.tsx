@@ -41,13 +41,13 @@ export default function RecentOrders() {
     <div className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-theme-sm px-4 pb-3 pt-4 dark:border-white/5 dark:bg-gray-900/40 dark:backdrop-blur-md sm:px-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-gray-900 dark:text-white/90">
-          Recent Orders
+          Pesanan Terbaru
         </h3>
         <Link 
           href="/reports/sales" 
           className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
         >
-          View All Report
+          Lihat Semua Laporan
           <ArrowUpIcon className="rotate-90 w-3 h-3" />
         </Link>
       </div>
@@ -55,10 +55,10 @@ export default function RecentOrders() {
         <Table>
           <TableHeader className="border-gray-100 dark:border-white/5 border-y bg-gray-50/50 dark:bg-white/[0.03]">
             <TableRow>
-              <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">Order ID</TableCell>
-              <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">Customer</TableCell>
-              <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">Price</TableCell>
-              <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">Date</TableCell>
+              <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">ID Pesanan</TableCell>
+              <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">Pelanggan</TableCell>
+              <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">Harga</TableCell>
+              <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">Tanggal</TableCell>
               <TableCell isHeader className="px-4 py-3 whitespace-nowrap font-bold text-slate-500 text-start text-xs uppercase tracking-wider dark:text-gray-400">Status</TableCell>
             </TableRow>
           </TableHeader>
@@ -66,12 +66,12 @@ export default function RecentOrders() {
             {transactions.map((trx: any) => (
               <TableRow key={trx.id}>
                 <TableCell className="px-4 py-3 whitespace-nowrap font-medium text-gray-800 text-theme-sm dark:text-white/90">{trx.order_number}</TableCell>
-                <TableCell className="px-4 py-3 whitespace-nowrap text-gray-500 text-theme-sm dark:text-gray-400">{trx.customer_name || "Guest"}</TableCell>
+                <TableCell className="px-4 py-3 whitespace-nowrap text-gray-500 text-theme-sm dark:text-gray-400">{trx.customer_name || "Tamu"}</TableCell>
                 <TableCell className="px-4 py-3 whitespace-nowrap font-medium text-gray-800 text-theme-sm dark:text-white/90">{formatCurrency(trx.total_amount)}</TableCell>
                 <TableCell className="px-4 py-3 whitespace-nowrap text-gray-500 text-theme-sm dark:text-gray-400">{format(new Date(trx.created_at), "dd MMM HH:mm")}</TableCell>
                 <TableCell className="px-4 py-3 whitespace-nowrap">
                   <Badge size="sm" color={trx.status === "PAID" || trx.status === "COMPLETED" ? "success" : trx.status === "PENDING" ? "warning" : "error"}>
-                    {trx.status}
+                    {trx.status === "PAID" ? "DIBAYAR" : trx.status === "COMPLETED" ? "SELESAI" : trx.status === "PENDING" ? "TERTUNDA" : trx.status === "FAILED" ? "GAGAL" : trx.status === "CANCELED" ? "DIBATALKAN" : trx.status}
                   </Badge>
                 </TableCell>
               </TableRow>

@@ -15,28 +15,28 @@ export const EcommerceMetrics = () => {
 
   const metrics = [
     {
-      label: "Revenue",
+      label: "Pendapatan",
       value: formatCurrency(stats?.total_sales || 0),
       icon: <DollarLineIcon className="size-6 text-brand-600 dark:text-brand-400" />,
       trend: "+12.5%",
       isUp: true
     },
     {
-      label: "Orders",
+      label: "Pesanan",
       value: (stats?.total_orders || 0).toLocaleString(),
       icon: <BoxIconLine className="size-6 text-brand-600 dark:text-brand-400" />,
       trend: "+8.2%",
       isUp: true
     },
     {
-      label: "Customers",
+      label: "Pelanggan",
       value: (stats?.total_customers || 0).toLocaleString(),
       icon: <GroupIcon className="size-6 text-brand-600 dark:text-brand-400" />,
       trend: "+11.0%",
       isUp: true
     },
     {
-      label: "Avg. Order",
+      label: "Rata-rata Pesanan",
       value: formatCurrency(avgOrder),
       icon: <ShootingStarIcon className="size-6 text-brand-600 dark:text-brand-400" />,
       trend: "+5.4%",

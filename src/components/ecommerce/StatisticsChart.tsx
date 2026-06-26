@@ -66,27 +66,27 @@ export default function StatisticsChart() {
       y: {
         formatter: (val, { seriesIndex }) => {
           if (seriesIndex === 1) return formatCurrency(val); // Revenue
-          return val.toString() + " orders"; // Total Orders
+          return val.toString() + " pesanan"; // Total Orders
         }
       }
     },
     xaxis: {
       type: "category",
-      categories: categories.length > 0 ? categories : ["No Data"],
+      categories: categories.length > 0 ? categories : ["Tidak Ada Data"],
       axisBorder: { show: false },
       axisTicks: { show: false },
       labels: { style: { colors: '#94a3b8', fontWeight: 500 } }
     },
     yaxis: [
       {
-        seriesName: "Total Orders",
+        seriesName: "Total Pesanan",
         labels: {
           style: { colors: '#94a3b8', fontWeight: 500 },
         }
       },
       {
         opposite: true,
-        seriesName: "Revenue",
+        seriesName: "Pendapatan",
         labels: {
           style: { colors: '#94a3b8', fontWeight: 500 },
           formatter: (val) => {
@@ -101,11 +101,11 @@ export default function StatisticsChart() {
 
   const series = [
     {
-      name: "Total Orders",
+      name: "Total Pesanan",
       data: salesData,
     },
     {
-      name: "Revenue",
+      name: "Pendapatan",
       data: revenueData,
     },
   ];
@@ -123,10 +123,10 @@ export default function StatisticsChart() {
       <div className="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
         <div className="w-full">
           <h3 className="text-lg font-bold text-gray-900 dark:text-white/90">
-            Statistics
+            Statistik
           </h3>
           <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-            Target you've set for each month
+            Target yang telah Anda tetapkan untuk setiap bulan
           </p>
         </div>
         <div className="flex items-center gap-3 sm:justify-end">

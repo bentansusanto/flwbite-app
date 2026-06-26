@@ -70,7 +70,7 @@ export default function MonthlyTarget() {
     stroke: {
       lineCap: "round",
     },
-    labels: ["Progress"],
+    labels: ["Progres"],
   };
 
   const [isOpen, setIsOpen] = useState(false);
@@ -102,10 +102,10 @@ export default function MonthlyTarget() {
         <div className="flex justify-between">
           <div>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white/90">
-              Monthly Target
+              Target Bulanan
             </h3>
             <p className="mt-1 font-normal text-gray-500 text-theme-sm dark:text-gray-400">
-              Target you’ve set for each month
+              Target yang telah Anda tetapkan untuk setiap bulan
             </p>
           </div>
           <div className="relative inline-block">
@@ -122,14 +122,14 @@ export default function MonthlyTarget() {
                 onItemClick={closeDropdown}
                 className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
               >
-                View More
+                Lihat Lebih Banyak
               </DropdownItem>
               <DropdownItem
                 tag="a"
                 onItemClick={closeDropdown}
                 className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
               >
-                Delete
+                Hapus
               </DropdownItem>
             </Dropdown>
           </div>
@@ -147,12 +147,12 @@ export default function MonthlyTarget() {
           <span className={`absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full px-3 py-1 text-xs font-medium ${
             progress >= 100 ? "bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500" : "bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-500"
           }`}>
-            {progress >= 100 ? "Achieved" : `${progress.toFixed(0)}% Achieved`}
+            {progress >= 100 ? "Tercapai" : `${progress.toFixed(0)}% Tercapai`}
           </span>
         </div>
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-          You earn {formatCurrency(dailyRevenue)} today. Keep up your
-          good work!
+          Anda mendapatkan {formatCurrency(dailyRevenue)} hari ini. Pertahankan
+          kerja bagus Anda!
         </p>
       </div>
 
@@ -170,7 +170,7 @@ export default function MonthlyTarget() {
 
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-            Revenue
+            Pendapatan
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
             {monthlyRevenue >= 1000000 ? `${(monthlyRevenue/1000000).toFixed(1)}M` : formatCurrency(monthlyRevenue)}
@@ -181,7 +181,7 @@ export default function MonthlyTarget() {
 
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-            Today
+            Hari Ini
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
             {dailyRevenue >= 1000 ? `${(dailyRevenue/1000).toFixed(0)}K` : formatCurrency(dailyRevenue)}

@@ -323,26 +323,8 @@ export const ReceiptModal = ({ isOpen, onClose, receiptData }: ReceiptModalProps
             </div>
 
             {/* Footer */}
-            <div className="text-center mt-6 space-y-4">
+            <div className="text-center mt-6">
               <p className="font-bold uppercase text-[10px]">Terima Kasih!</p>
-              
-              {/* Fake Barcode */}
-              <div className="flex justify-center">
-                <svg width="180" height="40" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="0" y="0" width="180" height="40" fill="white"/>
-                  {Array.from({ length: 40 }).map((_, i) => (
-                    <rect 
-                      key={i} 
-                      x={i * 4 + (Math.random() > 0.5 ? 2 : 0)} 
-                      y="0" 
-                      width={Math.random() > 0.5 ? 2 : 1} 
-                      height="40" 
-                      fill="black"
-                    />
-                  ))}
-                </svg>
-              </div>
-              <p className="text-[8px] tracking-[0.2em]">{receiptData.orderId.substring(0, 12).toUpperCase()}</p>
             </div>
           </div>
         </div>
