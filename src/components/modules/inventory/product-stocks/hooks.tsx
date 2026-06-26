@@ -76,7 +76,7 @@ export const useAddStockModal = (onClose: () => void) => {
   const [updateStock, { isLoading: isUpdating }] = useUpdateStockMutation();
   const { data: productsData, isLoading: isLoadingProducts } = useGetProductsQuery({});
   
-  const products = productsData?.data || [];
+  const products = (productsData?.data || []).filter((p: any) => p.is_stock_tracked === true);
 
   const formik = useFormik<AddStockFormValues>({
     initialValues: {
