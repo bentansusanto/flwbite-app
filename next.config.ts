@@ -34,16 +34,7 @@ const nextConfig: NextConfig = {
     },
   },
 
-  async rewrites() {
-    const internalApiUrl = process.env.INTERNAL_API_URL;
-    if (!internalApiUrl) return [];
-    return [
-      {
-        source: '/api/proxy/:path*',
-        destination: `${internalApiUrl}/:path*`,
-      },
-    ];
-  },
+
 };
 
 export default withPWA(nextConfig);
