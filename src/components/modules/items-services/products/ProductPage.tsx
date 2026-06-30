@@ -31,7 +31,7 @@ const buildDefaultValues = (type: ProductType) => ({
   is_stock_tracked: type === "retail", 
   is_sell: true,
   image: "",
-  variants: [{ name: "Standar", price: 0, cost_price: null, is_active: true }],
+  variants: [{ name: "Standar", sku: "", price: 0, cost_price: null, is_active: true }],
 });
 
 export const ProductPage = () => {
@@ -63,11 +63,12 @@ export const ProductPage = () => {
             ? selectedProduct.variants.map((v: any) => ({
                 id: v.id,
                 name: v.name,
+                sku: v.sku || "",
                 price: v.price,
                 cost_price: v.cost_price ?? null,
                 is_active: v.is_active,
               }))
-            : [{ name: "Standar", price: 0, cost_price: null, is_active: true }],
+            : [{ name: "Standar", sku: "", price: 0, cost_price: null, is_active: true }],
       }
     : buildDefaultValues(selectedType);
 
@@ -227,8 +228,9 @@ export const ProductPage = () => {
                       {values.variants.map((variant: ProductVariantInput, index: number) => (
                         <div key={index} className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-white/[0.02] space-y-3">
                           <div className="flex items-start gap-2.5">
-                            <div className="flex-1">
+                            <div className="flex-1 grid grid-cols-2 gap-2">
                               <InputField name={`variants.${index}.name`} placeholder="Nama varian (cth. Kecil)" value={variant.name} onChange={handleChange} onBlur={handleBlur} error={!!((touched.variants as any)?.[index]?.name && (errors.variants as any)?.[index]?.name)} hint={(touched.variants as any)?.[index]?.name && (errors.variants as any)?.[index]?.name ? (errors.variants as any)[index].name : ""} />
+                              <InputField name={`variants.${index}.sku`} placeholder="SKU (cth: RTL-KAO-LAR-A8F2)" value={variant.sku || ""} onChange={(e) => setFieldValue(`variants.${index}.sku`, e.target.value.toUpperCase())} onBlur={handleBlur} error={!!((touched.variants as any)?.[index]?.sku && (errors.variants as any)?.[index]?.sku)} hint={(touched.variants as any)?.[index]?.sku && (errors.variants as any)?.[index]?.sku ? (errors.variants as any)[index].sku : ""} />
                             </div>
                             <button type="button" onClick={() => setFieldValue(`variants.${index}.is_active`, !variant.is_active)} className={`mt-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${variant.is_active ? "bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800"}`}>
                               {variant.is_active ? "Aktif" : "Nonaktif"}
@@ -279,7 +281,7 @@ export const ProductPage = () => {
                           </div>
                         </div>
                       ))}
-                      <button type="button" onClick={() => push({ name: "", price: 0, cost_price: null, is_active: true })} className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 py-3 text-sm font-bold text-gray-500 hover:border-brand-300 hover:text-brand-500 dark:border-gray-700 transition-all hover:bg-brand-50/50">
+                      <button type="button" onClick={() => push({ name: "", sku: "", price: 0, cost_price: null, is_active: true })} className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 py-3 text-sm font-bold text-gray-500 hover:border-brand-300 hover:text-brand-500 dark:border-gray-700 transition-all hover:bg-brand-50/50">
                         <PlusCircle size={16} />Tambah Varian Baru
                       </button>
                     </div>

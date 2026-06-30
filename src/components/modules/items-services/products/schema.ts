@@ -4,6 +4,11 @@ import { z } from "zod";
 export const productVariantSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Nama varian wajib diisi"),
+  sku: z
+    .string()
+    .regex(/^[A-Z]{3}-[A-Z]{3}-[A-Z]{3}-[A-Z0-9]{4}$/, "Format SKU tidak valid (cth: RTL-KAO-LAR-A8F2)")
+    .optional()
+    .or(z.literal("")),
   price: z
     .coerce
     .number({ error: "Harga jual harus berupa angka" })

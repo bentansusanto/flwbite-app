@@ -1,0 +1,15 @@
+services:
+  flwbite-app:
+    image: ghcr.io/bentansusanto/flwbite-app:${DOCKER_TAG:-production}
+    container_name: flwbite-app-${ENV_NAME:-production}
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    env_file:
+      - .env.production
+    networks:
+      - flwbite-network
+
+networks:
+  flwbite-network:
+    external: true
