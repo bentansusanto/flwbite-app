@@ -33,11 +33,18 @@ async function proxy(req: NextRequest, context: { params: Promise<{ path: string
       duplex: (req.method !== "GET" && req.method !== "HEAD") ? "half" : undefined,
     });
 
+    const responseHeaders = new Headers(response.headers);
+    responseHeaders.delete("content-encoding");
+    responseHeaders.delete("content-length");
+    responseHeaders.delete("transfer-encoding");
+    responseHeaders.delete("connection");
+    responseHeaders.delete("keep-alive");
+
     // Create a new response using the fetch response body
     return new NextResponse(response.body, {
       status: response.status,
       statusText: response.statusText,
-      headers: response.headers,
+      headers: responseHeaders,
     });
   } catch (error) {
     console.error(`Proxy Error for ${targetUrl}:`, error);
