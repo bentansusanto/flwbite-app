@@ -6,7 +6,7 @@ services:
     ports:
       - "${APP_PORT:-3000}:3000"
     env_file:
-      - .env.production
+      - .env
     networks:
       - flwbite-network
 

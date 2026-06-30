@@ -50,14 +50,13 @@ jobs:
       - name: Deploy to aaPanel via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: ${{ secrets.VPS_PORT || 22 }}
+          host: ${{ secrets.VPS_FLWBITE_APP_HOST }}
+          username: ${{ secrets.VPS_FLWBITE_APP_USERNAME }}
+          key: ${{ secrets.VPS_FLWBITE_APP_SSH_KEY }}
+          port: ${{ secrets.VPS_FLWBITE_APP_PORT || 22 }}
           script: |
-            # Pindah ke direktori flwbite-app
-            cd /www/wwwroot/flwbite-app || cd /root/flwbite-app
+            # Pindah ke direktori flwbite-app-prod
+            cd /www/wwwroot/flwbite-app/flwbite-app-prod || cd /root/flwbite-app-prod
             
             # Tarik kode terbaru untuk docker-compose.prod.yml (opsional jika manual setup)
             git pull origin master || true
