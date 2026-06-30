@@ -6,7 +6,7 @@ export const productVariantSchema = z.object({
   name: z.string().min(1, "Nama varian wajib diisi"),
   sku: z
     .string()
-    .regex(/^[A-Z]{3}-[A-Z]{3}-[A-Z]{3}-[A-Z0-9]{4}$/, "Format SKU tidak valid (cth: RTL-KAO-LAR-A8F2)")
+    .regex(/^[A-Z0-9]+(-[A-Z0-9]+)+$/, "Format SKU tidak valid (Hanya huruf kapital, angka, wajib ada strip, tanpa spasi)")
     .optional()
     .or(z.literal("")),
   price: z
