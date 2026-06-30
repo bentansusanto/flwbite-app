@@ -12,18 +12,7 @@ export function middleware(request: NextRequest) {
 
   console.log(`Middleware Debug: Path: ${pathname}, Host: ${hostname}, HasToken: ${!!token}`);
 
-  // 0. API Proxy Logic (Moved from next.config.ts to support runtime env in Docker)
-  if (pathname.startsWith("/api/proxy")) {
-    const internalApiUrl = process.env.INTERNAL_API_URL;
-    if (internalApiUrl) {
-      const pathAfterProxy = pathname.replace("/api/proxy", "");
-      const search = request.nextUrl.search;
-      const targetUrl = `${internalApiUrl}${pathAfterProxy}${search}`;
-      return NextResponse.rewrite(targetUrl);
-    } else {
-      return new NextResponse("INTERNAL_API_URL is not set", { status: 500 });
-    }
-  }
+
 
   // 1. Logika Subdomain (Multi-tenancy)
   // Ubah flwbite.com menjadi domain utama Anda
