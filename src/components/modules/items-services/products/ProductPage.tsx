@@ -228,9 +228,11 @@ export const ProductPage = () => {
                       {values.variants.map((variant: ProductVariantInput, index: number) => (
                         <div key={index} className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-white/[0.02] space-y-3">
                           <div className="flex items-start gap-2.5">
-                            <div className="flex-1 grid grid-cols-2 gap-2">
+                            <div className={`flex-1 grid gap-2 ${values.type === "retail" ? "grid-cols-2" : "grid-cols-1"}`}>
                               <InputField name={`variants.${index}.name`} placeholder="Nama varian (cth. Kecil)" value={variant.name} onChange={handleChange} onBlur={handleBlur} error={!!((touched.variants as any)?.[index]?.name && (errors.variants as any)?.[index]?.name)} hint={(touched.variants as any)?.[index]?.name && (errors.variants as any)?.[index]?.name ? (errors.variants as any)[index].name : ""} />
-                              <InputField name={`variants.${index}.sku`} placeholder="SKU (cth: RTL-KAO-LAR-A8F2)" value={variant.sku || ""} onChange={(e) => setFieldValue(`variants.${index}.sku`, e.target.value.toUpperCase())} onBlur={handleBlur} error={!!((touched.variants as any)?.[index]?.sku && (errors.variants as any)?.[index]?.sku)} hint={(touched.variants as any)?.[index]?.sku && (errors.variants as any)?.[index]?.sku ? (errors.variants as any)[index].sku : ""} />
+                              {values.type === "retail" && (
+                                <InputField name={`variants.${index}.sku`} placeholder="SKU (cth: RTL-KAO-LAR-A8F2)" value={variant.sku || ""} onChange={(e) => setFieldValue(`variants.${index}.sku`, e.target.value.toUpperCase())} onBlur={handleBlur} error={!!((touched.variants as any)?.[index]?.sku && (errors.variants as any)?.[index]?.sku)} hint={(touched.variants as any)?.[index]?.sku && (errors.variants as any)?.[index]?.sku ? (errors.variants as any)[index].sku : ""} />
+                              )}
                             </div>
                             <button type="button" onClick={() => setFieldValue(`variants.${index}.is_active`, !variant.is_active)} className={`mt-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${variant.is_active ? "bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800"}`}>
                               {variant.is_active ? "Aktif" : "Nonaktif"}
