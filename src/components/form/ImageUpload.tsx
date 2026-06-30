@@ -43,7 +43,8 @@ export default function ImageUpload({ value, onChange, className = "", label }: 
       if (token) headers["Authorization"] = `Bearer ${token}`;
       if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/media/upload`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api/proxy";
+      const res = await fetch(`${apiUrl}/media/upload`, {
         method: "POST",
         headers,
         body: formData,
