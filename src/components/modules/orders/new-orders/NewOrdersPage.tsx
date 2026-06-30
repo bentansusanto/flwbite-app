@@ -318,14 +318,6 @@ export const NewOrdersPage = () => {
       toast.error("Keranjang belanja masih kosong! Pilih produk terlebih dahulu.");
       return;
     }
-    if (!selectedCustomer) {
-      toast.error("Pelanggan wajib dipilih sebelum melakukan pembayaran!");
-      if (isMobile) {
-        setIsDrawerOpen(false);
-      }
-      setIsCustomerModalOpen(true);
-      return;
-    }
     if (isMobile) {
       setIsDrawerOpen(false);
     }

@@ -7,6 +7,12 @@ import InputField from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import { toast } from "sonner";
 import { useGetCustomersQuery, useCreateCustomerMutation } from "@/store/api/customerApi";
+import { z } from "zod";
+
+const customerSchema = z.object({
+  name: z.string().min(1, "Nama wajib diisi"),
+  phone: z.string().optional(),
+});
 
 
 interface CustomerSelectionModalProps {
@@ -22,7 +28,7 @@ export const CustomerSelectionModal = ({
 }: CustomerSelectionModalProps) => {
   const [search, setSearch] = useState("");
   const [isAddingNew, setIsAddingNew] = useState(false);
-  const [newCustomer, setNewCustomer] = useState({ name: "", email: "", phone: "" });
+  const [newCustomer, setNewCustomer] = useState({ name: "", phone: "" });
   
   // API Hooks
   const { data: customersData, isLoading } = useGetCustomersQuery({ search }, { skip: !isOpen });
@@ -32,8 +38,9 @@ export const CustomerSelectionModal = ({
 
   const handleCreateCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCustomer.name) {
-      toast.error("Nama wajib diisi");
+    const parsed = customerSchema.safeParse(newCustomer);
+    if (!parsed.success) {
+      toast.error(parsed.error.errors[0].message);
       return;
     }
 
@@ -43,7 +50,7 @@ export const CustomerSelectionModal = ({
       onSelect(res.data);
       onClose();
       setIsAddingNew(false);
-      setNewCustomer({ name: "", email: "", phone: "" });
+      setNewCustomer({ name: "", phone: "" });
     } catch (err: any) {
       toast.error(err?.data?.message || "Gagal mendaftarkan pelanggan");
     }
@@ -181,23 +188,13 @@ export const CustomerSelectionModal = ({
                 required
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 gap-5">
               <div>
-                <Label required>Nomor Telepon</Label>
+                <Label>Nomor Telepon (Opsional)</Label>
                 <InputField 
                   placeholder="08123456789" 
                   value={newCustomer.phone}
                   onChange={e => setNewCustomer({...newCustomer, phone: e.target.value})}
-                  required
-                />
-              </div>
-              <div>
-                <Label>Email (Opsional)</Label>
-                <InputField 
-                  type="email"
-                  placeholder="john@example.com" 
-                  value={newCustomer.email}
-                  onChange={e => setNewCustomer({...newCustomer, email: e.target.value})}
                 />
               </div>
             </div>
