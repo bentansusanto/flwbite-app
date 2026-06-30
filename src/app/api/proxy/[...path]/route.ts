@@ -20,6 +20,9 @@ async function proxy(req: NextRequest, context: { params: Promise<{ path: string
   headers.delete("host");
   // Remove connection header which can cause issues with some proxies
   headers.delete("connection");
+  // CRITICAL: Remove accept-encoding to prevent backend from gzipping. 
+  // If backend gzips, Next.js might gzip it again, breaking JSON parsing in the browser!
+  headers.delete("accept-encoding");
 
   try {
     const response = await fetch(targetUrl, {
