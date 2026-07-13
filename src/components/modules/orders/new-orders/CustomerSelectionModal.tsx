@@ -40,7 +40,7 @@ export const CustomerSelectionModal = ({
     e.preventDefault();
     const parsed = customerSchema.safeParse(newCustomer);
     if (!parsed.success) {
-      toast.error(parsed.error.errors[0]?.message || "Validasi gagal");
+      toast.error(parsed.error.issues[0]?.message || "Validasi gagal");
       return;
     }
 
