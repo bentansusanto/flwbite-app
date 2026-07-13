@@ -49,6 +49,7 @@ export const NewOrdersPage = () => {
   const [isQueueModalOpen, setIsQueueModalOpen] = useState(false);
   const [isCancelAlertOpen, setIsCancelAlertOpen] = useState(false);
   const [orderIdToCancel, setOrderIdToCancel] = useState<string | null>(null);
+  const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
   
   // Receipt State
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
@@ -118,6 +119,7 @@ export const NewOrdersPage = () => {
     }
 
     setTableNumber(order.table_number || "");
+    setActiveOrderId(order.id);
     setIsQueueModalOpen(false);
     toast.success(`Pesanan ${order.customer_name || ""} berhasil dipanggil.`);
   };
@@ -232,6 +234,14 @@ export const NewOrdersPage = () => {
 
       const orderId = orderRes.data.id;
 
+      if (activeOrderId) {
+        try {
+          await cancelOrder(activeOrderId).unwrap();
+        } catch (e) {
+          console.error("Gagal membatalkan pesanan lama", e);
+        }
+      }
+
       await payOrder({
         order_id: orderId,
         payment_method: paymentMethod,
@@ -275,6 +285,14 @@ export const NewOrdersPage = () => {
     }
 
     try {
+      if (activeOrderId) {
+        try {
+          await cancelOrder(activeOrderId).unwrap();
+        } catch (e) {
+          console.error("Gagal membatalkan pesanan lama", e);
+        }
+      }
+
       await createOrder({
         type: getOrderType(),
         branch_id: branchId,
@@ -295,8 +313,8 @@ export const NewOrdersPage = () => {
       setCustomerName("");
       setTableNumber("");
       setNotes("");
+      setActiveOrderId(null);
       setIsQueueModalOpen(false);
-      setCart([]);
     } catch (err: any) {
       toast.error(err?.data?.message || "Gagal menyimpan pesanan.");
     }
@@ -311,6 +329,7 @@ export const NewOrdersPage = () => {
     setTableNumber("");
     setIsCheckoutOpen(false);
     setIsDrawerOpen(false);
+    setActiveOrderId(null);
   };
 
   const handlePayButtonClick = (isMobile: boolean = false) => {

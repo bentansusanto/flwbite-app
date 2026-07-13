@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 async function proxy(req: NextRequest, context: { params: Promise<{ path: string[] }> | { path: string[] } }) {
   // Await params to support both Next.js 14 and 15
   const resolvedParams = await Promise.resolve(context.params);
