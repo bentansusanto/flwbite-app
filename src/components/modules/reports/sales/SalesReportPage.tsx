@@ -397,6 +397,7 @@ export default function SalesReportPage() {
         </div>
         <div className="p-6">
           <Chart
+            key={JSON.stringify(chartOptions.xaxis?.categories || []) + JSON.stringify(chartSeries)}
             options={chartOptions}
             series={chartSeries}
             type="area"

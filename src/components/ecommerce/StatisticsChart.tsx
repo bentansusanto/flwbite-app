@@ -136,7 +136,13 @@ export default function StatisticsChart() {
 
       <div className="max-w-full overflow-x-auto custom-scrollbar">
         <div className="min-w-[1000px] xl:min-w-full">
-          <Chart options={options} series={series} type="area" height={310} />
+          <Chart 
+            key={JSON.stringify(categories) + JSON.stringify(series)}
+            options={options} 
+            series={series} 
+            type="area" 
+            height={310} 
+          />
         </div>
       </div>
     </div>
