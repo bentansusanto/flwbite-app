@@ -389,9 +389,9 @@ export default function SalesReportPage() {
           </div>
           <div className="flex bg-gray-50 dark:bg-gray-800 p-1 rounded-xl">
             {[
-              { label: 'HARIAN', value: 'daily' },
               { label: 'MINGGUAN', value: 'weekly' },
-              { label: 'BULANAN', value: 'monthly' }
+              { label: 'BULANAN', value: 'monthly' },
+              { label: 'TAHUNAN', value: 'yearly' }
             ].map((p) => (
               <button
                 key={p.value}

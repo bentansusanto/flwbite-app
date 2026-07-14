@@ -4,7 +4,7 @@ import { salesReportFilterSchema, SalesReportFilterValues } from "./schema";
 import { validateWithZod } from "@/utils/formik-zod";
 
 export const useSalesReport = () => {
-  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly" | "yearly">("monthly");
+  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly" | "yearly">("weekly");
 
   const formik = useFormik<SalesReportFilterValues>({
     initialValues: {
@@ -15,7 +15,7 @@ export const useSalesReport = () => {
       search: "",
       page: 1,
       limit: 5,
-      period: "monthly",
+      period: "weekly",
     },
     validate: validateWithZod(salesReportFilterSchema),
     onSubmit: (values) => {

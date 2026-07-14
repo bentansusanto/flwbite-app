@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import { useGetSalesChartQuery } from "@/store/api/reportApi";
 
 export default function StatisticsChart() {
-  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("monthly");
+  const [period, setPeriod] = useState<"weekly" | "monthly" | "yearly">("weekly");
   const { data: chartData, isLoading: isChartLoading } = useGetSalesChartQuery({ period });
   
   const points = chartData?.data?.points || [];
@@ -142,9 +142,9 @@ export default function StatisticsChart() {
         </div>
         <div className="flex bg-gray-50 dark:bg-gray-800 p-1 rounded-xl">
           {[
-            { label: 'HARIAN', value: 'daily' },
             { label: 'MINGGUAN', value: 'weekly' },
-            { label: 'BULANAN', value: 'monthly' }
+            { label: 'BULANAN', value: 'monthly' },
+            { label: 'TAHUNAN', value: 'yearly' }
           ].map((p) => (
             <button
               key={p.value}

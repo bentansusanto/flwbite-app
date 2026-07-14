@@ -8,7 +8,7 @@ export const salesReportFilterSchema = z.object({
   search: z.string().optional(),
   page: z.number().default(1),
   limit: z.number().default(5),
-  period: z.enum(["daily", "weekly", "monthly", "yearly"]).default("monthly"),
+  period: z.enum(["daily", "weekly", "monthly", "yearly"]).default("weekly"),
 });
 
 export type SalesReportFilterValues = z.infer<typeof salesReportFilterSchema>;
