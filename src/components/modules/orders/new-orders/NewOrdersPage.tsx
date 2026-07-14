@@ -119,9 +119,12 @@ export const NewOrdersPage = () => {
 
     if (order.customer_id) {
        setSelectedCustomer({ id: order.customer_id, name: order.customer_name });
+    } else if (order.customer_name) {
+       setSelectedCustomer({ id: null, name: order.customer_name });
+       setCustomerName(order.customer_name);
     } else {
        setSelectedCustomer(null);
-       setCustomerName(order.customer_name);
+       setCustomerName("");
     }
 
     setTableNumber(order.table_number || "");
@@ -263,6 +266,10 @@ export const NewOrdersPage = () => {
       }).unwrap();
 
       // Optimistic: immediately remove order from pending queue in local UI since it is now completed
+      if (activeOrderId) {
+        cancelledIdsRef.current.add(activeOrderId);
+        setLocalPendingOrders(prev => prev.filter(o => o.id !== activeOrderId));
+      }
       setLocalPendingOrders(prev => prev.filter(o => o.id !== orderId));
       
       // Background refetch to sync with real server data
