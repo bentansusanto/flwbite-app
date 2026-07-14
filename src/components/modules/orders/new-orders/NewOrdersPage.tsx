@@ -10,7 +10,7 @@ import { ReceiptModal, ReceiptData } from "./ReceiptModal";
 import Cookies from "js-cookie";
 import { useGetProductsQuery } from "@/store/api/productApi";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
-import { useCreateOrderMutation, usePayOrderMutation, useGetTransactionsQuery, useCancelOrderMutation, useCompleteOrderMutation, orderApi } from "@/store/api/orderApi";
+import { useCreateOrderMutation, usePayOrderMutation, useGetTransactionsQuery, useCancelOrderMutation, orderApi } from "@/store/api/orderApi";
 import { useGetTaxesQuery } from "@/store/api/taxApi";
 import { useGetPromotionsQuery } from "@/store/api/promotionApi";
 import { useGetMeTenantQuery } from "@/store/api/tenantApi";
@@ -76,15 +76,10 @@ export const NewOrdersPage = () => {
     status: "PENDING",
     branch_id: branchId
   }, { skip: !branchId });
-  const { data: paidOrdersData, isLoading: isLoadingPaid, refetch: refetchPaid } = useGetTransactionsQuery({
-    status: "PAID",
-    branch_id: branchId
-  }, { skip: !branchId });
   const { data: stocksData } = useGetStocksByBranchQuery(branchId || "", { skip: !branchId });
   const { data: taxesData } = useGetTaxesQuery(undefined);
   const { data: promotionsData } = useGetPromotionsQuery(undefined);
   const [cancelOrder] = useCancelOrderMutation();
-  const [completeOrder] = useCompleteOrderMutation();
 
   const [createOrder, { isLoading: isCreatingOrder }] = useCreateOrderMutation();
   const [payOrder, { isLoading: isPayingOrder }] = usePayOrderMutation();
@@ -96,10 +91,8 @@ export const NewOrdersPage = () => {
 
   // Local state for queue lists - enables instant optimistic updates
   const [localPendingOrders, setLocalPendingOrders] = useState<any[]>([]);
-  const [localPaidOrders, setLocalPaidOrders] = useState<any[]>([]);
 
   // Denylist: track IDs that have been completed/cancelled so stale RTK refetches don't restore them
-  const completedIdsRef = useRef<Set<string>>(new Set());
   const cancelledIdsRef = useRef<Set<string>>(new Set());
 
   // Sync local state when RTK Query data arrives, filtering out denylist IDs
@@ -108,12 +101,6 @@ export const NewOrdersPage = () => {
       setLocalPendingOrders(pendingOrdersData.data.filter((o: any) => !cancelledIdsRef.current.has(o.id)));
     }
   }, [pendingOrdersData]);
-
-  useEffect(() => {
-    if (paidOrdersData?.data) {
-      setLocalPaidOrders(paidOrdersData.data.filter((o: any) => !completedIdsRef.current.has(o.id)));
-    }
-  }, [paidOrdersData]);
 
   const handleResumeOrder = (order: any) => {
     if (cart.length > 0) {
@@ -275,30 +262,12 @@ export const NewOrdersPage = () => {
         amount: total
       }).unwrap();
 
-      // Optimistic: immediately move order to PAID queue in local UI
+      // Optimistic: immediately remove order from pending queue in local UI since it is now completed
       setLocalPendingOrders(prev => prev.filter(o => o.id !== orderId));
-      setLocalPaidOrders(prev => [
-        {
-          id: orderId,
-          customer_name: selectedCustomer?.name || customerName || "Pelanggan",
-          customer_id: selectedCustomer?.id || null,
-          table_number: tableNumber,
-          status: "PAID",
-          total_amount: total,
-          items: cart.map(item => ({
-            product_name: item.name,
-            qty: item.quantity,
-            price: item.price,
-            variant_id: item.variant_id,
-          })),
-          created_at: new Date().toISOString(),
-        },
-        ...prev,
-      ]);
+      
       // Background refetch to sync with real server data
       setTimeout(() => {
         refetchPending();
-        refetchPaid();
       }, 1500);
 
       toast.success("Transaksi Berhasil!");
@@ -1185,24 +1154,8 @@ export const NewOrdersPage = () => {
           isOpen={isQueueModalOpen}
           onClose={() => setIsQueueModalOpen(false)}
           pendingOrders={localPendingOrders}
-          paidOrders={localPaidOrders}
-          isLoading={isLoadingPending || isLoadingPaid}
+          isLoading={isLoadingPending}
           onResume={handleResumeOrder}
-          onComplete={async (id) => {
-            // Add to denylist FIRST so any background refetch won't restore it
-            completedIdsRef.current.add(id);
-            // Optimistic: remove from local UI immediately
-            setLocalPaidOrders(prev => prev.filter(o => o.id !== id));
-            try {
-              await completeOrder(id).unwrap();
-              toast.success("Pesanan selesai disiapkan.");
-            } catch (err: any) {
-              toast.error(err?.data?.message || "Gagal menyelesaikan pesanan.");
-              // Revert: remove from denylist and restore
-              completedIdsRef.current.delete(id);
-              refetchPaid();
-            }
-          }}
           onCancel={(id) => {
             setOrderIdToCancel(id);
             setIsCancelAlertOpen(true);

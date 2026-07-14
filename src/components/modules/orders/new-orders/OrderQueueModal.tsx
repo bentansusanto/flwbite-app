@@ -8,10 +8,8 @@ interface OrderQueueModalProps {
   isOpen: boolean;
   onClose: () => void;
   pendingOrders: any[];
-  paidOrders: any[];
   onResume: (order: any) => void;
   onCancel: (orderId: string) => void;
-  onComplete: (orderId: string) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -19,15 +17,11 @@ export const OrderQueueModal = ({
   isOpen,
   onClose,
   pendingOrders = [],
-  paidOrders = [],
   onResume,
   onCancel,
-  onComplete,
   isLoading = false
 }: OrderQueueModalProps) => {
-  const [activeTab, setActiveTab] = React.useState<"pending" | "paid">("pending");
   const [viewingOrder, setViewingOrder] = React.useState<any | null>(null);
-  const [processingId, setProcessingId] = React.useState<string | null>(null);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -47,44 +41,20 @@ export const OrderQueueModal = ({
     return then.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   };
 
-  const currentOrders = activeTab === "pending" ? pendingOrders : paidOrders;
+  const currentOrders = pendingOrders;
 
   return (
     <>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        title="Antrian Pesanan"
+        title="Antrian Pesanan (Menunggu Pembayaran)"
         className="max-w-3xl w-[95%] sm:w-[90%] mx-auto"
       >
         <div className="flex flex-col h-auto max-h-[50vh] sm:max-h-[60vh] lg:h-[650px] lg:max-h-[85vh]">
-          {/* Tabs */}
-          <div className="flex border-b border-gray-100 dark:border-gray-800">
-            <button
-              onClick={() => setActiveTab("pending")}
-              className={`flex-1 py-3 sm:py-4 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all relative ${
-                activeTab === "pending" ? "text-brand-600 dark:text-brand-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              }`}
-            >
-              Menunggu Bayar ({pendingOrders.length})
-              {activeTab === "pending" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-600 dark:bg-brand-500" />}
-            </button>
-            <button
-              onClick={() => setActiveTab("paid")}
-              className={`flex-1 py-3 sm:py-4 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all relative ${
-                activeTab === "paid" ? "text-brand-600 dark:text-brand-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              }`}
-            >
-              Sedang Disiapkan ({paidOrders.length})
-              {activeTab === "paid" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-600 dark:bg-brand-500" />}
-            </button>
-          </div>
-
           <div className="p-4 border-b border-gray-50 dark:border-gray-800/50 bg-gray-50/30 dark:bg-gray-800/20">
             <p className="text-[11px] text-gray-500 dark:text-gray-400 text-center italic">
-              {activeTab === "pending"
-                ? "Pesanan yang disimpan namun belum dibayar."
-                : "Pesanan lunas yang sedang dalam proses penyiapan."}
+              Pesanan yang disimpan namun belum dibayar.
             </p>
           </div>
 
@@ -151,41 +121,22 @@ export const OrderQueueModal = ({
                           >
                             <Eye size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
-                          {activeTab === "pending" ? (
-                            <>
-                              <button
-                                onClick={() => onCancel(order.id)}
-                                className="p-2 sm:p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
-                                title="Batalkan Pesanan"
-                              >
-                                <Trash2 size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
-                              </button>
-                              <Button
-                                onClick={() => {
-                                  onResume(order);
-                                }}
-                                className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-sm"
-                                endIcon={<ArrowRight size={18} className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />}
-                              >
-                                Panggil
-                              </Button>
-                            </>
-                          ) : (
-                            <Button
-                              onClick={async () => {
-                                setProcessingId(order.id);
-                                try {
-                                  await onComplete(order.id);
-                                } finally {
-                                  setProcessingId(null);
-                                }
-                              }}
-                              disabled={processingId === order.id}
-                              className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-sm"
-                            >
-                              {processingId === order.id ? "Memproses..." : "Selesaikan"}
-                            </Button>
-                          )}
+                          <button
+                            onClick={() => onCancel(order.id)}
+                            className="p-2 sm:p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
+                            title="Batalkan Pesanan"
+                          >
+                            <Trash2 size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
+                          </button>
+                          <Button
+                            onClick={() => {
+                              onResume(order);
+                            }}
+                            className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-sm"
+                            endIcon={<ArrowRight size={18} className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />}
+                          >
+                            Panggil
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -224,10 +175,8 @@ export const OrderQueueModal = ({
               </div>
               <div className="text-right">
                 <p className="text-[10px] font-bold text-gray-400 uppercase">Status</p>
-                <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-md ${
-                  activeTab === "pending" ? "bg-orange-50 text-orange-600" : "bg-brand-50 text-brand-600"
-                }`}>
-                  {activeTab === "pending" ? "Belum Bayar" : "Diproses"}
+                <span className="text-[10px] font-bold uppercase px-2 py-1 rounded-md bg-orange-50 text-orange-600">
+                  Belum Bayar
                 </span>
               </div>
             </div>
