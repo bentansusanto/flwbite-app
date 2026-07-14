@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Search, ShoppingCart, Trash2, Plus, Minus, ChevronRight, Filter, Power, Package, UserPlus, Users, LayoutGrid, ShoppingBag, Utensils, Star } from "lucide-react";
 import Button from "@/components/ui/button/Button";
 import { PosSessionGuard } from "../pos-session/PosSessionGuard";
@@ -98,16 +98,20 @@ export const NewOrdersPage = () => {
   const [localPendingOrders, setLocalPendingOrders] = useState<any[]>([]);
   const [localPaidOrders, setLocalPaidOrders] = useState<any[]>([]);
 
-  // Sync local state when RTK Query data arrives
+  // Denylist: track IDs that have been completed/cancelled so stale RTK refetches don't restore them
+  const completedIdsRef = useRef<Set<string>>(new Set());
+  const cancelledIdsRef = useRef<Set<string>>(new Set());
+
+  // Sync local state when RTK Query data arrives, filtering out denylist IDs
   useEffect(() => {
     if (pendingOrdersData?.data) {
-      setLocalPendingOrders(pendingOrdersData.data);
+      setLocalPendingOrders(pendingOrdersData.data.filter((o: any) => !cancelledIdsRef.current.has(o.id)));
     }
   }, [pendingOrdersData]);
 
   useEffect(() => {
     if (paidOrdersData?.data) {
-      setLocalPaidOrders(paidOrdersData.data);
+      setLocalPaidOrders(paidOrdersData.data.filter((o: any) => !completedIdsRef.current.has(o.id)));
     }
   }, [paidOrdersData]);
 
@@ -143,17 +147,19 @@ export const NewOrdersPage = () => {
     if (!orderIdToCancel) return;
     try {
       toast.loading("Membatalkan pesanan...", { id: "cancel-order" });
-      // Optimistic: remove from local UI immediately
+      // Add to denylist BEFORE removing from UI so even a stale refetch won't restore it
+      cancelledIdsRef.current.add(orderIdToCancel);
       setLocalPendingOrders(prev => prev.filter(o => o.id !== orderIdToCancel));
       await cancelOrder(orderIdToCancel).unwrap();
       toast.success("Pesanan berhasil dibatalkan.", { id: "cancel-order" });
       setIsCancelAlertOpen(false);
       setOrderIdToCancel(null);
-      // Background refresh to sync
+      // Background refresh to sync (denylist will prevent restore)
       refetchPending();
     } catch (err) {
       toast.error("Gagal membatalkan pesanan.", { id: "cancel-order" });
-      // Revert on failure
+      // Revert: remove from denylist and restore
+      cancelledIdsRef.current.delete(orderIdToCancel);
       refetchPending();
     }
   };
@@ -1183,6 +1189,8 @@ export const NewOrdersPage = () => {
           isLoading={isLoadingPending || isLoadingPaid}
           onResume={handleResumeOrder}
           onComplete={async (id) => {
+            // Add to denylist FIRST so any background refetch won't restore it
+            completedIdsRef.current.add(id);
             // Optimistic: remove from local UI immediately
             setLocalPaidOrders(prev => prev.filter(o => o.id !== id));
             try {
@@ -1190,7 +1198,8 @@ export const NewOrdersPage = () => {
               toast.success("Pesanan selesai disiapkan.");
             } catch (err: any) {
               toast.error(err?.data?.message || "Gagal menyelesaikan pesanan.");
-              // Revert on failure by re-syncing
+              // Revert: remove from denylist and restore
+              completedIdsRef.current.delete(id);
               refetchPaid();
             }
           }}
