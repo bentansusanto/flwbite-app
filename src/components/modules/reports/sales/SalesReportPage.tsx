@@ -280,6 +280,9 @@ export default function SalesReportPage() {
       categories: chartPoints.map(p => {
         if (/^\d{2}:\d{2}$/.test(p.label)) return p.label;
         try {
+          if (/^\d{4}-\d{2}$/.test(p.label)) {
+            return format(new Date(p.label + "-01T00:00:00Z"), "MMM yy");
+          }
           return format(new Date(p.label), "dd MMM");
         } catch {
           return p.label;
