@@ -43,7 +43,10 @@ export const orderApi = apiSlice.injectEndpoints({
     getTransactions: builder.query<PaginatedResponse<Order>, any>({
       query: (params) => ({
         url: "/orders/history",
-        params,
+        params: {
+          ...params,
+          _cb: Date.now(),
+        },
       }),
       transformResponse: (response: { data: PaginatedResponse<Order> }) => response.data,
       providesTags: ["Order"],
