@@ -54,7 +54,7 @@ export const orderApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
+      invalidatesTags: ["PosSession", "Product", "Stock", "ProductBatch"],
     }),
     payOrder: builder.mutation<any, any>({
       query: (body) => ({
@@ -62,7 +62,7 @@ export const orderApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
+      invalidatesTags: ["PosSession", "Product", "Stock", "ProductBatch"],
     }),
     refundOrder: builder.mutation<any, { id: string; reason: string }>({
       query: ({ id, reason }) => ({
@@ -77,7 +77,7 @@ export const orderApi = apiSlice.injectEndpoints({
         url: `/orders/${id}/cancel`,
         method: "PATCH",
       }),
-      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
+      invalidatesTags: ["PosSession", "Product", "Stock", "ProductBatch"],
     }),
     completeOrder: builder.mutation<any, string>({
       query: (id) => ({
@@ -113,7 +113,7 @@ export const orderApi = apiSlice.injectEndpoints({
           patches.forEach((patch) => patch.undo());
         }
       },
-      invalidatesTags: ["Order", "PosSession", "Product", "Stock", "ProductBatch"],
+      invalidatesTags: ["PosSession", "Product", "Stock", "ProductBatch"],
     }),
   }),
 });

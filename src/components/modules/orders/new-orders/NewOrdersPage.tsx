@@ -129,6 +129,7 @@ export const NewOrdersPage = () => {
     try {
       toast.loading("Membatalkan pesanan...", { id: "cancel-order" });
       await cancelOrder(orderIdToCancel).unwrap();
+      refetchPending();
       toast.success("Pesanan berhasil dibatalkan.", { id: "cancel-order" });
       setIsCancelAlertOpen(false);
       setOrderIdToCancel(null);
@@ -313,6 +314,7 @@ export const NewOrdersPage = () => {
         notes: notes
       }).unwrap();
 
+      refetchPending(); // Manually update pending queue
       toast.success("Pesanan berhasil disimpan di antrian.");
       setCart([]);
       setSelectedCustomer(null);
@@ -1143,6 +1145,7 @@ export const NewOrdersPage = () => {
           onComplete={async (id) => {
             try {
               await completeOrder(id).unwrap();
+              refetchPaid();
               toast.success("Pesanan selesai disiapkan.");
             } catch (err: any) {
               toast.error(err?.data?.message || "Gagal menyelesaikan pesanan.");
