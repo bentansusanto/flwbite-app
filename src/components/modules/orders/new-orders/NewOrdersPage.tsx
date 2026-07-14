@@ -91,10 +91,25 @@ export const NewOrdersPage = () => {
 
   const products = productsData?.data || [];
   const categoriesList = categoriesData?.data || [];
-  const pendingOrders = pendingOrdersData?.data || [];
-  const paidOrders = paidOrdersData?.data || [];
   const taxes = taxesData?.data || [];
   const promotions = promotionsData?.data || [];
+
+  // Local state for queue lists - enables instant optimistic updates
+  const [localPendingOrders, setLocalPendingOrders] = useState<any[]>([]);
+  const [localPaidOrders, setLocalPaidOrders] = useState<any[]>([]);
+
+  // Sync local state when RTK Query data arrives
+  useEffect(() => {
+    if (pendingOrdersData?.data) {
+      setLocalPendingOrders(pendingOrdersData.data);
+    }
+  }, [pendingOrdersData]);
+
+  useEffect(() => {
+    if (paidOrdersData?.data) {
+      setLocalPaidOrders(paidOrdersData.data);
+    }
+  }, [paidOrdersData]);
 
   const handleResumeOrder = (order: any) => {
     if (cart.length > 0) {
@@ -128,13 +143,18 @@ export const NewOrdersPage = () => {
     if (!orderIdToCancel) return;
     try {
       toast.loading("Membatalkan pesanan...", { id: "cancel-order" });
+      // Optimistic: remove from local UI immediately
+      setLocalPendingOrders(prev => prev.filter(o => o.id !== orderIdToCancel));
       await cancelOrder(orderIdToCancel).unwrap();
-      await refetchPending();
       toast.success("Pesanan berhasil dibatalkan.", { id: "cancel-order" });
       setIsCancelAlertOpen(false);
       setOrderIdToCancel(null);
+      // Background refresh to sync
+      refetchPending();
     } catch (err) {
       toast.error("Gagal membatalkan pesanan.", { id: "cancel-order" });
+      // Revert on failure
+      refetchPending();
     }
   };
 
@@ -249,11 +269,31 @@ export const NewOrdersPage = () => {
         amount: total
       }).unwrap();
 
-      // Force a manual refetch bypassing RTK query deduplication and tags
+      // Optimistic: immediately move order to PAID queue in local UI
+      setLocalPendingOrders(prev => prev.filter(o => o.id !== orderId));
+      setLocalPaidOrders(prev => [
+        {
+          id: orderId,
+          customer_name: selectedCustomer?.name || customerName || "Pelanggan",
+          customer_id: selectedCustomer?.id || null,
+          table_number: tableNumber,
+          status: "PAID",
+          total_amount: total,
+          items: cart.map(item => ({
+            product_name: item.name,
+            qty: item.quantity,
+            price: item.price,
+            variant_id: item.variant_id,
+          })),
+          created_at: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+      // Background refetch to sync with real server data
       setTimeout(() => {
         refetchPending();
         refetchPaid();
-      }, 500);
+      }, 1500);
 
       toast.success("Transaksi Berhasil!");
       
@@ -1138,20 +1178,20 @@ export const NewOrdersPage = () => {
         <OrderQueueModal
           isOpen={isQueueModalOpen}
           onClose={() => setIsQueueModalOpen(false)}
-          pendingOrders={pendingOrders}
-          paidOrders={paidOrders}
+          pendingOrders={localPendingOrders}
+          paidOrders={localPaidOrders}
           isLoading={isLoadingPending || isLoadingPaid}
           onResume={handleResumeOrder}
           onComplete={async (id) => {
+            // Optimistic: remove from local UI immediately
+            setLocalPaidOrders(prev => prev.filter(o => o.id !== id));
             try {
               await completeOrder(id).unwrap();
-              // Add a small artificial delay for UX (1.5 seconds)
-              await new Promise(resolve => setTimeout(resolve, 1500));
-              // Await the refetch so Memproses... stays until fresh data arrives
-              await refetchPaid();
               toast.success("Pesanan selesai disiapkan.");
             } catch (err: any) {
               toast.error(err?.data?.message || "Gagal menyelesaikan pesanan.");
+              // Revert on failure by re-syncing
+              refetchPaid();
             }
           }}
           onCancel={(id) => {
