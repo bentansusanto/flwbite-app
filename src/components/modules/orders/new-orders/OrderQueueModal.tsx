@@ -9,9 +9,9 @@ interface OrderQueueModalProps {
   onClose: () => void;
   pendingOrders: any[];
   paidOrders: any[];
-  onResume: (order: any) => void;
+  onResume: (order: any) => Promise<void>;
   onCancel: (orderId: string) => void;
-  onComplete: (orderId: string) => void;
+  onComplete: (orderId: string) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -27,6 +27,7 @@ export const OrderQueueModal = ({
 }: OrderQueueModalProps) => {
   const [activeTab, setActiveTab] = React.useState<"pending" | "paid">("pending");
   const [viewingOrder, setViewingOrder] = React.useState<any | null>(null);
+  const [processingId, setProcessingId] = React.useState<string | null>(null);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -160,19 +161,35 @@ export const OrderQueueModal = ({
                                 <Trash2 size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
                               </button>
                               <Button
-                                onClick={() => onResume(order)}
+                                onClick={async () => {
+                                  setProcessingId(order.id);
+                                  try {
+                                    await onResume(order);
+                                  } finally {
+                                    setProcessingId(null);
+                                  }
+                                }}
+                                disabled={processingId === order.id}
                                 className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-sm"
-                                endIcon={<ArrowRight size={18} className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />}
+                                endIcon={processingId !== order.id ? <ArrowRight size={18} className="w-4 h-4 sm:w-[18px] sm:h-[18px]" /> : undefined}
                               >
-                                Panggil
+                                {processingId === order.id ? "Memproses..." : "Panggil"}
                               </Button>
                             </>
                           ) : (
                             <Button
-                              onClick={() => onComplete(order.id)}
+                              onClick={async () => {
+                                setProcessingId(order.id);
+                                try {
+                                  await onComplete(order.id);
+                                } finally {
+                                  setProcessingId(null);
+                                }
+                              }}
+                              disabled={processingId === order.id}
                               className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-sm"
                             >
-                              Selesaikan
+                              {processingId === order.id ? "Memproses..." : "Selesaikan"}
                             </Button>
                           )}
                         </div>
