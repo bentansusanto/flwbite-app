@@ -11,7 +11,6 @@ import Cookies from "js-cookie";
 import { useGetProductsQuery } from "@/store/api/productApi";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
 import { useCreateOrderMutation, usePayOrderMutation, useGetTransactionsQuery, useCancelOrderMutation, useCompleteOrderMutation, orderApi } from "@/store/api/orderApi";
-import { useDispatch } from "react-redux";
 import { useGetTaxesQuery } from "@/store/api/taxApi";
 import { useGetPromotionsQuery } from "@/store/api/promotionApi";
 import { useGetMeTenantQuery } from "@/store/api/tenantApi";
@@ -69,16 +68,15 @@ export const NewOrdersPage = () => {
   const { data: tenantRes } = useGetMeTenantQuery(undefined);
   const tenantName = tenantRes?.data?.name || "Toko Demo";
   const branches: any[] = []; // Placeholder
-  const dispatch = useDispatch();
 
   // API Queries
   const { data: productsData, isLoading: isLoadingProducts } = useGetProductsQuery({});
   const { data: categoriesData } = useGetCategoriesQuery({});
-  const { data: pendingOrdersData, isLoading: isLoadingPending } = useGetTransactionsQuery({
+  const { data: pendingOrdersData, isLoading: isLoadingPending, refetch: refetchPending } = useGetTransactionsQuery({
     status: "PENDING",
     branch_id: branchId
   }, { skip: !branchId });
-  const { data: paidOrdersData, isLoading: isLoadingPaid } = useGetTransactionsQuery({
+  const { data: paidOrdersData, isLoading: isLoadingPaid, refetch: refetchPaid } = useGetTransactionsQuery({
     status: "PAID",
     branch_id: branchId
   }, { skip: !branchId });
@@ -250,10 +248,11 @@ export const NewOrdersPage = () => {
         amount: total
       }).unwrap();
 
-      // Force RTK Query to refetch after a slight delay to bypass request deduplication
+      // Force a manual refetch bypassing RTK query deduplication and tags
       setTimeout(() => {
-        dispatch(orderApi.util.invalidateTags(["Order"]));
-      }, 300);
+        refetchPending();
+        refetchPaid();
+      }, 500);
 
       toast.success("Transaksi Berhasil!");
       
