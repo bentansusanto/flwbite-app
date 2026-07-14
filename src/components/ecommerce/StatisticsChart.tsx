@@ -1,7 +1,7 @@
 "use client";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
-import ChartTab from "../common/ChartTab";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -9,10 +9,18 @@ import { format } from "date-fns";
 import { useGetSalesChartQuery } from "@/store/api/reportApi";
 
 export default function StatisticsChart() {
-  const { data: chartData, isLoading: isChartLoading } = useGetSalesChartQuery({ period: "monthly" });
+  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("monthly");
+  const { data: chartData, isLoading: isChartLoading } = useGetSalesChartQuery({ period });
   
   const points = chartData?.data?.points || [];
-  const categories = points.map(p => format(new Date(p.label), "dd MMM"));
+  const categories = points.map(p => {
+    if (/^\d{2}:\d{2}$/.test(p.label)) return p.label;
+    try {
+      return format(new Date(p.label), "dd MMM");
+    } catch {
+      return p.label;
+    }
+  });
   const salesData = points.map(p => p.sales);
   const revenueData = points.map(p => p.revenue);
 
@@ -129,8 +137,24 @@ export default function StatisticsChart() {
             Target yang telah Anda tetapkan untuk setiap bulan
           </p>
         </div>
-        <div className="flex items-center gap-3 sm:justify-end">
-          <ChartTab />
+        <div className="flex bg-gray-50 dark:bg-gray-800 p-1 rounded-xl">
+          {[
+            { label: 'HARIAN', value: 'daily' },
+            { label: 'MINGGUAN', value: 'weekly' },
+            { label: 'BULANAN', value: 'monthly' }
+          ].map((p) => (
+            <button
+              key={p.value}
+              onClick={() => setPeriod(p.value as any)}
+              className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
+                period === p.value
+                  ? 'bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm'
+                  : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
       </div>
 

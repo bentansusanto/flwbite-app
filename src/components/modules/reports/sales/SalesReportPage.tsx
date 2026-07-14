@@ -277,7 +277,14 @@ export default function SalesReportPage() {
     },
     xaxis: {
       type: "category",
-      categories: chartPoints.map(p => format(new Date(p.label), "dd MMM")),
+      categories: chartPoints.map(p => {
+        if (/^\d{2}:\d{2}$/.test(p.label)) return p.label;
+        try {
+          return format(new Date(p.label), "dd MMM");
+        } catch {
+          return p.label;
+        }
+      }),
       axisBorder: { show: false },
       axisTicks: { show: false },
       labels: { style: { colors: '#94a3b8', fontWeight: 500 } }
