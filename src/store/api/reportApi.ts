@@ -37,10 +37,10 @@ export const reportApi = apiSlice.injectEndpoints({
       query: () => "/reports/dashboard",
       providesTags: ["Order", "Customer", "Product"],
     }),
-    getSalesChart: builder.query<{ data: SalesChartResponse }, { period: string; branch_id?: string }>({
-      query: ({ period, branch_id }) => ({
+    getSalesChart: builder.query<{ data: SalesChartResponse }, { period: string; branch_id?: string; start_date?: string; end_date?: string }>({
+      query: ({ period, branch_id, start_date, end_date }) => ({
         url: "/reports/chart",
-        params: { period, branch_id },
+        params: { period, branch_id, start_date, end_date },
       }),
       providesTags: ["Order"],
     }),

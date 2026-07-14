@@ -85,7 +85,9 @@ export default function SalesReportPage() {
   });
   const { data: chartResponse } = useGetSalesChartQuery({
     period,
-    branch_id: formik.values.branch_id
+    branch_id: formik.values.branch_id,
+    start_date: formik.values.start_date,
+    end_date: formik.values.end_date,
   });
   const { data: transactionsData, isLoading: isLoadingTrx } = useGetTransactionsQuery({
     branch_id: formik.values.branch_id,
