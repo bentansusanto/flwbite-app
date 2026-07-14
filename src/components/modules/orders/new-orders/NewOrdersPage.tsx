@@ -707,9 +707,9 @@ export const NewOrdersPage = () => {
               className="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 transition-colors relative group"
             >
               <Users className="w-5 h-5 text-gray-400" />
-              {(localPendingOrders.length + localPaidOrders.length) > 0 && (
+              {localPendingOrders.length > 0 && (
                 <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900 shadow-sm animate-pulse">
-                  {localPendingOrders.length + localPaidOrders.length}
+                  {localPendingOrders.length}
                 </div>
               )}
               <span className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Antrian Pesanan</span>
