@@ -15,7 +15,9 @@ async function proxy(req: NextRequest, context: { params: Promise<{ path: string
 
   const path = pathArray.join("/");
   const search = req.nextUrl.search;
-  const targetUrl = `${internalApiUrl.replace(/\/$/, "")}/${path}${search}`;
+  const cacheBuster = `_t=${Date.now()}`;
+  const finalSearch = search ? `${search}&${cacheBuster}` : `?${cacheBuster}`;
+  const targetUrl = `${internalApiUrl.replace(/\/$/, "")}/${path}${finalSearch}`;
 
   const headers = new Headers(req.headers);
   // Remove host header to allow fetch to set the correct host for the target URL
