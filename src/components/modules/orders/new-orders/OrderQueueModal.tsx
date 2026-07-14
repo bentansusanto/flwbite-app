@@ -9,7 +9,7 @@ interface OrderQueueModalProps {
   onClose: () => void;
   pendingOrders: any[];
   paidOrders: any[];
-  onResume: (order: any) => Promise<void>;
+  onResume: (order: any) => void;
   onCancel: (orderId: string) => void;
   onComplete: (orderId: string) => Promise<void>;
   isLoading?: boolean;
@@ -161,19 +161,13 @@ export const OrderQueueModal = ({
                                 <Trash2 size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
                               </button>
                               <Button
-                                onClick={async () => {
-                                  setProcessingId(order.id);
-                                  try {
-                                    await onResume(order);
-                                  } finally {
-                                    setProcessingId(null);
-                                  }
+                                onClick={() => {
+                                  onResume(order);
                                 }}
-                                disabled={processingId === order.id}
                                 className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 text-sm"
-                                endIcon={processingId !== order.id ? <ArrowRight size={18} className="w-4 h-4 sm:w-[18px] sm:h-[18px]" /> : undefined}
+                                endIcon={<ArrowRight size={18} className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />}
                               >
-                                {processingId === order.id ? "Memproses..." : "Panggil"}
+                                Panggil
                               </Button>
                             </>
                           ) : (
