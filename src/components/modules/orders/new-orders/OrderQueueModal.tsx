@@ -82,9 +82,7 @@ export const OrderQueueModal = ({
                   >
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                       <div className="flex items-start gap-3 sm:gap-4">
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                          activeTab === "pending" ? "bg-orange-50 text-orange-600" : "bg-brand-50 text-brand-600"
-                        }`}>
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-orange-50 text-orange-600">
                           <Users size={24} className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                         <div className="min-w-0">
