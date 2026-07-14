@@ -129,7 +129,7 @@ export const NewOrdersPage = () => {
     try {
       toast.loading("Membatalkan pesanan...", { id: "cancel-order" });
       await cancelOrder(orderIdToCancel).unwrap();
-      refetchPending();
+      await refetchPending();
       toast.success("Pesanan berhasil dibatalkan.", { id: "cancel-order" });
       setIsCancelAlertOpen(false);
       setOrderIdToCancel(null);
@@ -1145,7 +1145,10 @@ export const NewOrdersPage = () => {
           onComplete={async (id) => {
             try {
               await completeOrder(id).unwrap();
-              refetchPaid();
+              // Add a small artificial delay for UX (1.5 seconds)
+              await new Promise(resolve => setTimeout(resolve, 1500));
+              // Await the refetch so Memproses... stays until fresh data arrives
+              await refetchPaid();
               toast.success("Pesanan selesai disiapkan.");
             } catch (err: any) {
               toast.error(err?.data?.message || "Gagal menyelesaikan pesanan.");
