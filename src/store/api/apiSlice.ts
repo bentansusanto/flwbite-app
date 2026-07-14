@@ -12,6 +12,12 @@ const baseQuery = fetchBaseQuery({
     if (csrfToken) {
       headers.set("X-CSRF-Token", csrfToken);
     }
+    
+    // HTTP standard cache control headers to prevent proxy/CDN/browser caching
+    headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
+    headers.set("Pragma", "no-cache");
+    headers.set("Expires", "0");
+    
     return headers;
   },
   credentials: 'include', // Important for HttpOnly cookies (refresh_token)
