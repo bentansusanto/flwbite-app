@@ -31,6 +31,7 @@ async function proxy(req: NextRequest, context: { params: Promise<{ path: string
       method: req.method,
       headers,
       body: (req.method !== "GET" && req.method !== "HEAD") ? await req.blob() : undefined,
+      cache: "no-store",
       // @ts-ignore - duplex is needed for streaming body in fetch
       duplex: (req.method !== "GET" && req.method !== "HEAD") ? "half" : undefined,
     });
