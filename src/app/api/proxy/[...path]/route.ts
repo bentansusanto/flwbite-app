@@ -43,6 +43,11 @@ async function proxy(req: NextRequest, context: { params: Promise<{ path: string
     responseHeaders.delete("connection");
     responseHeaders.delete("keep-alive");
 
+    // Force disable caching on the client side
+    responseHeaders.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    responseHeaders.set("Pragma", "no-cache");
+    responseHeaders.set("Expires", "0");
+
     // Create a new response using the fetch response body
     return new NextResponse(response.body, {
       status: response.status,
