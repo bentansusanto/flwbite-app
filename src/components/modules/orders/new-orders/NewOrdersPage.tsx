@@ -10,7 +10,8 @@ import { ReceiptModal, ReceiptData } from "./ReceiptModal";
 import Cookies from "js-cookie";
 import { useGetProductsQuery } from "@/store/api/productApi";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
-import { useCreateOrderMutation, usePayOrderMutation, useGetTransactionsQuery, useCancelOrderMutation, useCompleteOrderMutation } from "@/store/api/orderApi";
+import { useCreateOrderMutation, usePayOrderMutation, useGetTransactionsQuery, useCancelOrderMutation, useCompleteOrderMutation, orderApi } from "@/store/api/orderApi";
+import { useDispatch } from "react-redux";
 import { useGetTaxesQuery } from "@/store/api/taxApi";
 import { useGetPromotionsQuery } from "@/store/api/promotionApi";
 import { useGetMeTenantQuery } from "@/store/api/tenantApi";
@@ -68,6 +69,7 @@ export const NewOrdersPage = () => {
   const { data: tenantRes } = useGetMeTenantQuery(undefined);
   const tenantName = tenantRes?.data?.name || "Toko Demo";
   const branches: any[] = []; // Placeholder
+  const dispatch = useDispatch();
 
   // API Queries
   const { data: productsData, isLoading: isLoadingProducts } = useGetProductsQuery({});
@@ -247,6 +249,11 @@ export const NewOrdersPage = () => {
         payment_method: paymentMethod,
         amount: total
       }).unwrap();
+
+      // Force RTK Query to refetch after a slight delay to bypass request deduplication
+      setTimeout(() => {
+        dispatch(orderApi.util.invalidateTags(["Order"]));
+      }, 300);
 
       toast.success("Transaksi Berhasil!");
       
